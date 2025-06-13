@@ -5,8 +5,12 @@ import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Image } from "@heroui/image";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
-import { ExternalLink, Github, ArrowRight } from "lucide-react";
+import {
+  ArrowTopRightOnSquareIcon,
+  ArrowRightIcon,
+} from "@heroicons/react/24/outline";
 
+import { GithubIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 
 const ProjectsSection = () => {
@@ -97,21 +101,6 @@ const ProjectsSection = () => {
                 <Image
                   alt={projects[0].title}
                   className="w-full h-full object-cover"
-                  fallback={
-                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                      <div className="text-center p-8">
-                        <div className="w-16 h-16 bg-primary/30 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                          <ExternalLink className="w-8 h-8 text-primary" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-primary">
-                          Tracker Platform
-                        </h3>
-                        <p className="text-sm text-default-600 mt-2">
-                          Political Data & Analytics
-                        </p>
-                      </div>
-                    </div>
-                  }
                   src={projects[0].image}
                 />
                 <div className="absolute top-4 left-4">
@@ -130,12 +119,12 @@ const ProjectsSection = () => {
                 <div className="mb-6">
                   <h4 className="font-semibold mb-3">Key Features:</h4>
                   <ul className="space-y-2">
-                    {projects[0].highlights.map((highlight, index) => (
+                    {projects[0].highlights?.map((highlight, index) => (
                       <li
                         key={index}
                         className="flex items-center text-sm text-default-600"
                       >
-                        <ArrowRight className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
+                        <ArrowRightIcon className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
                         {highlight}
                       </li>
                     ))}
@@ -153,7 +142,9 @@ const ProjectsSection = () => {
                 <div className="flex gap-4">
                   <Button
                     color="primary"
-                    startContent={<ExternalLink className="w-4 h-4" />}
+                    startContent={
+                      <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                    }
                     variant="solid"
                     onPress={() =>
                       window.open(projects[0].links.live, "_blank")
@@ -162,7 +153,7 @@ const ProjectsSection = () => {
                     View Live Demo
                   </Button>
                   <Button
-                    startContent={<Github className="w-4 h-4" />}
+                    startContent={<GithubIcon className="w-4 h-4" />}
                     variant="bordered"
                     onPress={() =>
                       window.open(projects[0].links.github, "_blank")
@@ -191,11 +182,6 @@ const ProjectsSection = () => {
                   <Image
                     alt={project.title}
                     className="w-full h-48 object-cover"
-                    fallback={
-                      <div className="w-full h-48 bg-gradient-to-br from-default-100 to-default-200 flex items-center justify-center">
-                        <ExternalLink className="w-12 h-12 text-default-400" />
-                      </div>
-                    }
                     src={project.image}
                   />
                 </CardHeader>
@@ -219,7 +205,9 @@ const ProjectsSection = () => {
                   <Button
                     color="primary"
                     size="sm"
-                    startContent={<ExternalLink className="w-4 h-4" />}
+                    startContent={
+                      <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                    }
                     variant="flat"
                     onPress={() => window.open(project.links.live, "_blank")}
                   >
@@ -227,7 +215,7 @@ const ProjectsSection = () => {
                   </Button>
                   <Button
                     size="sm"
-                    startContent={<Github className="w-4 h-4" />}
+                    startContent={<GithubIcon className="w-4 h-4" />}
                     variant="light"
                     onPress={() => window.open(project.links.github, "_blank")}
                   >
@@ -252,7 +240,7 @@ const ProjectsSection = () => {
           </p>
           <Button
             color="primary"
-            endContent={<ArrowRight className="w-5 h-5" />}
+            endContent={<ArrowRightIcon className="w-5 h-5" />}
             size="lg"
             variant="bordered"
             onPress={() => {

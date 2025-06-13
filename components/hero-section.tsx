@@ -2,7 +2,12 @@
 
 import { Button } from "@heroui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, Download } from "lucide-react";
+import {
+  ArrowRightIcon,
+  ArrowDownTrayIcon,
+  ArrowDownIcon,
+  ArrowDownCircleIcon,
+} from "@heroicons/react/24/solid";
 
 import { siteConfig } from "@/config/site";
 
@@ -74,7 +79,7 @@ const HeroSection = () => {
             <Button
               className="font-semibold"
               color="primary"
-              endContent={<ArrowRight className="w-5 h-5" />}
+              endContent={<ArrowRightIcon className="w-5 h-5 flex-shrink-0" />}
               size="lg"
               variant="shadow"
               onPress={() => {
@@ -89,7 +94,9 @@ const HeroSection = () => {
             <Button
               className="font-semibold"
               size="lg"
-              startContent={<Download className="w-5 h-5" />}
+              startContent={
+                <ArrowDownTrayIcon className="w-5 h-5 flex-shrink-0" />
+              }
               variant="bordered"
             >
               Download Resume
@@ -167,13 +174,17 @@ const HeroSection = () => {
 
       {/* Scroll indicator */}
       <motion.div
-        animate={{ y: [0, 10, 0] }}
+        animate={{ opacity: 1, y: 0 }}
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        transition={{ duration: 2, repeat: Infinity }}
+        initial={{ opacity: 0, y: 20 }}
+        transition={{ duration: 0.8, delay: 1.0 }}
       >
-        <div className="w-6 h-10 border-2 border-default-300 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-default-300 rounded-full mt-2" />
-        </div>
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+        >
+          <ArrowDownCircleIcon className="w-12 h-12 text-default-500 mt-2" />
+        </motion.div>
       </motion.div>
     </section>
   );

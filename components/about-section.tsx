@@ -3,30 +3,35 @@
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
-import { Code2, Database, Globe, Zap } from "lucide-react";
+import {
+  CodeBracketIcon,
+  CircleStackIcon,
+  GlobeAltIcon,
+  BoltIcon,
+} from "@heroicons/react/24/outline";
 
 const AboutSection = () => {
   const highlights = [
     {
-      icon: <Code2 className="w-6 h-6" />,
+      icon: <CodeBracketIcon className="w-6 h-6" />,
       title: "Full-Stack Development",
       description:
         "Expertise in modern web technologies including React, Next.js, Node.js, and TypeScript",
     },
     {
-      icon: <Database className="w-6 h-6" />,
+      icon: <CircleStackIcon className="w-6 h-6" />,
       title: "Database Design",
       description:
         "Proficient in Prisma, PostgreSQL databases, with experience in C#, .NET, and MongoDB",
     },
     {
-      icon: <Globe className="w-6 h-6" />,
+      icon: <GlobeAltIcon className="w-6 h-6" />,
       title: "Web Applications",
       description:
         "Building scalable, responsive applications with focus on performance and user experience",
     },
     {
-      icon: <Zap className="w-6 h-6" />,
+      icon: <BoltIcon className="w-6 h-6" />,
       title: "Modern Tools",
       description:
         "Utilizing the latest development tools and frameworks to deliver cutting-edge solutions",

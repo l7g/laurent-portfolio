@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
@@ -218,7 +218,7 @@ const ProjectsSection = () => {
                   <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
                     {" "}
                     <p className="text-sm text-warning-700 dark:text-warning-300">
-                      🚧 Personal project currently in development. Code is
+                      ðŸš§ Personal project currently in development. Code is
                       private. Contact me to discuss my development approach and
                       capabilities.
                     </p>
@@ -372,7 +372,7 @@ const ProjectsSection = () => {
                     <div className="mb-3 p-2 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-md">
                       {" "}
                       <p className="text-xs text-warning-700 dark:text-warning-300">
-                        🚧 Available for freelancing - Contact for custom
+                        ðŸš§ Available for freelancing - Contact for custom
                         development
                       </p>
                     </div>

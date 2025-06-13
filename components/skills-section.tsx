@@ -83,8 +83,7 @@ const SkillsSection = () => {
     { name: "React", icon: <SiReact className="w-8 h-8" />, color: "#61DAFB" },
     {
       name: "Next.js",
-      icon: <SiNextdotjs className="w-8 h-8" />,
-      color: "#000000",
+      icon: <SiNextdotjs className="w-8 h-8 dark:text-white" />,
     },
     {
       name: "TypeScript",
@@ -98,7 +97,7 @@ const SkillsSection = () => {
     },
     {
       name: "Express",
-      icon: <SiExpress className="w-8 h-8" />,
+      icon: <SiExpress className="w-8 h-8 dark:text-white" />,
       color: "#000000",
     },
     {

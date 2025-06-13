@@ -106,7 +106,7 @@ const ProjectsSection = () => {
                   className="w-full h-full object-cover"
                   src={projects[0].image}
                 />
-                <div className="absolute top-4 left-4">
+                <div className="absolute top-4 left-4 z-10">
                   <Chip color="primary" size="sm" variant="solid">
                     Featured Project
                   </Chip>

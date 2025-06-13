@@ -16,7 +16,6 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-saffron-50 via-background to-saffron-100 dark:from-background dark:via-saffron-950/20 dark:to-background" />
-
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <motion.div
@@ -44,7 +43,6 @@ const HeroSection = () => {
           }}
         />
       </div>
-
       <div className="relative z-10 container mx-auto px-6 text-center">
         <motion.div
           animate={{ opacity: 1, y: 0 }}
@@ -170,22 +168,28 @@ const HeroSection = () => {
             </motion.a>
           </motion.div>
         </motion.div>
-      </div>
-
+      </div>{" "}
       {/* Scroll indicator */}
-      <motion.div
-        animate={{ opacity: 1, y: 0 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        initial={{ opacity: 0, y: 20 }}
-        transition={{ duration: 0.8, delay: 1.0 }}
-      >
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20">
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
         >
-          <ArrowDownCircleIcon className="w-12 h-12 text-default-500 mt-2" />
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            className="cursor-pointer"
+            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+            onClick={() => {
+              document.getElementById("about")?.scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
+          >
+            <ArrowDownCircleIcon className="w-12 h-12 text-default-500 hover:text-primary transition-colors" />
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 };

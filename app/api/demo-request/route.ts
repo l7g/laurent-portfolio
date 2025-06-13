@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { sendWorkInquiryEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
@@ -9,10 +9,10 @@ export async function POST(request: NextRequest) {
       body;
 
     // Debug logging
-    console.log("🔍 Environment check:");
+    console.log("ðŸ” Environment check:");
     console.log("RESEND_API_KEY exists:", !!process.env.RESEND_API_KEY);
     console.log("CONTACT_EMAIL:", process.env.NEXT_PUBLIC_CONTACT_EMAIL);
-    console.log("📝 Form data received:", { name, email, company, workType });
+    console.log("ðŸ“ Form data received:", { name, email, company, workType });
 
     // Validate required fields
     if (!name || !email || !description) {
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         description,
       },
     }); // Send email using Resend
-    console.log("📧 Attempting to send email...");
+    console.log("ðŸ“§ Attempting to send email...");
     const emailResult = await sendWorkInquiryEmail({
       to: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "laurentgagne.dev@pm.me",
       subject: `Work Inquiry from ${company || name}`,
@@ -47,13 +47,13 @@ export async function POST(request: NextRequest) {
       timeline,
     });
 
-    console.log("📧 Email result:", emailResult);
+    console.log("ðŸ“§ Email result:", emailResult);
 
     if (!emailResult.success) {
-      console.error("❌ Work inquiry email failed:", emailResult.error);
+      console.error("âŒ Work inquiry email failed:", emailResult.error);
       // Continue anyway - inquiry is saved to database
     } else {
-      console.log("✅ Email sent successfully!");
+      console.log("âœ… Email sent successfully!");
     }
 
     return NextResponse.json(

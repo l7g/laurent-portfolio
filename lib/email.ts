@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+﻿import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -75,7 +75,7 @@ export async function sendContactEmail(data: EmailData) {
           <p>I typically respond within 24-48 hours. Looking forward to connecting with you!</p>
           
           <p>Best regards,<br>
-          <strong>Laurent Gagné</strong><br>
+          <strong>Laurent GagnÃ©</strong><br>
           Full-Stack Developer</p>
           
           <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
@@ -101,17 +101,17 @@ export async function sendWorkInquiryEmail(data: EmailData) {
   const { to, name, email, message, company, position, workType, timeline } =
     data;
 
-  console.log("📧 sendWorkInquiryEmail called with:", {
+  console.log("ðŸ“§ sendWorkInquiryEmail called with:", {
     to,
     name,
     email,
     company,
   });
-  console.log("🔑 Resend API key exists:", !!process.env.RESEND_API_KEY);
+  console.log("ðŸ”‘ Resend API key exists:", !!process.env.RESEND_API_KEY);
 
   try {
     // Send work inquiry notification to you
-    console.log("📤 Sending work inquiry email to:", to);
+    console.log("ðŸ“¤ Sending work inquiry email to:", to);
     const result = await resend.emails.send({
       from: "Laurent Portfolio <onboarding@resend.dev>",
       to: [to],
@@ -172,7 +172,7 @@ export async function sendWorkInquiryEmail(data: EmailData) {
           <p>I'll review the details and get back to you within 24 hours to discuss how I can contribute to your team.</p>
           
           <p>Best regards,<br>
-          <strong>Laurent Gagné</strong><br>
+          <strong>Laurent GagnÃ©</strong><br>
           Full-Stack Developer</p>
           
           <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">

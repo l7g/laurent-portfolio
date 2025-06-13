@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@heroui/button";
@@ -11,7 +11,6 @@ import { z } from "zod";
 import {
   EnvelopeIcon,
   MapPinIcon,
-  PhoneIcon,
   PaperAirplaneIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,

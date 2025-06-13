@@ -1,11 +1,10 @@
-"use client";
+﻿"use client";
 
 import { Button } from "@heroui/button";
 import { motion } from "framer-motion";
 import {
   ArrowRightIcon,
   ArrowDownTrayIcon,
-  ArrowDownIcon,
   ArrowDownCircleIcon,
 } from "@heroicons/react/24/solid";
 

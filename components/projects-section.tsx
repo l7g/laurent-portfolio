@@ -185,10 +185,10 @@ const ProjectsSection = () => {
         >
           <Card className="overflow-hidden shadow-xl">
             <div className="grid lg:grid-cols-2 gap-0">
-              <div className="relative h-64 lg:h-auto">
+              <div className="relative h-48 sm:h-56 md:h-64 lg:h-auto overflow-hidden">
                 <Image
                   alt={projects[0].title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                   src={projects[0].image}
                 />{" "}
                 <div className="absolute top-4 left-4 z-10">
@@ -325,7 +325,7 @@ const ProjectsSection = () => {
         </motion.div>
 
         {/* Other Projects Grid */}
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8">
           {projects.slice(1).map((project, index) => (
             <motion.div
               key={project.title}
@@ -335,8 +335,8 @@ const ProjectsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
             >
               {" "}
-              <Card className="h-full hover:shadow-lg transition-shadow">
-                <CardHeader className="p-0">
+              <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden">
+                <CardHeader className="p-0 overflow-hidden">
                   {project.image.startsWith("placeholder-") ? (
                     <PlaceholderImage
                       type={project.image}
@@ -345,7 +345,7 @@ const ProjectsSection = () => {
                   ) : (
                     <Image
                       alt={project.title}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-40 sm:h-48 object-cover object-center"
                       src={project.image}
                     />
                   )}

@@ -11,7 +11,6 @@ import { z } from "zod";
 import {
   EnvelopeIcon,
   MapPinIcon,
-  PhoneIcon,
   PaperAirplaneIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,

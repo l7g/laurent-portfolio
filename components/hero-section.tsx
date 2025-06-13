@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import {
   ArrowRightIcon,
   ArrowDownTrayIcon,
-  ArrowDownIcon,
   ArrowDownCircleIcon,
 } from "@heroicons/react/24/solid";
 

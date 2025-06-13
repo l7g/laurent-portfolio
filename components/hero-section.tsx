@@ -12,7 +12,10 @@ import { siteConfig } from "@/config/site";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+    >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-saffron-50 via-background to-saffron-100 dark:from-background dark:via-saffron-950/20 dark:to-background" />
       {/* Animated background elements */}

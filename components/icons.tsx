@@ -3,13 +3,37 @@ import * as React from "react";
 import { IconSvgProps } from "@/types";
 
 export const Logo: React.FC<IconSvgProps> = (props) => (
-  <svg height={36} viewBox="0 0 32 32" width={36} {...props}>
-    <path
-      clipRule="evenodd"
-      d="M17.6482 10.1305L15.8785 7.02583L7.02979 22.5499H10.5278L17.6482 10.1305ZM19.8798 14.0457L18.11 17.1983L19.394 19.4511H16.8453L15.1056 22.5499H24.7272L19.8798 14.0457Z"
-      fill="currentColor"
-      fillRule="evenodd"
+  <svg height={32} viewBox="0 0 32 32" width={32} {...props}>
+    <defs>
+      <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#f59e0b" />
+        <stop offset="100%" stopColor="#d97706" />
+      </linearGradient>
+    </defs>
+
+    {/* Clean rounded square */}
+    <rect
+      x="2"
+      y="2"
+      width="28"
+      height="28"
+      rx="6"
+      ry="6"
+      fill="url(#logoGradient)"
     />
+
+    {/* Simple, clean "LG" monogram */}
+    <text
+      x="16"
+      y="20"
+      textAnchor="middle"
+      fill="white"
+      fontSize="12"
+      fontWeight="600"
+      fontFamily="system-ui, -apple-system, sans-serif"
+    >
+      LG
+    </text>
   </svg>
 );
 

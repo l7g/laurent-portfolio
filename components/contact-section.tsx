@@ -16,6 +16,7 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
+import { siteConfig } from "@/config/site";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -26,33 +27,33 @@ const contactSchema = z.object({
 
 type ContactForm = z.infer<typeof contactSchema>;
 
-const demoRequestSchema = z.object({
+const workInquirySchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
-  company: z.string().optional(),
-  projectType: z.string().min(5, "Please describe your project type"),
-  budget: z.string().optional(),
+  company: z.string().min(2, "Company name is required"),
+  position: z.string().min(5, "Please describe the position"),
+  workType: z.string().min(3, "Please specify work type"),
   timeline: z.string().optional(),
   description: z
     .string()
-    .min(20, "Please provide more details about your project"),
+    .min(20, "Please provide more details about the opportunity"),
 });
 
-type DemoRequestForm = z.infer<typeof demoRequestSchema>;
+type WorkInquiryForm = z.infer<typeof workInquirySchema>;
 
 const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
     "idle" | "success" | "error"
   >("idle");
-  const [activeTab, setActiveTab] = useState<"contact" | "demo">("contact");
+  const [activeTab, setActiveTab] = useState<"contact" | "work">("contact");
 
   const contactForm = useForm<ContactForm>({
     resolver: zodResolver(contactSchema),
   });
 
-  const demoForm = useForm<DemoRequestForm>({
-    resolver: zodResolver(demoRequestSchema),
+  const workForm = useForm<WorkInquiryForm>({
+    resolver: zodResolver(workInquirySchema),
   });
 
   const handleContactSubmit = async (data: ContactForm) => {
@@ -77,8 +78,7 @@ const ContactSection = () => {
       setTimeout(() => setSubmitStatus("idle"), 5000);
     }
   };
-
-  const handleDemoSubmit = async (data: DemoRequestForm) => {
+  const handleWorkSubmit = async (data: WorkInquiryForm) => {
     setIsSubmitting(true);
     try {
       const response = await fetch("/api/demo-request", {
@@ -89,7 +89,7 @@ const ContactSection = () => {
 
       if (response.ok) {
         setSubmitStatus("success");
-        demoForm.reset();
+        workForm.reset();
       } else {
         setSubmitStatus("error");
       }
@@ -105,19 +105,19 @@ const ContactSection = () => {
     {
       icon: <EnvelopeIcon className="w-5 h-5" />,
       title: "Email",
-      value: "laurent@example.com",
-      href: "mailto:laurent@example.com",
+      value: "laurentgagne.dev@pm.me",
+      href: siteConfig.links.email,
     },
-    {
+    /* {
       icon: <PhoneIcon className="w-5 h-5" />,
       title: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
-    },
+      value: "+39 3791699005",
+      href: "tel:+393791699005",
+    }, */
     {
       icon: <MapPinIcon className="w-5 h-5" />,
-      title: "Location",
-      value: "New York, NY",
+      title: "Current Location",
+      value: "Cagliari, IT",
       href: "#",
     },
   ];
@@ -134,11 +134,11 @@ const ContactSection = () => {
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Get In <span className="text-primary">Touch</span>
-          </h2>
+          </h2>{" "}
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
-            Ready to bring your ideas to life? Let&apos;s discuss your project
-            and see how I can help you achieve your goals with modern web
-            development solutions.
+            I&apos;m actively seeking my first professional opportunity in web
+            development. Let&apos;s connect to discuss potential roles,
+            collaborations, or just chat about technology and coding!
           </p>
         </motion.div>
 
@@ -152,11 +152,12 @@ const ContactSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
           >
             <div>
-              <h3 className="text-2xl font-bold mb-6">Let&apos;s Connect</h3>
+              <h3 className="text-2xl font-bold mb-6">Let&apos;s Connect</h3>{" "}
               <p className="text-default-600 mb-8">
-                I&apos;m always open to discussing new opportunities,
-                interesting projects, or just having a chat about technology and
-                development.
+                I&apos;m enthusiastic about starting my professional journey and
+                eager to learn from experienced developers. Whether you have
+                entry-level opportunities, mentorship, or just want to discuss
+                code - I&apos;d love to hear from you!
               </p>
             </div>{" "}
             <div className="space-y-6">
@@ -188,28 +189,35 @@ const ContactSection = () => {
               viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
             >
+              {" "}
               <Card>
                 <CardBody className="p-6">
-                  <h4 className="font-bold mb-4">Quick Stats</h4>
+                  <h4 className="font-bold mb-4">My Journey</h4>{" "}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">50+</div>
-                      <div className="text-sm text-default-600">Projects</div>
+                      <div className="text-2xl font-bold text-primary">3</div>
+                      <div className="text-sm text-default-600">
+                        Years Learning
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">3+</div>
-                      <div className="text-sm text-default-600">Years Exp.</div>
-                    </div>
+                      <div className="text-2xl font-bold text-primary">6mo</div>
+                      <div className="text-sm text-default-600">
+                        Accenture Intern
+                      </div>
+                    </div>{" "}
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">24h</div>
-                      <div className="text-sm text-default-600">Response</div>
+                      <div className="text-2xl font-bold text-primary">3</div>
+                      <div className="text-sm text-default-600">
+                        Commercial Projects
+                      </div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-primary">
-                        100%
+                        Real
                       </div>
                       <div className="text-sm text-default-600">
-                        Satisfaction
+                        Client Work
                       </div>
                     </div>
                   </div>
@@ -228,7 +236,7 @@ const ContactSection = () => {
           >
             <Card>
               <CardBody className="p-8">
-                {/* Tab Navigation */}
+                {/* Tab Navigation */}{" "}
                 <div className="flex gap-4 mb-8">
                   <Button
                     color={activeTab === "contact" ? "primary" : "default"}
@@ -236,16 +244,15 @@ const ContactSection = () => {
                     onPress={() => setActiveTab("contact")}
                   >
                     General Contact
-                  </Button>
+                  </Button>{" "}
                   <Button
-                    color={activeTab === "demo" ? "primary" : "default"}
-                    variant={activeTab === "demo" ? "solid" : "light"}
-                    onPress={() => setActiveTab("demo")}
+                    color={activeTab === "work" ? "primary" : "default"}
+                    variant={activeTab === "work" ? "solid" : "light"}
+                    onPress={() => setActiveTab("work")}
                   >
-                    Request Demo
+                    Work Inquiry
                   </Button>
                 </div>
-
                 {/* Status Messages */}
                 {submitStatus === "success" && (
                   <motion.div
@@ -259,7 +266,6 @@ const ContactSection = () => {
                     </span>
                   </motion.div>
                 )}
-
                 {submitStatus === "error" && (
                   <motion.div
                     animate={{ opacity: 1, y: 0 }}
@@ -273,7 +279,6 @@ const ContactSection = () => {
                     </span>
                   </motion.div>
                 )}
-
                 {/* Contact Form */}
                 {activeTab === "contact" && (
                   <form
@@ -320,7 +325,7 @@ const ContactSection = () => {
                       <textarea
                         className="w-full p-3 border border-default-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
                         id="contact-message"
-                        placeholder="Tell me about your project, ideas, or just say hello!"
+                        placeholder="Tell me about opportunities, collaborations, or just say hello!"
                         rows={6}
                         {...contactForm.register("message")}
                         aria-describedby={
@@ -353,84 +358,94 @@ const ContactSection = () => {
                       {isSubmitting ? "Sending..." : "Send Message"}
                     </Button>
                   </form>
-                )}
-
-                {/* Demo Request Form */}
-                {activeTab === "demo" && (
+                )}{" "}
+                {/* Work Inquiry Form */}
+                {activeTab === "work" && (
                   <form
                     className="space-y-6"
-                    onSubmit={demoForm.handleSubmit(handleDemoSubmit)}
+                    onSubmit={workForm.handleSubmit(handleWorkSubmit)}
                   >
                     <div className="grid md:grid-cols-2 gap-6">
                       <Input
                         label="Your Name"
                         placeholder="Enter your full name"
-                        {...demoForm.register("name")}
-                        errorMessage={demoForm.formState.errors.name?.message}
-                        isInvalid={!!demoForm.formState.errors.name}
+                        {...workForm.register("name")}
+                        errorMessage={workForm.formState.errors.name?.message}
+                        isInvalid={!!workForm.formState.errors.name}
                       />
                       <Input
                         label="Email Address"
                         placeholder="your.email@example.com"
                         type="email"
-                        {...demoForm.register("email")}
-                        errorMessage={demoForm.formState.errors.email?.message}
-                        isInvalid={!!demoForm.formState.errors.email}
+                        {...workForm.register("email")}
+                        errorMessage={workForm.formState.errors.email?.message}
+                        isInvalid={!!workForm.formState.errors.email}
                       />
                     </div>
                     <div className="grid md:grid-cols-2 gap-6">
+                      {" "}
                       <Input
-                        label="Company (Optional)"
-                        placeholder="Your company name"
-                        {...demoForm.register("company")}
-                      />
-                      <Input
-                        label="Project Type"
-                        placeholder="e.g., E-commerce, Dashboard, etc."
-                        {...demoForm.register("projectType")}
+                        label="Company Name"
+                        placeholder="Your company or organization"
+                        {...workForm.register("company")}
                         errorMessage={
-                          demoForm.formState.errors.projectType?.message
+                          workForm.formState.errors.company?.message
                         }
-                        isInvalid={!!demoForm.formState.errors.projectType}
+                        isInvalid={!!workForm.formState.errors.company}
+                      />
+                      <Input
+                        label="Position/Role"
+                        placeholder="e.g., Junior Developer, Frontend Developer"
+                        {...workForm.register("position")}
+                        errorMessage={
+                          workForm.formState.errors.position?.message
+                        }
+                        isInvalid={!!workForm.formState.errors.position}
                       />
                     </div>
                     <div className="grid md:grid-cols-2 gap-6">
+                      {" "}
                       <Input
-                        label="Budget Range (Optional)"
-                        placeholder="e.g., $5K - $10K"
-                        {...demoForm.register("budget")}
+                        label="Work Type"
+                        placeholder="e.g., Full-time, Part-time, Contract"
+                        {...workForm.register("workType")}
+                        errorMessage={
+                          workForm.formState.errors.workType?.message
+                        }
+                        isInvalid={!!workForm.formState.errors.workType}
                       />
                       <Input
                         label="Timeline (Optional)"
-                        placeholder="e.g., 2-3 months"
-                        {...demoForm.register("timeline")}
+                        placeholder="e.g., Immediate, 1-2 months"
+                        {...workForm.register("timeline")}
                       />
                     </div>{" "}
                     <div>
+                      {" "}
                       <label
                         className="block text-sm font-medium mb-2"
-                        htmlFor="demo-description"
+                        htmlFor="work-description"
                       >
-                        Project Description
+                        Opportunity Description
                       </label>
                       <textarea
                         className="w-full p-3 border border-default-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-                        id="demo-description"
-                        placeholder="Describe your project in detail. What are you looking to build? What features do you need?"
+                        id="work-description"
+                        placeholder="Tell me about the role, responsibilities, team, and what you're looking for in a candidate."
                         rows={6}
-                        {...demoForm.register("description")}
+                        {...workForm.register("description")}
                         aria-describedby={
-                          demoForm.formState.errors.description
-                            ? "demo-description-error"
+                          workForm.formState.errors.description
+                            ? "work-description-error"
                             : undefined
                         }
                       />
-                      {demoForm.formState.errors.description && (
+                      {workForm.formState.errors.description && (
                         <p
                           className="text-danger text-sm mt-1"
-                          id="demo-description-error"
+                          id="work-description-error"
                         >
-                          {demoForm.formState.errors.description.message}
+                          {workForm.formState.errors.description.message}
                         </p>
                       )}
                     </div>
@@ -446,7 +461,7 @@ const ContactSection = () => {
                       }
                       type="submit"
                     >
-                      {isSubmitting ? "Submitting..." : "Request Demo & Quote"}
+                      {isSubmitting ? "Submitting..." : "Send Work Inquiry"}
                     </Button>
                   </form>
                 )}

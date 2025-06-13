@@ -20,10 +20,10 @@ const SkillsSection = () => {
       icon: <CodeBracketIcon className="w-6 h-6" />,
       color: "primary",
       skills: [
-        { name: "React/Next.js", level: 95 },
-        { name: "TypeScript", level: 90 },
-        { name: "TailwindCSS", level: 88 },
-        { name: "JavaScript", level: 92 },
+        { name: "JavaScript", level: 90 },
+        { name: "React/Next.js", level: 85 },
+        { name: "TypeScript", level: 82 },
+        { name: "TailwindCSS", level: 80 },
       ],
     },
     {
@@ -31,10 +31,10 @@ const SkillsSection = () => {
       icon: <ServerIcon className="w-6 h-6" />,
       color: "secondary",
       skills: [
-        { name: "Node.js", level: 87 },
-        { name: "Express.js", level: 85 },
-        { name: "REST APIs", level: 90 },
-        { name: "GraphQL", level: 75 },
+        { name: "Node.js", level: 82 },
+        { name: "Express.js", level: 80 },
+        { name: "REST APIs", level: 85 },
+        { name: "C# / .NET", level: 72 },
       ],
     },
     {
@@ -42,38 +42,37 @@ const SkillsSection = () => {
       icon: <CircleStackIcon className="w-6 h-6" />,
       color: "success",
       skills: [
-        { name: "PostgreSQL", level: 88 },
-        { name: "Prisma", level: 90 },
-        { name: "MongoDB", level: 82 },
-        { name: "Redis", level: 75 },
+        { name: "SQL", level: 85 },
+        { name: "PostgreSQL", level: 80 },
+        { name: "Prisma", level: 82 },
+        { name: "MS SQL", level: 75 },
       ],
     },
     {
-      title: "DevOps & Tools",
+      title: "Tools & Version Control",
       icon: <CloudIcon className="w-6 h-6" />,
       color: "warning",
       skills: [
-        { name: "Git/GitHub", level: 92 },
-        { name: "Docker", level: 80 },
-        { name: "AWS", level: 75 },
-        { name: "Vercel", level: 88 },
+        { name: "Git/GitHub", level: 90 },
+        { name: "Vercel", level: 85 },
+        { name: "MongoDB", level: 55 },
+        { name: "GraphQL", level: 45 },
       ],
     },
   ];
-
   const technologies = [
+    { name: "JavaScript", icon: "🟨" },
     { name: "React", icon: "⚛️" },
     { name: "Next.js", icon: "▲" },
-    { name: "TypeScript", icon: "📘" },
-    { name: "Node.js", icon: "💚" },
+    { name: "TypeScript", icon: "�" },
+    { name: "Node.js", icon: "�" },
+    { name: "Express", icon: "�" },
+    { name: "C# / .NET", icon: "🔷" },
+    { name: "SQL", icon: "�️" },
+    { name: "PostgreSQL", icon: "�" },
     { name: "Prisma", icon: "🔺" },
-    { name: "PostgreSQL", icon: "🐘" },
-    { name: "TailwindCSS", icon: "🎨" },
     { name: "Git", icon: "📝" },
-    { name: "Docker", icon: "🐳" },
-    { name: "AWS", icon: "☁️" },
-    { name: "MongoDB", icon: "🍃" },
-    { name: "Express", icon: "🚀" },
+    { name: "TailwindCSS", icon: "🎨" },
   ];
 
   return (
@@ -86,13 +85,16 @@ const SkillsSection = () => {
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
+          {" "}
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Skills & <span className="text-primary">Expertise</span>
-          </h2>
+            Skills & <span className="text-primary">Learning Journey</span>
+          </h2>{" "}
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
-            I&apos;m proficient in a wide range of modern technologies and
-            tools, constantly learning and adapting to the latest industry
-            trends.
+            3 years of dedicated self-study in web development, with strong
+            foundations in JavaScript and modern web technologies. Recently
+            completed a 3-month C#/.NET course that deepened my understanding of
+            database theory and backend architecture, making me more versatile
+            across different tech stacks.
           </p>
         </motion.div>
 
@@ -160,7 +162,9 @@ const SkillsSection = () => {
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
-          <h3 className="text-2xl font-bold mb-8">Technologies I Work With</h3>
+          <h3 className="text-2xl font-bold mb-8">
+            Technologies I'm Working With
+          </h3>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {technologies.map((tech, index) => (
               <motion.div
@@ -191,40 +195,43 @@ const SkillsSection = () => {
         >
           <Card>
             <CardBody className="p-8">
+              {" "}
               <h3 className="text-2xl font-bold text-center mb-8">
-                Additional Competencies
+                Growing Skills & Interests
               </h3>
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <PaintBrushIcon className="w-6 h-6 text-primary" />
                   </div>
-                  <h4 className="font-semibold mb-2">UI/UX Design</h4>
+                  <h4 className="font-semibold mb-2">UI/UX Awareness</h4>
                   <p className="text-sm text-default-600">
-                    Creating intuitive and visually appealing user interfaces
-                    with attention to user experience
+                    Developing an eye for user-friendly interfaces and learning
+                    design principles to create better user experiences
                   </p>
-                </div>
-
+                </div>{" "}
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <CommandLineIcon className="w-6 h-6 text-primary" />
                   </div>
-                  <h4 className="font-semibold mb-2">Version Control</h4>
+                  <h4 className="font-semibold mb-2">Database Architecture</h4>
                   <p className="text-sm text-default-600">
-                    Proficient in Git workflows, branching strategies, and
-                    collaborative development practices
+                    Strong understanding of database design and theory gained
+                    through C#/.NET course, now applying these concepts across
+                    different tech stacks and ORMs
                   </p>
-                </div>
-
+                </div>{" "}
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <CogIcon className="w-6 h-6 text-primary" />
                   </div>
-                  <h4 className="font-semibold mb-2">Problem Solving</h4>
+                  <h4 className="font-semibold mb-2">
+                    Full-Stack Capabilities
+                  </h4>
                   <p className="text-sm text-default-600">
-                    Strong analytical skills and ability to debug complex issues
-                    and optimize performance
+                    Proven ability to build complete web applications from
+                    database design to frontend implementation, with experience
+                    across multiple technology stacks
                   </p>
                 </div>
               </div>

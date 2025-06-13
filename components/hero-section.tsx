@@ -58,18 +58,16 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             Hi, I&apos;m <span className="text-primary">Laurent</span>
-          </motion.h1>
-
+          </motion.h1>{" "}
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className="text-xl md:text-2xl text-default-600 mb-8 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Full-Stack Developer crafting modern web applications with passion
-            for clean code and innovative solutions
+            Aspiring Full-Stack Developer building modern web applications
+            through 3 years of self-study and hands-on learning
           </motion.p>
-
           <motion.div
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
@@ -90,19 +88,21 @@ const HeroSection = () => {
             >
               View My Work
             </Button>
-
             <Button
+              as="a"
               className="font-semibold"
+              href="/Laurent_Cv.pdf"
+              rel="noopener noreferrer"
               size="lg"
               startContent={
                 <ArrowDownTrayIcon className="w-5 h-5 flex-shrink-0" />
               }
+              target="_blank"
               variant="bordered"
             >
-              Download Resume
+              View CV
             </Button>
           </motion.div>
-
           <motion.div
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-center gap-6 mt-12"

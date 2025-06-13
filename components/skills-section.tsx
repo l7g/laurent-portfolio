@@ -12,6 +12,21 @@ import {
   CommandLineIcon,
   CogIcon,
 } from "@heroicons/react/24/outline";
+import {
+  SiJavascript,
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiNodedotjs,
+  SiExpress,
+  SiSharp,
+  SiPostgresql,
+  SiPrisma,
+  SiGit,
+  SiTailwindcss,
+  SiMysql,
+} from "react-icons/si";
+import { BiLogoPostgresql } from "react-icons/bi";
 
 const SkillsSection = () => {
   const skillCategories = [
@@ -61,18 +76,54 @@ const SkillsSection = () => {
     },
   ];
   const technologies = [
-    { name: "JavaScript", icon: "🟨" },
-    { name: "React", icon: "⚛️" },
-    { name: "Next.js", icon: "▲" },
-    { name: "TypeScript", icon: "�" },
-    { name: "Node.js", icon: "�" },
-    { name: "Express", icon: "�" },
-    { name: "C# / .NET", icon: "🔷" },
-    { name: "SQL", icon: "�️" },
-    { name: "PostgreSQL", icon: "�" },
-    { name: "Prisma", icon: "🔺" },
-    { name: "Git", icon: "📝" },
-    { name: "TailwindCSS", icon: "🎨" },
+    {
+      name: "JavaScript",
+      icon: <SiJavascript className="w-8 h-8" />,
+      color: "#F7DF1E",
+    },
+    { name: "React", icon: <SiReact className="w-8 h-8" />, color: "#61DAFB" },
+    {
+      name: "Next.js",
+      icon: <SiNextdotjs className="w-8 h-8" />,
+      color: "#000000",
+    },
+    {
+      name: "TypeScript",
+      icon: <SiTypescript className="w-8 h-8" />,
+      color: "#3178C6",
+    },
+    {
+      name: "Node.js",
+      icon: <SiNodedotjs className="w-8 h-8" />,
+      color: "#339933",
+    },
+    {
+      name: "Express",
+      icon: <SiExpress className="w-8 h-8" />,
+      color: "#000000",
+    },
+    {
+      name: "C# / .NET",
+      icon: <SiSharp className="w-8 h-8" />,
+      color: "#512BD4",
+    },
+    { name: "SQL", icon: <SiMysql className="w-8 h-8" />, color: "#4479A1" },
+    {
+      name: "PostgreSQL",
+      icon: <SiPostgresql className="w-8 h-8" />,
+      color: "#336791",
+    },
+    {
+      name: "Prisma",
+      icon: <SiPrisma className="w-8 h-8" />,
+      color: "#2D3748",
+    },
+    { name: "Git", icon: <SiGit className="w-8 h-8" />, color: "#F05032" },
+    {
+      name: "TailwindCSS",
+      icon: <SiTailwindcss className="w-8 h-8" />,
+      color: "#06B6D4",
+    },
   ];
 
   return (
@@ -166,17 +217,23 @@ const SkillsSection = () => {
             Technologies I'm Working With
           </h3>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {" "}
             {technologies.map((tech, index) => (
               <motion.div
                 key={tech.name}
-                className="flex flex-col items-center p-4 rounded-lg hover:bg-default-100 transition-colors cursor-pointer"
+                className="flex flex-col items-center p-4 rounded-lg hover:bg-default-100 transition-all duration-300 cursor-pointer group"
                 initial={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.1 }}
                 whileInView={{ opacity: 1, scale: 1 }}
               >
-                <div className="text-3xl mb-2">{tech.icon}</div>
+                <div
+                  className="w-16 h-16 rounded-xl flex items-center justify-center mb-3 group-hover:shadow-lg transition-all duration-300"
+                  style={{ color: tech.color }}
+                >
+                  {tech.icon}
+                </div>
                 <span className="text-sm font-medium text-center">
                   {tech.name}
                 </span>

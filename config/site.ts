@@ -48,8 +48,8 @@ export const siteConfig = {
       href: "#contact",
     },
     {
-      label: "Request Demo",
-      href: "#demo",
+      label: "Curriculum",
+      href: "/Laurent_Cv.pdf",
     },
   ],
   links: {

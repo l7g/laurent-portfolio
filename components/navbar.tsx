@@ -74,6 +74,7 @@ export const Navbar = () => {
         <NavbarMenuToggle />
       </NavbarContent>{" "}
       <NavbarMenu>
+        {" "}
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
@@ -85,7 +86,8 @@ export const Navbar = () => {
                       ? "danger"
                       : "foreground"
                 }
-                href="#"
+                href={item.href}
+                isExternal={item.href.startsWith("/Laurent_Cv.pdf")}
                 size="lg"
               >
                 {item.label}

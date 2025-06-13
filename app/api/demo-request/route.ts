@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !projectType || !description) {
       return NextResponse.json(
         { error: "Name, email, project type, and description are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -91,19 +91,19 @@ export async function POST(request: NextRequest) {
       });
     } catch (emailError) {
       // Continue even if email fails - we still saved to database
-      // Email error logged for debugging purposes
+      void emailError; // Suppress unused variable warning
     }
 
     return NextResponse.json(
       { message: "Demo request submitted successfully", id: demoRequest.id },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    // Demo request error logged for debugging purposes
+    void error; // Suppress unused variable warning
 
     return NextResponse.json(
       { error: "Failed to submit demo request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

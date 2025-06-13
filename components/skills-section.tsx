@@ -4,20 +4,20 @@ import { Card, CardBody } from "@heroui/card";
 import { Progress } from "@heroui/progress";
 import { motion } from "framer-motion";
 import {
-  Code2,
-  Database,
-  Palette,
-  Server,
-  Cloud,
-  GitBranch,
-  Settings,
-} from "lucide-react";
+  CodeBracketIcon,
+  CircleStackIcon,
+  PaintBrushIcon,
+  ServerIcon,
+  CloudIcon,
+  CommandLineIcon,
+  CogIcon,
+} from "@heroicons/react/24/outline";
 
 const SkillsSection = () => {
   const skillCategories = [
     {
       title: "Frontend Development",
-      icon: <Code2 className="w-6 h-6" />,
+      icon: <CodeBracketIcon className="w-6 h-6" />,
       color: "primary",
       skills: [
         { name: "React/Next.js", level: 95 },
@@ -28,7 +28,7 @@ const SkillsSection = () => {
     },
     {
       title: "Backend Development",
-      icon: <Server className="w-6 h-6" />,
+      icon: <ServerIcon className="w-6 h-6" />,
       color: "secondary",
       skills: [
         { name: "Node.js", level: 87 },
@@ -39,7 +39,7 @@ const SkillsSection = () => {
     },
     {
       title: "Database & ORM",
-      icon: <Database className="w-6 h-6" />,
+      icon: <CircleStackIcon className="w-6 h-6" />,
       color: "success",
       skills: [
         { name: "PostgreSQL", level: 88 },
@@ -50,7 +50,7 @@ const SkillsSection = () => {
     },
     {
       title: "DevOps & Tools",
-      icon: <Cloud className="w-6 h-6" />,
+      icon: <CloudIcon className="w-6 h-6" />,
       color: "warning",
       skills: [
         { name: "Git/GitHub", level: 92 },
@@ -197,7 +197,7 @@ const SkillsSection = () => {
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Palette className="w-6 h-6 text-primary" />
+                    <PaintBrushIcon className="w-6 h-6 text-primary" />
                   </div>
                   <h4 className="font-semibold mb-2">UI/UX Design</h4>
                   <p className="text-sm text-default-600">
@@ -208,7 +208,7 @@ const SkillsSection = () => {
 
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <GitBranch className="w-6 h-6 text-primary" />
+                    <CommandLineIcon className="w-6 h-6 text-primary" />
                   </div>
                   <h4 className="font-semibold mb-2">Version Control</h4>
                   <p className="text-sm text-default-600">
@@ -219,7 +219,7 @@ const SkillsSection = () => {
 
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Settings className="w-6 h-6 text-primary" />
+                    <CogIcon className="w-6 h-6 text-primary" />
                   </div>
                   <h4 className="font-semibold mb-2">Problem Solving</h4>
                   <p className="text-sm text-default-600">

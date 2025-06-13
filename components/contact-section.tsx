@@ -9,13 +9,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  Mail,
-  MapPin,
-  Phone,
-  Send,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+  EnvelopeIcon,
+  MapPinIcon,
+  PhoneIcon,
+  PaperAirplaneIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/outline";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -103,19 +103,19 @@ const ContactSection = () => {
 
   const contactInfo = [
     {
-      icon: <Mail className="w-5 h-5" />,
+      icon: <EnvelopeIcon className="w-5 h-5" />,
       title: "Email",
       value: "laurent@example.com",
       href: "mailto:laurent@example.com",
     },
     {
-      icon: <Phone className="w-5 h-5" />,
+      icon: <PhoneIcon className="w-5 h-5" />,
       title: "Phone",
       value: "+1 (555) 123-4567",
       href: "tel:+15551234567",
     },
     {
-      icon: <MapPin className="w-5 h-5" />,
+      icon: <MapPinIcon className="w-5 h-5" />,
       title: "Location",
       value: "New York, NY",
       href: "#",
@@ -253,7 +253,7 @@ const ContactSection = () => {
                     className="flex items-center gap-2 p-4 mb-6 bg-success/10 rounded-lg text-success"
                     initial={{ opacity: 0, y: -10 }}
                   >
-                    <CheckCircle className="w-5 h-5" />
+                    <CheckCircleIcon className="w-5 h-5" />
                     <span>
                       Message sent successfully! I&apos;ll get back to you soon.
                     </span>
@@ -266,7 +266,7 @@ const ContactSection = () => {
                     className="flex items-center gap-2 p-4 mb-6 bg-danger/10 rounded-lg text-danger"
                     initial={{ opacity: 0, y: -10 }}
                   >
-                    <AlertCircle className="w-5 h-5" />
+                    <ExclamationCircleIcon className="w-5 h-5" />
                     <span>
                       Failed to send message. Please try again or email me
                       directly.
@@ -344,7 +344,9 @@ const ContactSection = () => {
                       isLoading={isSubmitting}
                       size="lg"
                       startContent={
-                        !isSubmitting && <Send className="w-5 h-5" />
+                        !isSubmitting && (
+                          <PaperAirplaneIcon className="w-5 h-5" />
+                        )
                       }
                       type="submit"
                     >
@@ -438,7 +440,9 @@ const ContactSection = () => {
                       isLoading={isSubmitting}
                       size="lg"
                       startContent={
-                        !isSubmitting && <Send className="w-5 h-5" />
+                        !isSubmitting && (
+                          <PaperAirplaneIcon className="w-5 h-5" />
+                        )
                       }
                       type="submit"
                     >

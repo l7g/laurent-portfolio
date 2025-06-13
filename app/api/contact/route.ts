@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !subject || !message) {
       return NextResponse.json(
         { error: "All fields are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -70,19 +70,19 @@ export async function POST(request: NextRequest) {
       });
     } catch (emailError) {
       // Continue even if email fails - we still saved to database
-      // Email error logged for debugging purposes
+      void emailError; // Suppress unused variable warning
     }
 
     return NextResponse.json(
       { message: "Contact form submitted successfully", id: contact.id },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    // Contact form error logged for debugging purposes
+    void error; // Suppress unused variable warning
 
     return NextResponse.json(
       { error: "Failed to submit contact form" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

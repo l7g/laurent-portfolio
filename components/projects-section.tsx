@@ -101,7 +101,7 @@ const ProjectsSection = () => {
     {
       title: "Tracker - Political Data Platform",
       description:
-        "A comprehensive political tracking platform built with Next.js, featuring real-time election data, party management, parliament tracking, and advanced analytics. Includes user authentication, role-based access control, and dynamic data visualization.",
+        "A comprehensive data platform built with Next.js, designed to handle complex political information with enterprise-level architecture. Features advanced user authentication, role-based access control, and scalable database design patterns.",
       image: "/projects/tracker-preview.png", // You'll need to add this image
       technologies: [
         "Next.js",
@@ -118,17 +118,17 @@ const ProjectsSection = () => {
         github: "#", // Add your tracker GitHub link
       },
       highlights: [
-        "Real-time election data tracking",
-        "Advanced user authentication & authorization",
-        "Responsive dashboard with data visualization",
-        "Database-driven dynamic content",
-        "Role-based access control system",
+        "Enterprise-grade data architecture and modeling",
+        "Advanced authentication & authorization systems",
+        "Responsive, modern UI with optimal user experience",
+        "Complex database relationships and optimization",
+        "Scalable role-based access control implementation",
       ],
     },
     {
       title: "E-Commerce Dashboard",
       description:
-        "Modern e-commerce administration dashboard with inventory management, order tracking, and analytics. Built with React and Node.js.",
+        "Modern e-commerce administration platform with comprehensive inventory management, analytics, and user interface design. Built with scalability and real-world business needs in mind.",
       image: "placeholder-ecommerce",
       technologies: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
       featured: false,
@@ -141,7 +141,7 @@ const ProjectsSection = () => {
     {
       title: "Task Management App",
       description:
-        "Collaborative task management application with real-time updates, team collaboration features, and progress tracking.",
+        "Professional task management solution featuring real-time collaboration, advanced project tracking, and intuitive user experience design for team productivity.",
       image: "placeholder-tasks",
       technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
       featured: false,
@@ -163,13 +163,15 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
+          {" "}
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Featured <span className="text-primary">Projects</span>
-          </h2>
+          </h2>{" "}
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
-            Here are some of my recent projects that showcase my skills in
-            full-stack development, from complex data platforms to modern web
-            applications.
+            Comprehensive full-stack applications built with professional
+            quality and scalability in mind. My flagship project showcases my
+            capabilities, while other projects are available for custom
+            development and freelancing opportunities.
           </p>
         </motion.div>
 
@@ -188,10 +190,10 @@ const ProjectsSection = () => {
                   alt={projects[0].title}
                   className="w-full h-full object-cover"
                   src={projects[0].image}
-                />
+                />{" "}
                 <div className="absolute top-4 left-4 z-10">
                   <Chip color="primary" size="sm" variant="solid">
-                    Featured Project
+                    Flagship Project
                   </Chip>
                 </div>
               </div>{" "}
@@ -214,9 +216,11 @@ const ProjectsSection = () => {
                 </div>
                 {projects[0].isWip && (
                   <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                    {" "}
                     <p className="text-sm text-warning-700 dark:text-warning-300">
-                      🚧 This project is currently under development. Contact me
-                      for early access or more information.
+                      🚧 Personal project currently in development. Code is
+                      private. Contact me to discuss my development approach and
+                      capabilities.
                     </p>
                   </div>
                 )}
@@ -247,6 +251,7 @@ const ProjectsSection = () => {
                 <div className="flex gap-4">
                   {projects[0].isWip ? (
                     <>
+                      {" "}
                       <Button
                         className="font-semibold shadow-lg"
                         color="warning"
@@ -274,7 +279,8 @@ const ProjectsSection = () => {
                           });
                         }}
                       >
-                        Request Early Access
+                        {" "}
+                        Discuss My Work
                       </Button>
                       <Button
                         className="font-semibold"
@@ -364,8 +370,10 @@ const ProjectsSection = () => {
                   </div>
                   {project.isWip && (
                     <div className="mb-3 p-2 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-md">
+                      {" "}
                       <p className="text-xs text-warning-700 dark:text-warning-300">
-                        🚧 Under development - Contact for info
+                        🚧 Available for freelancing - Contact for custom
+                        development
                       </p>
                     </div>
                   )}
@@ -411,7 +419,8 @@ const ProjectsSection = () => {
                           });
                         }}
                       >
-                        Get Info
+                        {" "}
+                        Freelance Inquiry
                       </Button>
                       <Button
                         size="sm"
@@ -465,8 +474,10 @@ const ProjectsSection = () => {
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
+          {" "}
           <p className="text-default-600 mb-6">
-            Want to see more of my work or discuss a project?
+            Interested in hiring me or need custom development work similar to
+            these projects?
           </p>
           <Button
             color="primary"

@@ -1,8 +1,12 @@
-"use client";
+﻿"use client";
 
 import { Button } from "@heroui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, Download } from "lucide-react";
+import {
+  ArrowRightIcon,
+  ArrowDownTrayIcon,
+  ArrowDownCircleIcon,
+} from "@heroicons/react/24/solid";
 
 import { siteConfig } from "@/config/site";
 
@@ -11,7 +15,6 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-saffron-50 via-background to-saffron-100 dark:from-background dark:via-saffron-950/20 dark:to-background" />
-
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <motion.div
@@ -39,7 +42,6 @@ const HeroSection = () => {
           }}
         />
       </div>
-
       <div className="relative z-10 container mx-auto px-6 text-center">
         <motion.div
           animate={{ opacity: 1, y: 0 }}
@@ -53,18 +55,16 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             Hi, I&apos;m <span className="text-primary">Laurent</span>
-          </motion.h1>
-
+          </motion.h1>{" "}
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className="text-xl md:text-2xl text-default-600 mb-8 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Full-Stack Developer crafting modern web applications with passion
-            for clean code and innovative solutions
+            Aspiring Full-Stack Developer building modern web applications
+            through 3 years of self-study and hands-on learning
           </motion.p>
-
           <motion.div
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
@@ -74,7 +74,7 @@ const HeroSection = () => {
             <Button
               className="font-semibold"
               color="primary"
-              endContent={<ArrowRight className="w-5 h-5" />}
+              endContent={<ArrowRightIcon className="w-5 h-5 flex-shrink-0" />}
               size="lg"
               variant="shadow"
               onPress={() => {
@@ -85,17 +85,21 @@ const HeroSection = () => {
             >
               View My Work
             </Button>
-
             <Button
+              as="a"
               className="font-semibold"
+              href="/Laurent_Cv.pdf"
+              rel="noopener noreferrer"
               size="lg"
-              startContent={<Download className="w-5 h-5" />}
+              startContent={
+                <ArrowDownTrayIcon className="w-5 h-5 flex-shrink-0" />
+              }
+              target="_blank"
               variant="bordered"
             >
-              Download Resume
+              View CV
             </Button>
           </motion.div>
-
           <motion.div
             animate={{ opacity: 1, y: 0 }}
             className="flex justify-center gap-6 mt-12"
@@ -163,18 +167,28 @@ const HeroSection = () => {
             </motion.a>
           </motion.div>
         </motion.div>
-      </div>
-
+      </div>{" "}
       {/* Scroll indicator */}
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-6 h-10 border-2 border-default-300 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-default-300 rounded-full mt-2" />
-        </div>
-      </motion.div>
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center z-20">
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            className="cursor-pointer"
+            transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+            onClick={() => {
+              document.getElementById("about")?.scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
+          >
+            <ArrowDownCircleIcon className="w-12 h-12 text-default-500 hover:text-primary transition-colors" />
+          </motion.div>
+        </motion.div>
+      </div>
     </section>
   );
 };

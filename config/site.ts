@@ -1,7 +1,7 @@
-export type SiteConfig = typeof siteConfig;
+﻿export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Lauren's Portfolio",
+  name: "Laurent",
   description:
     "Full-stack developer specializing in modern web applications and data-driven solutions.",
   navItems: [
@@ -48,14 +48,14 @@ export const siteConfig = {
       href: "#contact",
     },
     {
-      label: "Request Demo",
-      href: "#demo",
+      label: "Curriculum",
+      href: "/Laurent_Cv.pdf",
     },
   ],
   links: {
-    github: "https://github.com/lauren",
-    linkedin: "https://linkedin.com/in/lauren",
-    email: "mailto:lauren@example.com",
+    github: "https://github.com/l7g",
+    linkedin: "https://www.linkedin.com/in/laurent-gagnÃ©-606945251",
+    email: "mailto:laurentgagne.dev@pm.me",
     tracker: "https://tracker-demo.com",
   },
 };

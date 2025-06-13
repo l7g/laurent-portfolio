@@ -1,4 +1,4 @@
-import "@/styles/globals.css";
+﻿import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { Link } from "@heroui/link";
 import clsx from "clsx";
@@ -43,7 +43,10 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",
   },
@@ -68,7 +71,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen text-foreground bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
@@ -144,7 +147,7 @@ export default function RootLayout({
                 </div>
                 <div className="border-t border-default-200 mt-8 pt-8 text-center">
                   <p className="text-sm text-default-600">
-                    © 2025 Laurent&apos;s Portfolio. Built with{" "}
+                    Â© 2025 Laurent&apos;s Portfolio. Built with{" "}
                     <span className="text-primary">HeroUI</span> and Next.js
                   </p>
                 </div>

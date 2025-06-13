@@ -1,79 +1,128 @@
-"use client";
+﻿"use client";
 
 import { Card, CardBody } from "@heroui/card";
 import { Progress } from "@heroui/progress";
 import { motion } from "framer-motion";
 import {
-  Code2,
-  Database,
-  Palette,
-  Server,
-  Cloud,
-  GitBranch,
-  Settings,
-} from "lucide-react";
+  CodeBracketIcon,
+  CircleStackIcon,
+  PaintBrushIcon,
+  ServerIcon,
+  CloudIcon,
+  CommandLineIcon,
+  CogIcon,
+} from "@heroicons/react/24/outline";
+import {
+  SiJavascript,
+  SiReact,
+  SiNextdotjs,
+  SiTypescript,
+  SiNodedotjs,
+  SiExpress,
+  SiSharp,
+  SiPostgresql,
+  SiPrisma,
+  SiGit,
+  SiTailwindcss,
+  SiMysql,
+} from "react-icons/si";
 
 const SkillsSection = () => {
   const skillCategories = [
     {
       title: "Frontend Development",
-      icon: <Code2 className="w-6 h-6" />,
+      icon: <CodeBracketIcon className="w-6 h-6" />,
       color: "primary",
       skills: [
-        { name: "React/Next.js", level: 95 },
-        { name: "TypeScript", level: 90 },
-        { name: "TailwindCSS", level: 88 },
-        { name: "JavaScript", level: 92 },
+        { name: "JavaScript", level: 90 },
+        { name: "React/Next.js", level: 85 },
+        { name: "TypeScript", level: 82 },
+        { name: "TailwindCSS", level: 80 },
       ],
     },
     {
       title: "Backend Development",
-      icon: <Server className="w-6 h-6" />,
+      icon: <ServerIcon className="w-6 h-6" />,
       color: "secondary",
       skills: [
-        { name: "Node.js", level: 87 },
-        { name: "Express.js", level: 85 },
-        { name: "REST APIs", level: 90 },
-        { name: "GraphQL", level: 75 },
+        { name: "Node.js", level: 82 },
+        { name: "Express.js", level: 80 },
+        { name: "REST APIs", level: 85 },
+        { name: "C# / .NET", level: 72 },
       ],
     },
     {
       title: "Database & ORM",
-      icon: <Database className="w-6 h-6" />,
+      icon: <CircleStackIcon className="w-6 h-6" />,
       color: "success",
       skills: [
-        { name: "PostgreSQL", level: 88 },
-        { name: "Prisma", level: 90 },
-        { name: "MongoDB", level: 82 },
-        { name: "Redis", level: 75 },
+        { name: "SQL", level: 85 },
+        { name: "PostgreSQL", level: 80 },
+        { name: "Prisma", level: 82 },
+        { name: "MS SQL", level: 75 },
       ],
     },
     {
-      title: "DevOps & Tools",
-      icon: <Cloud className="w-6 h-6" />,
+      title: "Tools & Version Control",
+      icon: <CloudIcon className="w-6 h-6" />,
       color: "warning",
       skills: [
-        { name: "Git/GitHub", level: 92 },
-        { name: "Docker", level: 80 },
-        { name: "AWS", level: 75 },
-        { name: "Vercel", level: 88 },
+        { name: "Git/GitHub", level: 90 },
+        { name: "Vercel", level: 85 },
+        { name: "MongoDB", level: 55 },
+        { name: "GraphQL", level: 45 },
       ],
     },
   ];
-
   const technologies = [
-    { name: "React", icon: "⚛️" },
-    { name: "Next.js", icon: "▲" },
-    { name: "TypeScript", icon: "📘" },
-    { name: "Node.js", icon: "💚" },
-    { name: "Prisma", icon: "🔺" },
-    { name: "PostgreSQL", icon: "🐘" },
-    { name: "TailwindCSS", icon: "🎨" },
-    { name: "Git", icon: "📝" },
-    { name: "Docker", icon: "🐳" },
-    { name: "AWS", icon: "☁️" },
-    { name: "MongoDB", icon: "🍃" },
-    { name: "Express", icon: "🚀" },
+    {
+      name: "JavaScript",
+      icon: <SiJavascript className="w-8 h-8" />,
+      color: "#F7DF1E",
+    },
+    { name: "React", icon: <SiReact className="w-8 h-8" />, color: "#61DAFB" },
+    {
+      name: "Next.js",
+      icon: <SiNextdotjs className="w-8 h-8" />,
+      color: "#000000",
+    },
+    {
+      name: "TypeScript",
+      icon: <SiTypescript className="w-8 h-8" />,
+      color: "#3178C6",
+    },
+    {
+      name: "Node.js",
+      icon: <SiNodedotjs className="w-8 h-8" />,
+      color: "#339933",
+    },
+    {
+      name: "Express",
+      icon: <SiExpress className="w-8 h-8" />,
+      color: "#000000",
+    },
+    {
+      name: "C# / .NET",
+      icon: <SiSharp className="w-8 h-8" />,
+      color: "#512BD4",
+    },
+    { name: "SQL", icon: <SiMysql className="w-8 h-8" />, color: "#4479A1" },
+    {
+      name: "PostgreSQL",
+      icon: <SiPostgresql className="w-8 h-8" />,
+      color: "#336791",
+    },
+    {
+      name: "Prisma",
+      icon: <SiPrisma className="w-8 h-8" />,
+      color: "#2D3748",
+    },
+    { name: "Git", icon: <SiGit className="w-8 h-8" />, color: "#F05032" },
+    {
+      name: "TailwindCSS",
+      icon: <SiTailwindcss className="w-8 h-8" />,
+      color: "#06B6D4",
+    },
   ];
 
   return (
@@ -86,13 +135,16 @@ const SkillsSection = () => {
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
+          {" "}
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Skills & <span className="text-primary">Expertise</span>
-          </h2>
+            Skills & <span className="text-primary">Learning Journey</span>
+          </h2>{" "}
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
-            I&apos;m proficient in a wide range of modern technologies and
-            tools, constantly learning and adapting to the latest industry
-            trends.
+            3 years of dedicated self-study in web development, with strong
+            foundations in JavaScript and modern web technologies. Recently
+            completed a 3-month C#/.NET course that deepened my understanding of
+            database theory and backend architecture, making me more versatile
+            across different tech stacks.
           </p>
         </motion.div>
 
@@ -160,19 +212,27 @@ const SkillsSection = () => {
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
-          <h3 className="text-2xl font-bold mb-8">Technologies I Work With</h3>
+          <h3 className="text-2xl font-bold mb-8">
+            Technologies I&apos;m Working With
+          </h3>
           <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {" "}
             {technologies.map((tech, index) => (
               <motion.div
                 key={tech.name}
-                className="flex flex-col items-center p-4 rounded-lg hover:bg-default-100 transition-colors cursor-pointer"
+                className="flex flex-col items-center p-4 rounded-lg hover:bg-default-100 transition-all duration-300 cursor-pointer group"
                 initial={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.1 }}
                 whileInView={{ opacity: 1, scale: 1 }}
               >
-                <div className="text-3xl mb-2">{tech.icon}</div>
+                <div
+                  className="w-16 h-16 rounded-xl flex items-center justify-center mb-3 group-hover:shadow-lg transition-all duration-300"
+                  style={{ color: tech.color }}
+                >
+                  {tech.icon}
+                </div>
                 <span className="text-sm font-medium text-center">
                   {tech.name}
                 </span>
@@ -191,40 +251,43 @@ const SkillsSection = () => {
         >
           <Card>
             <CardBody className="p-8">
+              {" "}
               <h3 className="text-2xl font-bold text-center mb-8">
-                Additional Competencies
+                Growing Skills & Interests
               </h3>
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Palette className="w-6 h-6 text-primary" />
+                    <PaintBrushIcon className="w-6 h-6 text-primary" />
                   </div>
-                  <h4 className="font-semibold mb-2">UI/UX Design</h4>
+                  <h4 className="font-semibold mb-2">UI/UX Awareness</h4>
                   <p className="text-sm text-default-600">
-                    Creating intuitive and visually appealing user interfaces
-                    with attention to user experience
+                    Developing an eye for user-friendly interfaces and learning
+                    design principles to create better user experiences
                   </p>
-                </div>
-
+                </div>{" "}
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <GitBranch className="w-6 h-6 text-primary" />
+                    <CommandLineIcon className="w-6 h-6 text-primary" />
                   </div>
-                  <h4 className="font-semibold mb-2">Version Control</h4>
+                  <h4 className="font-semibold mb-2">Database Architecture</h4>
                   <p className="text-sm text-default-600">
-                    Proficient in Git workflows, branching strategies, and
-                    collaborative development practices
+                    Strong understanding of database design and theory gained
+                    through C#/.NET course, now applying these concepts across
+                    different tech stacks and ORMs
                   </p>
-                </div>
-
+                </div>{" "}
                 <div className="text-center">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Settings className="w-6 h-6 text-primary" />
+                    <CogIcon className="w-6 h-6 text-primary" />
                   </div>
-                  <h4 className="font-semibold mb-2">Problem Solving</h4>
+                  <h4 className="font-semibold mb-2">
+                    Full-Stack Capabilities
+                  </h4>
                   <p className="text-sm text-default-600">
-                    Strong analytical skills and ability to debug complex issues
-                    and optimize performance
+                    Proven ability to build complete web applications from
+                    database design to frontend implementation, with experience
+                    across multiple technology stacks
                   </p>
                 </div>
               </div>

@@ -216,9 +216,8 @@ const ProjectsSection = () => {
                 </div>
                 {projects[0].isWip && (
                   <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-                    {" "}
-                    <p className="text-sm text-warning-700 dark:text-warning-300">
-                      ðŸš§ Personal project currently in development. Code is
+                    {" "}                    <p className="text-sm text-warning-700 dark:text-warning-300">
+                      🚧 Personal project currently in development. Code is
                       private. Contact me to discuss my development approach and
                       capabilities.
                     </p>
@@ -371,8 +370,7 @@ const ProjectsSection = () => {
                   {project.isWip && (
                     <div className="mb-3 p-2 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-md">
                       {" "}
-                      <p className="text-xs text-warning-700 dark:text-warning-300">
-                        ðŸš§ Available for freelancing - Contact for custom
+                      <p className="text-xs text-warning-700 dark:text-warning-300">                        🚧 Available for freelancing - Contact for custom
                         development
                       </p>
                     </div>

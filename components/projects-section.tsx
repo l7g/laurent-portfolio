@@ -1,0 +1,272 @@
+"use client";
+
+import { Button } from "@heroui/button";
+import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
+import { Image } from "@heroui/image";
+import { Chip } from "@heroui/chip";
+import { motion } from "framer-motion";
+import { ExternalLink, Github, ArrowRight } from "lucide-react";
+
+import { siteConfig } from "@/config/site";
+
+const ProjectsSection = () => {
+  const projects = [
+    {
+      title: "Tracker - Political Data Platform",
+      description:
+        "A comprehensive political tracking platform built with Next.js, featuring real-time election data, party management, parliament tracking, and advanced analytics. Includes user authentication, role-based access control, and dynamic data visualization.",
+      image: "/projects/tracker-preview.png", // You'll need to add this image
+      technologies: [
+        "Next.js",
+        "TypeScript",
+        "Prisma",
+        "PostgreSQL",
+        "TailwindCSS",
+        "NextAuth.js",
+      ],
+      featured: true,
+      links: {
+        live: siteConfig.links.tracker,
+        github: "#", // Add your tracker GitHub link
+      },
+      highlights: [
+        "Real-time election data tracking",
+        "Advanced user authentication & authorization",
+        "Responsive dashboard with data visualization",
+        "Database-driven dynamic content",
+        "Role-based access control system",
+      ],
+    },
+    {
+      title: "E-Commerce Dashboard",
+      description:
+        "Modern e-commerce administration dashboard with inventory management, order tracking, and analytics. Built with React and Node.js.",
+      image: "/projects/ecommerce-preview.png",
+      technologies: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
+      featured: false,
+      links: {
+        live: "#",
+        github: "#",
+      },
+    },
+    {
+      title: "Task Management App",
+      description:
+        "Collaborative task management application with real-time updates, team collaboration features, and progress tracking.",
+      image: "/projects/taskapp-preview.png",
+      technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
+      featured: false,
+      links: {
+        live: "#",
+        github: "#",
+      },
+    },
+  ];
+
+  return (
+    <section className="py-20" id="projects">
+      <div className="container mx-auto px-6">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          whileInView={{ opacity: 1, y: 0 }}
+        >
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Featured <span className="text-primary">Projects</span>
+          </h2>
+          <p className="text-xl text-default-600 max-w-3xl mx-auto">
+            Here are some of my recent projects that showcase my skills in
+            full-stack development, from complex data platforms to modern web
+            applications.
+          </p>
+        </motion.div>
+
+        {/* Featured Project - Tracker */}
+        <motion.div
+          className="mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          whileInView={{ opacity: 1, y: 0 }}
+        >
+          <Card className="overflow-hidden shadow-xl">
+            <div className="grid lg:grid-cols-2 gap-0">
+              <div className="relative h-64 lg:h-auto">
+                <Image
+                  alt={projects[0].title}
+                  className="w-full h-full object-cover"
+                  fallback={
+                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                      <div className="text-center p-8">
+                        <div className="w-16 h-16 bg-primary/30 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                          <ExternalLink className="w-8 h-8 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-primary">
+                          Tracker Platform
+                        </h3>
+                        <p className="text-sm text-default-600 mt-2">
+                          Political Data & Analytics
+                        </p>
+                      </div>
+                    </div>
+                  }
+                  src={projects[0].image}
+                />
+                <div className="absolute top-4 left-4">
+                  <Chip color="primary" size="sm" variant="solid">
+                    Featured Project
+                  </Chip>
+                </div>
+              </div>
+
+              <CardBody className="p-8">
+                <h3 className="text-2xl font-bold mb-4">{projects[0].title}</h3>
+                <p className="text-default-600 mb-6 leading-relaxed">
+                  {projects[0].description}
+                </p>
+
+                <div className="mb-6">
+                  <h4 className="font-semibold mb-3">Key Features:</h4>
+                  <ul className="space-y-2">
+                    {projects[0].highlights.map((highlight, index) => (
+                      <li
+                        key={index}
+                        className="flex items-center text-sm text-default-600"
+                      >
+                        <ArrowRight className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
+                        {highlight}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {projects[0].technologies.map((tech) => (
+                    <Chip key={tech} color="primary" size="sm" variant="flat">
+                      {tech}
+                    </Chip>
+                  ))}
+                </div>
+
+                <div className="flex gap-4">
+                  <Button
+                    color="primary"
+                    startContent={<ExternalLink className="w-4 h-4" />}
+                    variant="solid"
+                    onPress={() =>
+                      window.open(projects[0].links.live, "_blank")
+                    }
+                  >
+                    View Live Demo
+                  </Button>
+                  <Button
+                    startContent={<Github className="w-4 h-4" />}
+                    variant="bordered"
+                    onPress={() =>
+                      window.open(projects[0].links.github, "_blank")
+                    }
+                  >
+                    Source Code
+                  </Button>
+                </div>
+              </CardBody>
+            </div>
+          </Card>
+        </motion.div>
+
+        {/* Other Projects Grid */}
+        <div className="grid md:grid-cols-2 gap-8">
+          {projects.slice(1).map((project, index) => (
+            <motion.div
+              key={project.title}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileInView={{ opacity: 1, y: 0 }}
+            >
+              <Card className="h-full hover:shadow-lg transition-shadow">
+                <CardHeader className="p-0">
+                  <Image
+                    alt={project.title}
+                    className="w-full h-48 object-cover"
+                    fallback={
+                      <div className="w-full h-48 bg-gradient-to-br from-default-100 to-default-200 flex items-center justify-center">
+                        <ExternalLink className="w-12 h-12 text-default-400" />
+                      </div>
+                    }
+                    src={project.image}
+                  />
+                </CardHeader>
+
+                <CardBody className="p-6">
+                  <h3 className="text-xl font-bold mb-3">{project.title}</h3>
+                  <p className="text-default-600 mb-4 text-sm leading-relaxed">
+                    {project.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    {project.technologies.map((tech) => (
+                      <Chip key={tech} size="sm" variant="flat">
+                        {tech}
+                      </Chip>
+                    ))}
+                  </div>
+                </CardBody>
+
+                <CardFooter className="p-6 pt-0 flex gap-3">
+                  <Button
+                    color="primary"
+                    size="sm"
+                    startContent={<ExternalLink className="w-4 h-4" />}
+                    variant="flat"
+                    onPress={() => window.open(project.links.live, "_blank")}
+                  >
+                    Live Demo
+                  </Button>
+                  <Button
+                    size="sm"
+                    startContent={<Github className="w-4 h-4" />}
+                    variant="light"
+                    onPress={() => window.open(project.links.github, "_blank")}
+                  >
+                    Code
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Call to Action */}
+        <motion.div
+          className="text-center mt-16"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          whileInView={{ opacity: 1, y: 0 }}
+        >
+          <p className="text-default-600 mb-6">
+            Want to see more of my work or discuss a project?
+          </p>
+          <Button
+            color="primary"
+            endContent={<ArrowRight className="w-5 h-5" />}
+            size="lg"
+            variant="bordered"
+            onPress={() => {
+              document.getElementById("contact")?.scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
+          >
+            Get In Touch
+          </Button>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+export default ProjectsSection;

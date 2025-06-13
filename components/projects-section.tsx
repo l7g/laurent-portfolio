@@ -14,6 +14,89 @@ import { GithubIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 
 const ProjectsSection = () => {
+  // Custom placeholder component for WIP projects
+  const PlaceholderImage = ({
+    type,
+    title,
+  }: {
+    type: string;
+    title: string;
+  }) => {
+    if (type === "placeholder-ecommerce") {
+      return (
+        <div className="w-full h-48 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-white/80 dark:bg-gray-800/80" />
+          <div className="relative z-10 text-center">
+            <div className="w-16 h-16 mx-auto mb-3 bg-blue-500/20 rounded-xl flex items-center justify-center">
+              <svg
+                className="w-8 h-8 text-blue-600 dark:text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+              E-Commerce Dashboard
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Coming Soon
+            </p>
+          </div>
+          <div className="absolute top-4 right-4 flex space-x-1">
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+          </div>
+        </div>
+      );
+    }
+
+    if (type === "placeholder-tasks") {
+      return (
+        <div className="w-full h-48 bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-white/80 dark:bg-gray-800/80" />
+          <div className="relative z-10 text-center">
+            <div className="w-16 h-16 mx-auto mb-3 bg-purple-500/20 rounded-xl flex items-center justify-center">
+              <svg
+                className="w-8 h-8 text-purple-600 dark:text-purple-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+              Task Management
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              In Development
+            </p>
+          </div>
+          <div className="absolute top-4 right-4 flex space-x-1">
+            <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   const projects = [
     {
       title: "Tracker - Political Data Platform",
@@ -46,10 +129,10 @@ const ProjectsSection = () => {
       title: "E-Commerce Dashboard",
       description:
         "Modern e-commerce administration dashboard with inventory management, order tracking, and analytics. Built with React and Node.js.",
-      image: "/projects/ecommerce-preview.png",
+      image: "placeholder-ecommerce",
       technologies: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
       featured: false,
-      isWip: true, // Set to true if this project is WIP
+      isWip: true,
       links: {
         live: "#",
         github: "#",
@@ -59,10 +142,10 @@ const ProjectsSection = () => {
       title: "Task Management App",
       description:
         "Collaborative task management application with real-time updates, team collaboration features, and progress tracking.",
-      image: "/projects/taskapp-preview.png",
+      image: "placeholder-tasks",
       technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
       featured: false,
-      isWip: true, // Set to true if this project is WIP
+      isWip: true,
       links: {
         live: "#",
         github: "#",
@@ -245,13 +328,21 @@ const ProjectsSection = () => {
               viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
             >
+              {" "}
               <Card className="h-full hover:shadow-lg transition-shadow">
                 <CardHeader className="p-0">
-                  <Image
-                    alt={project.title}
-                    className="w-full h-48 object-cover"
-                    src={project.image}
-                  />
+                  {project.image.startsWith("placeholder-") ? (
+                    <PlaceholderImage
+                      type={project.image}
+                      title={project.title}
+                    />
+                  ) : (
+                    <Image
+                      alt={project.title}
+                      className="w-full h-48 object-cover"
+                      src={project.image}
+                    />
+                  )}
                 </CardHeader>{" "}
                 <CardBody className="p-6">
                   {" "}

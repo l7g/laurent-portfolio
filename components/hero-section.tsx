@@ -90,16 +90,19 @@ const HeroSection = () => {
             >
               View My Work
             </Button>
-
             <Button
+              as="a"
               className="font-semibold"
+              href="/Laurent_Cv.pdf"
+              rel="noopener noreferrer"
               size="lg"
               startContent={
                 <ArrowDownTrayIcon className="w-5 h-5 flex-shrink-0" />
               }
+              target="_blank"
               variant="bordered"
             >
-              Download Resume
+              View CV
             </Button>
           </motion.div>
 

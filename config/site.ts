@@ -53,9 +53,9 @@ export const siteConfig = {
     },
   ],
   links: {
-    github: "https://github.com/lauren",
-    linkedin: "https://linkedin.com/in/lauren",
-    email: "mailto:lauren@example.com",
+    github: "https://github.com/l7g",
+    linkedin: "https://www.linkedin.com/in/laurent-gagné-606945251",
+    email: "mailto:laurentgagne.dev@pm.me",
     tracker: "https://tracker-demo.com",
   },
 };

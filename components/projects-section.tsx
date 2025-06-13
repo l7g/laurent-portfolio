@@ -29,6 +29,7 @@ const ProjectsSection = () => {
         "NextAuth.js",
       ],
       featured: true,
+      isWip: true, // Set to false when project is complete
       links: {
         live: siteConfig.links.tracker,
         github: "#", // Add your tracker GitHub link
@@ -48,6 +49,7 @@ const ProjectsSection = () => {
       image: "/projects/ecommerce-preview.png",
       technologies: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
       featured: false,
+      isWip: true, // Set to true if this project is WIP
       links: {
         live: "#",
         github: "#",
@@ -60,6 +62,7 @@ const ProjectsSection = () => {
       image: "/projects/taskapp-preview.png",
       technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
       featured: false,
+      isWip: true, // Set to true if this project is WIP
       links: {
         live: "#",
         github: "#",
@@ -108,14 +111,35 @@ const ProjectsSection = () => {
                     Featured Project
                   </Chip>
                 </div>
-              </div>
-
+              </div>{" "}
               <CardBody className="p-8">
-                <h3 className="text-2xl font-bold mb-4">{projects[0].title}</h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <h3 className="text-2xl font-bold">{projects[0].title}</h3>
+                  {projects[0].isWip && (
+                    <Chip
+                      className="text-xs font-semibold animate-pulse"
+                      color="warning"
+                      size="sm"
+                      variant="solid"
+                      startContent={
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      }
+                    >
+                      Work in Progress
+                    </Chip>
+                  )}
+                </div>
+                {projects[0].isWip && (
+                  <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                    <p className="text-sm text-warning-700 dark:text-warning-300">
+                      🚧 This project is currently under development. Contact me
+                      for early access or more information.
+                    </p>
+                  </div>
+                )}
                 <p className="text-default-600 mb-6 leading-relaxed">
                   {projects[0].description}
                 </p>
-
                 <div className="mb-6">
                   <h4 className="font-semibold mb-3">Key Features:</h4>
                   <ul className="space-y-2">
@@ -130,37 +154,81 @@ const ProjectsSection = () => {
                     ))}
                   </ul>
                 </div>
-
                 <div className="flex flex-wrap gap-2 mb-6">
                   {projects[0].technologies.map((tech) => (
                     <Chip key={tech} color="primary" size="sm" variant="flat">
                       {tech}
                     </Chip>
                   ))}
-                </div>
-
+                </div>{" "}
                 <div className="flex gap-4">
-                  <Button
-                    color="primary"
-                    startContent={
-                      <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                    }
-                    variant="solid"
-                    onPress={() =>
-                      window.open(projects[0].links.live, "_blank")
-                    }
-                  >
-                    View Live Demo
-                  </Button>
-                  <Button
-                    startContent={<GithubIcon className="w-4 h-4" />}
-                    variant="bordered"
-                    onPress={() =>
-                      window.open(projects[0].links.github, "_blank")
-                    }
-                  >
-                    Source Code
-                  </Button>
+                  {projects[0].isWip ? (
+                    <>
+                      <Button
+                        className="font-semibold shadow-lg"
+                        color="warning"
+                        startContent={
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                            />
+                          </svg>
+                        }
+                        variant="solid"
+                        onPress={() => {
+                          const contactSection =
+                            document.getElementById("contact");
+                          contactSection?.scrollIntoView({
+                            behavior: "smooth",
+                          });
+                        }}
+                      >
+                        Request Early Access
+                      </Button>
+                      <Button
+                        className="font-semibold"
+                        startContent={<GithubIcon className="w-4 h-4" />}
+                        variant="bordered"
+                        onPress={() =>
+                          window.open(projects[0].links.github, "_blank")
+                        }
+                      >
+                        View Code
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        color="primary"
+                        startContent={
+                          <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                        }
+                        variant="solid"
+                        onPress={() =>
+                          window.open(projects[0].links.live, "_blank")
+                        }
+                      >
+                        View Live Demo
+                      </Button>
+                      <Button
+                        startContent={<GithubIcon className="w-4 h-4" />}
+                        variant="bordered"
+                        onPress={() =>
+                          window.open(projects[0].links.github, "_blank")
+                        }
+                      >
+                        Source Code
+                      </Button>
+                    </>
+                  )}
                 </div>
               </CardBody>
             </div>
@@ -184,14 +252,35 @@ const ProjectsSection = () => {
                     className="w-full h-48 object-cover"
                     src={project.image}
                   />
-                </CardHeader>
-
+                </CardHeader>{" "}
                 <CardBody className="p-6">
-                  <h3 className="text-xl font-bold mb-3">{project.title}</h3>
+                  {" "}
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-xl font-bold">{project.title}</h3>
+                    {project.isWip && (
+                      <Chip
+                        className="text-xs font-semibold animate-pulse"
+                        color="warning"
+                        size="sm"
+                        variant="solid"
+                        startContent={
+                          <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                        }
+                      >
+                        WIP
+                      </Chip>
+                    )}
+                  </div>
+                  {project.isWip && (
+                    <div className="mb-3 p-2 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-md">
+                      <p className="text-xs text-warning-700 dark:text-warning-300">
+                        🚧 Under development - Contact for info
+                      </p>
+                    </div>
+                  )}
                   <p className="text-default-600 mb-4 text-sm leading-relaxed">
                     {project.description}
                   </p>
-
                   <div className="flex flex-wrap gap-2">
                     {project.technologies.map((tech) => (
                       <Chip key={tech} size="sm" variant="flat">
@@ -200,27 +289,77 @@ const ProjectsSection = () => {
                     ))}
                   </div>
                 </CardBody>
-
                 <CardFooter className="p-6 pt-0 flex gap-3">
-                  <Button
-                    color="primary"
-                    size="sm"
-                    startContent={
-                      <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                    }
-                    variant="flat"
-                    onPress={() => window.open(project.links.live, "_blank")}
-                  >
-                    Live Demo
-                  </Button>
-                  <Button
-                    size="sm"
-                    startContent={<GithubIcon className="w-4 h-4" />}
-                    variant="light"
-                    onPress={() => window.open(project.links.github, "_blank")}
-                  >
-                    Code
-                  </Button>
+                  {project.isWip ? (
+                    <>
+                      <Button
+                        className="flex-1 font-semibold"
+                        color="warning"
+                        size="sm"
+                        startContent={
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                            />
+                          </svg>
+                        }
+                        variant="solid"
+                        onPress={() => {
+                          const contactSection =
+                            document.getElementById("contact");
+                          contactSection?.scrollIntoView({
+                            behavior: "smooth",
+                          });
+                        }}
+                      >
+                        Get Info
+                      </Button>
+                      <Button
+                        size="sm"
+                        startContent={<GithubIcon className="w-4 h-4" />}
+                        variant="light"
+                        onPress={() =>
+                          window.open(project.links.github, "_blank")
+                        }
+                      >
+                        Code
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        color="primary"
+                        size="sm"
+                        startContent={
+                          <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                        }
+                        variant="flat"
+                        onPress={() =>
+                          window.open(project.links.live, "_blank")
+                        }
+                      >
+                        Live Demo
+                      </Button>
+                      <Button
+                        size="sm"
+                        startContent={<GithubIcon className="w-4 h-4" />}
+                        variant="light"
+                        onPress={() =>
+                          window.open(project.links.github, "_blank")
+                        }
+                      >
+                        Code
+                      </Button>
+                    </>
+                  )}
                 </CardFooter>
               </Card>
             </motion.div>

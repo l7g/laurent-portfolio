@@ -16,6 +16,7 @@ import {
   CheckCircleIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
+import { siteConfig } from "@/config/site";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -105,19 +106,19 @@ const ContactSection = () => {
     {
       icon: <EnvelopeIcon className="w-5 h-5" />,
       title: "Email",
-      value: "laurent@example.com",
-      href: "mailto:laurent@example.com",
+      value: "laurentgagne.dev@pm.me",
+      href: siteConfig.links.email,
     },
-    {
+    /* {
       icon: <PhoneIcon className="w-5 h-5" />,
       title: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567",
-    },
+      value: "+39 3791699005",
+      href: "tel:+393791699005",
+    }, */
     {
       icon: <MapPinIcon className="w-5 h-5" />,
-      title: "Location",
-      value: "New York, NY",
+      title: "Current Location",
+      value: "Cagliari, IT",
       href: "#",
     },
   ];

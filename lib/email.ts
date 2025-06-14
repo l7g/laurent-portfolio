@@ -22,7 +22,7 @@ export async function sendContactEmail(data: EmailData) {
     console.log("🔑 Resend API key exists:", !!process.env.RESEND_API_KEY); // Send notification to you
     console.log("📤 Sending notification email to owner:", to);
     const notificationResult = await resend.emails.send({
-      from: "Portfolio Contact <contact@laurentgagne.com>", // Your verified domain
+      from: `Portfolio Contact <${process.env.RESEND_FROM_EMAIL || "contact@mail.laurentgagne.com"}>`, // Your verified domain
       to: [to], // Your email
       subject: `Portfolio Contact: ${subject}`,
       html: `
@@ -57,10 +57,9 @@ export async function sendContactEmail(data: EmailData) {
       success: !!notificationResult.data?.id,
       id: notificationResult.data?.id,
       error: notificationResult.error,
-    }); // Send confirmation to the person who contacted you
-    console.log("📤 Sending confirmation email to user:", email);
+    }); // Send confirmation to the person who contacted you    console.log("📤 Sending confirmation email to user:", email);
     const confirmationResult = await resend.emails.send({
-      from: "Laurent Gagné <noreply@laurentgagne.com>",
+      from: `Laurent Gagné <${process.env.RESEND_NOREPLY_EMAIL || "noreply@mail.laurentgagne.com"}>`,
       to: [email],
       subject: "Thank you for reaching out - Laurent Gagné",
       html: `
@@ -140,7 +139,7 @@ export async function sendWorkInquiryEmail(data: EmailData) {
     // Send work inquiry notification to you
     console.log("📤 Sending work inquiry email to owner:", to);
     const notificationResult = await resend.emails.send({
-      from: "Work Inquiry <contact@laurentgagne.com>",
+      from: `Work Inquiry <${process.env.RESEND_FROM_EMAIL || "contact@mail.laurentgagne.com"}>`,
       to: [to],
       subject: `Work Opportunity: ${company || "New Inquiry"}`,
       html: `
@@ -181,7 +180,7 @@ export async function sendWorkInquiryEmail(data: EmailData) {
     }); // Send confirmation to the company/person
     console.log("📤 Sending confirmation email to inquirer:", email);
     const confirmationResult = await resend.emails.send({
-      from: "Laurent Gagné <noreply@laurentgagne.com>",
+      from: `Laurent Gagné <${process.env.RESEND_NOREPLY_EMAIL || "noreply@mail.laurentgagne.com"}>`,
       to: [email],
       subject: "Work Inquiry Received - Laurent Gagné",
       html: `

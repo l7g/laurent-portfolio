@@ -13,9 +13,7 @@ export async function POST(request: NextRequest) {
         { error: "All fields are required" },
         { status: 400 },
       );
-    }
-
-    // Save to database
+    } // Save to database
     const contact = await prisma.contact.create({
       data: {
         name,
@@ -34,9 +32,22 @@ export async function POST(request: NextRequest) {
       message,
     });
 
+    console.log("📧 Email results:", {
+      emailSuccess: emailResult.success,
+      notificationSent: !!emailResult.notificationId,
+      confirmationSent: !!emailResult.confirmationId,
+      notificationError: emailResult.notificationError,
+      confirmationError: emailResult.confirmationError,
+    });
+
     if (!emailResult.success) {
-      console.error("Email sending failed:", emailResult.error);
+      console.error("❌ Email sending failed:", emailResult.error);
       // Continue anyway - contact is saved to database
+    } else if (emailResult.notificationError || emailResult.confirmationError) {
+      console.warn("⚠️ Some emails had issues:", {
+        notification: emailResult.notificationError ? "Failed" : "Success",
+        confirmation: emailResult.confirmationError ? "Failed" : "Success",
+      });
     }
 
     return NextResponse.json(

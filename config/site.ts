@@ -55,7 +55,13 @@ export const siteConfig = {
   links: {
     github: "https://github.com/l7g",
     linkedin: "https://www.linkedin.com/in/laurent-gagn%C3%A9-606945251",
-    email: "mailto:laurentgagne.dev@pm.me",
+    email: "mailto:contact@laurentgagne.com",
     tracker: "https://tracker-demo.com",
+  },
+  emailConfig: {
+    responseTime: "24-48 hours",
+    contactEmail: "contact@laurentgagne.com",
+    signature:
+      "Best regards,\nLaurent Gagné\nFull-Stack Developer\n\n📧 contact@laurentgagne.com\n🔗 https://laurentgagne.com\n💼 https://www.linkedin.com/in/laurent-gagn%C3%A9-606945251",
   },
 };

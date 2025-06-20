@@ -9,10 +9,10 @@ export async function POST(request: NextRequest) {
       body;
 
     // Debug logging
-    console.log("ðŸ” Environment check:");
+    console.log("🔍 Environment check:");
     console.log("RESEND_API_KEY exists:", !!process.env.RESEND_API_KEY);
     console.log("CONTACT_EMAIL:", process.env.NEXT_PUBLIC_CONTACT_EMAIL);
-    console.log("ðŸ“ Form data received:", { name, email, company, workType });
+    console.log("🔍 Form data received:", { name, email, company, workType });
 
     // Validate required fields
     if (!name || !email || !description) {
@@ -33,8 +33,10 @@ export async function POST(request: NextRequest) {
         timeline: timeline || null,
         description,
       },
-    }); // Send email using Resend
-    console.log("ðŸ“§ Attempting to send email...");
+    });
+
+    // Send email using Resend
+    console.log("📧 Attempting to send email...");
     const emailResult = await sendWorkInquiryEmail({
       to: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "laurentgagne.dev@pm.me",
       subject: `Work Inquiry from ${company || name}`,
@@ -46,14 +48,22 @@ export async function POST(request: NextRequest) {
       workType,
       timeline,
     });
-
-    console.log("ðŸ“§ Email result:", emailResult);
+    console.log("📧 Email results:", {
+      emailSuccess: emailResult.success,
+      notificationSent: !!emailResult.notificationId,
+      confirmationSent: !!emailResult.confirmationId,
+      notificationError: emailResult.notificationError,
+      confirmationError: emailResult.confirmationError,
+    });
 
     if (!emailResult.success) {
-      console.error("âŒ Work inquiry email failed:", emailResult.error);
+      console.error("❌ Work inquiry email failed:", emailResult.error);
       // Continue anyway - inquiry is saved to database
-    } else {
-      console.log("âœ… Email sent successfully!");
+    } else if (emailResult.notificationError || emailResult.confirmationError) {
+      console.warn("⚠️ Some work inquiry emails had issues:", {
+        notification: emailResult.notificationError ? "Failed" : "Success",
+        confirmation: emailResult.confirmationError ? "Failed" : "Success",
+      });
     }
 
     return NextResponse.json(

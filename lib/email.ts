@@ -18,10 +18,12 @@ export async function sendContactEmail(data: EmailData) {
   const { to, subject, name, email, message } = data;
 
   try {
-    // Send notification to you
-    const result = await resend.emails.send({
-      from: "Laurent Portfolio <onboarding@resend.dev>", // Free Resend domain
-      to: [to], // Your ProtonMail
+    console.log("📧 Starting sendContactEmail for:", { name, email, to });
+    console.log("🔑 Resend API key exists:", !!process.env.RESEND_API_KEY); // Send notification to you
+    console.log("📤 Sending notification email to owner:", to);
+    const notificationResult = await resend.emails.send({
+      from: `Portfolio Contact <${process.env.RESEND_FROM_EMAIL || "contact@mail.laurentgagne.com"}>`, // Your verified domain
+      to: [to], // Your email
       subject: `Portfolio Contact: ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -51,11 +53,15 @@ export async function sendContactEmail(data: EmailData) {
       `,
     });
 
-    // Send confirmation to the person who contacted you
-    await resend.emails.send({
-      from: "Laurent Portfolio <onboarding@resend.dev>",
+    console.log("✅ Notification email sent:", {
+      success: !!notificationResult.data?.id,
+      id: notificationResult.data?.id,
+      error: notificationResult.error,
+    }); // Send confirmation to the person who contacted you    console.log("📤 Sending confirmation email to user:", email);
+    const confirmationResult = await resend.emails.send({
+      from: `Laurent Gagné <${process.env.RESEND_NOREPLY_EMAIL || "noreply@mail.laurentgagne.com"}>`,
       to: [email],
-      subject: "Thanks for reaching out!",
+      subject: "Thank you for reaching out - Laurent Gagné",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">
@@ -71,11 +77,10 @@ export async function sendContactEmail(data: EmailData) {
             <p><strong>Subject:</strong> ${subject}</p>
             <p style="line-height: 1.6;">${message.replace(/\n/g, "<br>")}</p>
           </div>
-          
-          <p>I typically respond within 24-48 hours. Looking forward to connecting with you!</p>
+            <p>I typically respond within 24-48 hours. Looking forward to connecting with you!</p>
           
           <p>Best regards,<br>
-          <strong>Laurent GagnÃ©</strong><br>
+          <strong>Laurent Gagné</strong><br>
           Full-Stack Developer</p>
           
           <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
@@ -86,10 +91,31 @@ export async function sendContactEmail(data: EmailData) {
         </div>
       `,
     });
+    console.log("✅ Confirmation email result:", {
+      success: !!confirmationResult.data?.id,
+      id: confirmationResult.data?.id,
+      error: confirmationResult.error,
+    });
 
-    return { success: true, id: result.data?.id };
+    // Check for any errors in either email
+    const hasErrors = notificationResult.error || confirmationResult.error;
+    if (hasErrors) {
+      console.warn("⚠️ Some emails had errors:", {
+        notificationError: notificationResult.error,
+        confirmationError: confirmationResult.error,
+      });
+    }
+
+    // Return comprehensive results
+    return {
+      success: true,
+      notificationId: notificationResult.data?.id,
+      confirmationId: confirmationResult.data?.id,
+      notificationError: notificationResult.error,
+      confirmationError: confirmationResult.error,
+    };
   } catch (error) {
-    console.error("Email sending failed:", error);
+    console.error("❌ Email sending failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -101,19 +127,19 @@ export async function sendWorkInquiryEmail(data: EmailData) {
   const { to, name, email, message, company, position, workType, timeline } =
     data;
 
-  console.log("ðŸ“§ sendWorkInquiryEmail called with:", {
+  console.log("📧 sendWorkInquiryEmail called with:", {
     to,
     name,
     email,
     company,
   });
-  console.log("ðŸ”‘ Resend API key exists:", !!process.env.RESEND_API_KEY);
+  console.log("🔑 Resend API key exists:", !!process.env.RESEND_API_KEY);
 
   try {
     // Send work inquiry notification to you
-    console.log("ðŸ“¤ Sending work inquiry email to:", to);
-    const result = await resend.emails.send({
-      from: "Laurent Portfolio <onboarding@resend.dev>",
+    console.log("📤 Sending work inquiry email to owner:", to);
+    const notificationResult = await resend.emails.send({
+      from: `Work Inquiry <${process.env.RESEND_FROM_EMAIL || "contact@mail.laurentgagne.com"}>`,
       to: [to],
       subject: `Work Opportunity: ${company || "New Inquiry"}`,
       html: `
@@ -147,11 +173,16 @@ export async function sendWorkInquiryEmail(data: EmailData) {
       `,
     });
 
-    // Send confirmation to the company/person
-    await resend.emails.send({
-      from: "Laurent Portfolio <onboarding@resend.dev>",
+    console.log("✅ Work inquiry notification sent:", {
+      success: !!notificationResult.data?.id,
+      id: notificationResult.data?.id,
+      error: notificationResult.error,
+    }); // Send confirmation to the company/person
+    console.log("📤 Sending confirmation email to inquirer:", email);
+    const confirmationResult = await resend.emails.send({
+      from: `Laurent Gagné <${process.env.RESEND_NOREPLY_EMAIL || "noreply@mail.laurentgagne.com"}>`,
       to: [email],
-      subject: "Work Inquiry Received - Thank You!",
+      subject: "Work Inquiry Received - Laurent Gagné",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">
@@ -168,11 +199,10 @@ export async function sendWorkInquiryEmail(data: EmailData) {
             <p><strong>Position:</strong> ${position || "Not specified"}</p>
             <p><strong>Work Type:</strong> ${workType || "Not specified"}</p>
           </div>
-          
-          <p>I'll review the details and get back to you within 24 hours to discuss how I can contribute to your team.</p>
+            <p>I'll review the details and get back to you within 24 hours to discuss how I can contribute to your team.</p>
           
           <p>Best regards,<br>
-          <strong>Laurent GagnÃ©</strong><br>
+          <strong>Laurent Gagné</strong><br>
           Full-Stack Developer</p>
           
           <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
@@ -183,10 +213,30 @@ export async function sendWorkInquiryEmail(data: EmailData) {
         </div>
       `,
     });
+    console.log("✅ Work inquiry confirmation result:", {
+      success: !!confirmationResult.data?.id,
+      id: confirmationResult.data?.id,
+      error: confirmationResult.error,
+    });
 
-    return { success: true, id: result.data?.id };
+    // Check for any errors in either email
+    const hasErrors = notificationResult.error || confirmationResult.error;
+    if (hasErrors) {
+      console.warn("⚠️ Some work inquiry emails had errors:", {
+        notificationError: notificationResult.error,
+        confirmationError: confirmationResult.error,
+      });
+    }
+
+    return {
+      success: true,
+      notificationId: notificationResult.data?.id,
+      confirmationId: confirmationResult.data?.id,
+      notificationError: notificationResult.error,
+      confirmationError: confirmationResult.error,
+    };
   } catch (error) {
-    console.error("Work inquiry email failed:", error);
+    console.error("❌ Work inquiry email failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

@@ -23,7 +23,7 @@ After adding the subdomain in Resend, you'll get specific DNS records. They shou
 
 ```
 Type: MX
-Name: send.mail (or send.mail.laurentgagne.com)
+Name: send (or send.mail.laurentgagne.com)
 Value: feedback-smtp.eu-west-1.amazonaws.com
 Priority: 10
 TTL: 3600
@@ -33,8 +33,8 @@ TTL: 3600
 
 ```
 Type: TXT
-Name: mail (or mail.laurentgagne.com)
-Value: v=spf1 include:_spf.resend.com ~all
+Name: send (or send.mail.laurentgagne.com)
+Value: v=spf1 include:amazonses.com ~all
 TTL: 3600
 ```
 
@@ -42,7 +42,7 @@ TTL: 3600
 
 ```
 Type: TXT
-Name: resend._domainkey.mail (or resend._domainkey.mail.laurentgagne.com)
+Name: resend._domainkey (or resend._domainkey.mail.laurentgagne.com)
 Value: [Long DKIM key from Resend]
 TTL: 3600
 ```

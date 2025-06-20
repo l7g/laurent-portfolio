@@ -21,11 +21,9 @@ export async function POST(request: NextRequest) {
         subject,
         message,
       },
-    });
-
-    // Send email using Resend
+    }); // Send email using Resend
     const emailResult = await sendContactEmail({
-      to: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "laurentgagne.dev@pm.me",
+      to: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "contact@laurentgagne.com",
       subject,
       name,
       email,

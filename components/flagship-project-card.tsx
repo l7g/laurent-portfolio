@@ -3,6 +3,7 @@
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Button } from "@heroui/button";
+import { Image } from "@heroui/image";
 import {
   Modal,
   ModalContent,
@@ -14,6 +15,7 @@ import {
   ArrowTopRightOnSquareIcon,
   CodeBracketIcon,
 } from "@heroicons/react/24/outline";
+import { getProjectImageUrl } from "@/lib/blob-storage";
 
 interface Project {
   id: string;
@@ -74,6 +76,16 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
           </div>
         </CardHeader>
         <CardBody className="pt-0">
+          {/* Project Image */}
+          <div className="mb-4">
+            <Image
+              src={getProjectImageUrl(project.image, "web")}
+              alt={project.title}
+              className="w-full h-48 object-cover rounded-lg"
+              fallbackSrc={getProjectImageUrl(null, "web")}
+            />
+          </div>
+
           <p className="text-gray-700 text-sm mb-3">{project.description}</p>
 
           <div className="flex flex-wrap gap-1 mb-3">

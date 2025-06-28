@@ -12,6 +12,7 @@ import {
   ChartBarIcon,
   CogIcon,
 } from "@heroicons/react/24/outline";
+import { getProjectImageUrl } from "@/lib/blob-storage";
 
 interface AdminDashboardProps {
   contacts: any[];
@@ -273,7 +274,7 @@ export default function AdminDashboard({
                       key={project.id}
                       className="flex items-center justify-between p-4 border rounded-lg"
                     >
-                      <div>
+                      <div className="flex-1">
                         <h4 className="font-medium">{project.title}</h4>
                         <p className="text-sm text-gray-600">
                           {project.shortDesc}
@@ -288,26 +289,14 @@ export default function AdminDashboard({
                             ))}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {project.flagship && (
-                          <Chip color="warning" size="sm">
-                            Flagship
-                          </Chip>
-                        )}
-                        {project.featured && (
-                          <Chip color="secondary" size="sm">
-                            Featured
-                          </Chip>
-                        )}
-                        <Chip
-                          color={project.isActive ? "success" : "default"}
-                          size="sm"
-                        >
-                          {project.isActive ? "Active" : "Inactive"}
-                        </Chip>
-                        <Button size="sm" variant="flat">
-                          Edit
-                        </Button>
+
+                      {/* Project Image Preview */}
+                      <div className="w-24 h-18 flex-shrink-0">
+                        <img
+                          src={getProjectImageUrl(project.image, "default")}
+                          alt={project.title}
+                          className="w-full h-full object-cover rounded-lg border"
+                        />
                       </div>
                     </div>
                   ))}

@@ -87,8 +87,23 @@ async function restoreFromBackup(backupData) {
   // Restore users with hashed passwords
   if (data.users && data.users.length > 0) {
     for (const user of data.users) {
-      const hashedPassword =
-        user.hashedPassword || (await bcrypt.hash("defaultPassword123!", 12));
+      let hashedPassword;
+
+      if (user.hashedPassword) {
+        // Use the existing hashed password from backup
+        hashedPassword = user.hashedPassword;
+      } else {
+        // Use ADMIN_PASSWORD from environment variables as fallback
+        const adminPassword = process.env.ADMIN_PASSWORD;
+        if (!adminPassword) {
+          console.log(
+            `⚠️  No ADMIN_PASSWORD set for user ${user.email}, skipping user creation`,
+          );
+          continue;
+        }
+        hashedPassword = await bcrypt.hash(adminPassword, 12);
+      }
+
       await prisma.user.create({
         data: {
           email: user.email,

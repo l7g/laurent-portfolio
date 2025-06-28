@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "timestamp": "2025-06-28T19:45:50.535Z",
+    "timestamp": "2025-06-28T20:19:37.504Z",
     "version": "1.0.0",
     "description": "Production portfolio backup - all content editable via admin"
   },
@@ -169,7 +169,7 @@
         "slug": "ecommerce-dashboard",
         "description": "Modern e-commerce administration platform with comprehensive inventory management, analytics, and user interface design. Built with scalability and real-world business needs in mind.",
         "shortDesc": "Available for freelancing - Contact for custom development",
-        "image": "placeholder-ecommerce",
+        "image": "https://o9tjswk2bdgo27hm.public.blob.vercel-storage.com/projects/1751130069815-tracker-preview.png",
         "technologies": [
           "React",
           "Node.js",
@@ -205,7 +205,7 @@
         "startDate": null,
         "endDate": null,
         "createdAt": "2025-06-28T18:57:14.697Z",
-        "updatedAt": "2025-06-28T18:57:14.697Z"
+        "updatedAt": "2025-06-28T20:19:11.151Z"
       }
     ],
     "skills": [

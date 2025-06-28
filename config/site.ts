@@ -3,7 +3,7 @@
 export const siteConfig = {
   name: "Laurent",
   description:
-    "Full-stack developer specializing in modern web applications and data-driven solutions.",
+    "Full-stack developer specializing in modern software applications and data-driven solutions.",
   navItems: [
     {
       label: "Home",

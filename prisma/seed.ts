@@ -25,69 +25,148 @@ async function main() {
     {
       key: "site_title",
       value: "Laurent Gagné - Portfolio",
-      type: "TEXT" as const,
+      type: "text",
       description: "Main site title",
     },
     {
       key: "site_description",
       value:
         "Full-stack developer passionate about creating innovative solutions",
-      type: "TEXT" as const,
+      type: "text",
       description: "Site meta description",
     },
     {
       key: "hero_image",
       value: "/hero-image.png",
-      type: "IMAGE" as const,
+      type: "text",
       description: "Hero section background image",
     },
     {
       key: "profile_image",
       value: "/profile-image.jpg",
-      type: "IMAGE" as const,
+      type: "text",
       description: "Profile photo",
     },
     {
       key: "github_url",
       value: "https://github.com/laurentgagne",
-      type: "URL" as const,
+      type: "text",
       description: "GitHub profile URL",
     },
     {
       key: "linkedin_url",
       value: "https://linkedin.com/in/laurentgagne",
-      type: "URL" as const,
+      type: "text",
       description: "LinkedIn profile URL",
     },
     {
       key: "email",
       value: "laurentgagne.portfolio@gmail.com",
-      type: "TEXT" as const,
+      type: "text",
       description: "Contact email",
     },
     {
       key: "phone",
       value: "+1 (555) 123-4567",
-      type: "TEXT" as const,
+      type: "text",
       description: "Contact phone",
     },
     {
       key: "location",
       value: "Montreal, Canada",
-      type: "TEXT" as const,
+      type: "text",
       description: "Location",
     },
     {
       key: "primary_color",
       value: "#f98a07",
-      type: "COLOR" as const,
+      type: "text",
       description: "Primary brand color",
     },
     {
       key: "resume_url",
       value: "/resume.pdf",
-      type: "URL" as const,
+      type: "text",
       description: "Resume/CV download link",
+    },
+    // Contact Section Content
+    {
+      key: "contact_title",
+      value: "Let's Connect",
+      type: "text",
+      description: "Contact section title",
+      isPublic: true,
+    },
+    {
+      key: "contact_description",
+      value:
+        "I'm enthusiastic about starting my professional journey and eager to learn from experienced developers. Whether you have entry-level opportunities, mentorship, or just want to discuss code - I'd love to hear from you!",
+      type: "text",
+      description: "Contact section description",
+      isPublic: true,
+    },
+    {
+      key: "contact_journey_title",
+      value: "My Journey",
+      type: "text",
+      description: "Contact journey section title",
+      isPublic: true,
+    },
+    {
+      key: "contact_journey_stats",
+      value: JSON.stringify([
+        { label: "Years Learning", value: "3" },
+        { label: "Accenture Intern", value: "6mo" },
+        { label: "Commercial Projects", value: "3" },
+        { label: "Client Work", value: "Real" },
+      ]),
+      type: "json",
+      description: "Contact journey statistics",
+      isPublic: true,
+    },
+    // Form Labels and Messages
+    {
+      key: "contact_tab_general",
+      value: "General Contact",
+      type: "text",
+      description: "General contact tab label",
+      isPublic: true,
+    },
+    {
+      key: "contact_tab_work",
+      value: "Work Inquiry",
+      type: "text",
+      description: "Work inquiry tab label",
+      isPublic: true,
+    },
+    {
+      key: "contact_success_message",
+      value: "Message sent successfully! I'll get back to you soon.",
+      type: "text",
+      description: "Contact form success message",
+      isPublic: true,
+    },
+    {
+      key: "contact_error_message",
+      value: "Failed to send message. Please try again or email me directly.",
+      type: "text",
+      description: "Contact form error message",
+      isPublic: true,
+    },
+    {
+      key: "contact_general_placeholder",
+      value: "Tell me about opportunities, collaborations, or just say hello!",
+      type: "text",
+      description: "General contact form message placeholder",
+      isPublic: true,
+    },
+    {
+      key: "contact_work_placeholder",
+      value:
+        "Tell me about the role, responsibilities, team, and what you're looking for in a candidate.",
+      type: "text",
+      description: "Work inquiry form message placeholder",
+      isPublic: true,
     },
   ];
 
@@ -95,7 +174,10 @@ async function main() {
     await prisma.siteSetting.upsert({
       where: { key: setting.key },
       update: {},
-      create: setting,
+      create: {
+        ...setting,
+        isPublic: setting.isPublic || false,
+      },
     });
   }
 

@@ -235,7 +235,7 @@ const SkillsSection = () => {
             Skills & <span className="text-primary">Learning Journey</span>
           </h2>{" "}
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
-            3 years of dedicated self-study in web development, with strong
+            3 years of dedicated self-study in software development, with strong
             foundations in JavaScript and modern web technologies. Recently
             completed a 3-month C#/.NET course that deepened my understanding of
             database theory and backend architecture, making me more versatile
@@ -380,7 +380,7 @@ const SkillsSection = () => {
                     Full-Stack Capabilities
                   </h4>
                   <p className="text-sm text-default-600">
-                    Proven ability to build complete web applications from
+                    Proven ability to build complete software solutions from
                     database design to frontend implementation, with experience
                     across multiple technology stacks
                   </p>

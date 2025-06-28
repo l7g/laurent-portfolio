@@ -208,15 +208,23 @@ const ProjectsSection = () => {
             <Card className="overflow-hidden shadow-xl">
               <div className="grid lg:grid-cols-2 gap-0">
                 <div className="relative h-64 sm:h-72 md:h-80 lg:h-auto lg:min-h-[400px] overflow-hidden bg-gray-100">
-                  <img
-                    alt={projects[0].title}
-                    className="w-full h-full object-cover object-center"
-                    src={projects[0].image}
-                    style={{
-                      minHeight: "100%",
-                      minWidth: "100%",
-                    }}
-                  />
+                  {projects[0].image &&
+                  projects[0].image.startsWith("placeholder-") ? (
+                    <PlaceholderImage
+                      type={projects[0].image}
+                      title={projects[0].title}
+                    />
+                  ) : (
+                    <img
+                      alt={projects[0].title}
+                      className="w-full h-full object-cover object-center"
+                      src={projects[0].image}
+                      style={{
+                        minHeight: "100%",
+                        minWidth: "100%",
+                      }}
+                    />
+                  )}
                   <div className="absolute top-4 left-4 z-10">
                     <Chip color="primary" size="sm" variant="solid">
                       Flagship Project
@@ -411,7 +419,8 @@ const ProjectsSection = () => {
               <Card className="h-full hover:shadow-lg transition-shadow duration-300 overflow-hidden">
                 <CardHeader className="p-0 overflow-hidden">
                   <div className="w-full h-48 sm:h-56 md:h-64 overflow-hidden bg-gray-100">
-                    {project.image.startsWith("placeholder-") ? (
+                    {project.image &&
+                    project.image.startsWith("placeholder-") ? (
                       <PlaceholderImage
                         title={project.title}
                         type={project.image}

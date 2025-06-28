@@ -16,6 +16,7 @@ async function backupRestoreSeed() {
     const isBackupMode = process.env.BACKUP_MODE === "true";
     const isRestoreMode = process.env.RESTORE_MODE === "true";
     const forceReset = process.env.FORCE_RESET === "true";
+    const updatePassword = process.env.UPDATE_ADMIN_PASSWORD === "true";
 
     if (isBackupMode) {
       await backupCurrentData();
@@ -28,7 +29,7 @@ async function backupRestoreSeed() {
     }
 
     // Normal seeding mode (create if not exists)
-    await normalSeed();
+    await normalSeed(updatePassword);
   } catch (error) {
     console.error("❌ Backup/Restore process failed:", error);
     throw error;
@@ -181,7 +182,7 @@ async function restoreFromBackup() {
   }
 }
 
-async function normalSeed() {
+async function normalSeed(forcePasswordUpdate = false) {
   console.log("🌱 Normal seeding (create if not exists)...");
 
   // Admin user
@@ -205,8 +206,28 @@ async function normalSeed() {
         },
       });
       console.log("✅ Admin user created");
+    } else if (forcePasswordUpdate) {
+      // Force update password
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      await prisma.user.update({
+        where: { email: adminEmail },
+        data: {
+          password: hashedPassword,
+          name: adminName,
+        },
+      });
+      console.log("✅ Admin user password forcefully updated");
     } else {
-      console.log("✅ Admin user already exists");
+      // Update password if it's different (default behavior)
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
+      await prisma.user.update({
+        where: { email: adminEmail },
+        data: {
+          password: hashedPassword,
+          name: adminName,
+        },
+      });
+      console.log("✅ Admin user password updated");
     }
   }
 
@@ -222,7 +243,7 @@ async function createDefaultData() {
       sectionType: "HERO",
       title: "Welcome",
       subtitle: "Full-Stack Developer",
-      description: "Building Modern Web Applications",
+      description: "Building Modern Software Solutions",
       content: JSON.stringify({
         description:
           "Passionate about creating scalable, user-focused solutions with cutting-edge technologies.",
@@ -289,6 +310,115 @@ async function createDefaultData() {
     if (!existing) {
       await prisma.skill.create({ data: skill });
       console.log(`✅ Created skill: ${skill.name}`);
+    }
+  }
+
+  // Site settings
+  const siteSettings = [
+    {
+      key: "site_title",
+      value: "Laurent Gagné - Portfolio",
+      type: "text",
+      description: "Main site title",
+      isPublic: false,
+    },
+    {
+      key: "site_description",
+      value:
+        "Full-stack developer passionate about creating innovative solutions",
+      type: "text",
+      description: "Site meta description",
+      isPublic: false,
+    },
+    // Contact Section Content
+    {
+      key: "contact_title",
+      value: "Let's Connect",
+      type: "text",
+      description: "Contact section title",
+      isPublic: true,
+    },
+    {
+      key: "contact_description",
+      value:
+        "I'm enthusiastic about starting my professional journey and eager to learn from experienced developers. Whether you have entry-level opportunities, mentorship, or just want to discuss code - I'd love to hear from you!",
+      type: "text",
+      description: "Contact section description",
+      isPublic: true,
+    },
+    {
+      key: "contact_journey_title",
+      value: "My Journey",
+      type: "text",
+      description: "Contact journey section title",
+      isPublic: true,
+    },
+    {
+      key: "contact_journey_stats",
+      value: JSON.stringify([
+        { label: "Years Learning", value: "3" },
+        { label: "Accenture Intern", value: "6mo" },
+        { label: "Commercial Projects", value: "3" },
+        { label: "Client Work", value: "Real" },
+      ]),
+      type: "json",
+      description: "Contact journey statistics",
+      isPublic: true,
+    },
+    // Form Labels and Messages
+    {
+      key: "contact_tab_general",
+      value: "General Contact",
+      type: "text",
+      description: "General contact tab label",
+      isPublic: true,
+    },
+    {
+      key: "contact_tab_work",
+      value: "Work Inquiry",
+      type: "text",
+      description: "Work inquiry tab label",
+      isPublic: true,
+    },
+    {
+      key: "contact_success_message",
+      value: "Message sent successfully! I'll get back to you soon.",
+      type: "text",
+      description: "Contact form success message",
+      isPublic: true,
+    },
+    {
+      key: "contact_error_message",
+      value: "Failed to send message. Please try again or email me directly.",
+      type: "text",
+      description: "Contact form error message",
+      isPublic: true,
+    },
+    {
+      key: "contact_general_placeholder",
+      value: "Tell me about opportunities, collaborations, or just say hello!",
+      type: "text",
+      description: "General contact form message placeholder",
+      isPublic: true,
+    },
+    {
+      key: "contact_work_placeholder",
+      value:
+        "Tell me about the role, responsibilities, team, and what you're looking for in a candidate.",
+      type: "text",
+      description: "Work inquiry form message placeholder",
+      isPublic: true,
+    },
+  ];
+
+  for (const setting of siteSettings) {
+    const existing = await prisma.siteSetting.findFirst({
+      where: { key: setting.key },
+    });
+
+    if (!existing) {
+      await prisma.siteSetting.create({ data: setting });
+      console.log(`✅ Created site setting: ${setting.key}`);
     }
   }
 

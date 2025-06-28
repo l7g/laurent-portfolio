@@ -48,7 +48,7 @@ async function seedProduction() {
         sectionType: "HERO",
         title: "Welcome",
         subtitle: "Full-Stack Developer",
-        description: "Building Modern Web Applications",
+        description: "Building Modern Software Solutions",
         content: JSON.stringify({
           description:
             "Passionate about creating scalable, user-focused solutions with cutting-edge technologies.",

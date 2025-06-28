@@ -18,6 +18,7 @@ import {
 import { getProjectImageUrl } from "@/lib/blob-storage";
 import { useApi } from "@/lib/use-api";
 import ProjectEditModal from "./project-edit-modal";
+import SectionContentEditModal from "./section-content-edit-modal";
 
 interface AdminDashboardProps {
   contacts: any[];
@@ -39,11 +40,18 @@ export default function AdminDashboard({
   const [skills, setSkills] = useState(initialSkills);
   const [sections, setSections] = useState(initialSections);
   const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedSection, setSelectedSection] = useState<any>(null);
 
   const {
     isOpen: isProjectModalOpen,
     onOpen: onProjectModalOpen,
     onClose: onProjectModalClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isSectionModalOpen,
+    onOpen: onSectionModalOpen,
+    onClose: onSectionModalClose,
   } = useDisclosure();
   const api = useApi();
 
@@ -78,6 +86,12 @@ export default function AdminDashboard({
   const handleAddProject = () => {
     setSelectedProject(null);
     onProjectModalOpen();
+  };
+
+  // Section operations
+  const handleEditSection = (section: any) => {
+    setSelectedSection(section);
+    onSectionModalOpen();
   };
 
   const handleSaveProject = async (projectData: any) => {
@@ -331,7 +345,11 @@ export default function AdminDashboard({
                         >
                           {section.isActive ? "Active" : "Inactive"}
                         </Chip>
-                        <Button size="sm" variant="flat">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          onPress={() => handleEditSection(section)}
+                        >
                           Edit
                         </Button>
                       </div>
@@ -481,14 +499,15 @@ export default function AdminDashboard({
 
         {selectedTab === "settings" && (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Site Settings</h2>
-            <Card>
-              <CardBody>
-                <p className="text-gray-600">
-                  Settings management will be implemented here.
-                </p>
-              </CardBody>
-            </Card>
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Site Settings</h2>
+              <Button color="primary" size="sm" onPress={refreshSections}>
+                Refresh
+              </Button>
+            </div>
+            <div className="p-8 text-center text-gray-600">
+              Site settings management coming soon...
+            </div>
           </div>
         )}
       </div>
@@ -499,6 +518,14 @@ export default function AdminDashboard({
         isOpen={isProjectModalOpen}
         onClose={onProjectModalClose}
         onSave={handleSaveProject}
+      />
+
+      {/* Section Content Edit Modal */}
+      <SectionContentEditModal
+        section={selectedSection}
+        isOpen={isSectionModalOpen}
+        onClose={onSectionModalClose}
+        onUpdate={refreshSections}
       />
     </div>
   );

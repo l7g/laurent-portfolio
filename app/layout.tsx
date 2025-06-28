@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     "React Developer",
     "Next.js Developer",
     "TypeScript",
-    "Web Development",
+    "Software Development",
     "Portfolio",
     "JavaScript",
     "Node.js",
@@ -74,6 +74,7 @@ export default function RootLayout({
           "min-h-screen text-foreground bg-background font-sans antialiased",
           fontSans.variable,
         )}
+        suppressHydrationWarning
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col min-h-screen">
@@ -87,8 +88,8 @@ export default function RootLayout({
                       Laurent&apos;s Portfolio
                     </h3>
                     <p className="text-default-600 text-sm">
-                      Full-stack developer crafting modern web applications with
-                      passion for clean code and innovative solutions.
+                      Full-stack developer crafting modern software solutions
+                      with passion for clean code and innovative solutions.
                     </p>
                   </div>
                   <div>

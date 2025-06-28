@@ -108,6 +108,23 @@ export function getProjectImageUrl(
   projectType: keyof typeof PLACEHOLDER_IMAGES.projects = "default",
 ): string {
   if (imageUrl && imageUrl.trim()) {
+    // Handle custom placeholder types (map to appropriate placeholder images)
+    if (imageUrl.startsWith("placeholder-")) {
+      switch (imageUrl) {
+        case "placeholder-tasks":
+          return PLACEHOLDER_IMAGES.projects.web; // Task management is web-based
+        case "placeholder-ecommerce":
+          return PLACEHOLDER_IMAGES.projects.web; // E-commerce is web-based
+        case "placeholder-api":
+          return PLACEHOLDER_IMAGES.projects.api;
+        case "placeholder-mobile":
+          return PLACEHOLDER_IMAGES.projects.mobile;
+        case "placeholder-database":
+          return PLACEHOLDER_IMAGES.projects.database;
+        default:
+          return PLACEHOLDER_IMAGES.projects.default;
+      }
+    }
     return imageUrl;
   }
 

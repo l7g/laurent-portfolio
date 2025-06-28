@@ -104,7 +104,7 @@ const AboutSection = () => {
     },
     {
       icon: <GlobeAltIcon className="w-6 h-6" />,
-      title: "Web Applications",
+      title: "Software Solutions",
       description:
         "Building scalable, responsive applications with focus on performance and user experience",
     },
@@ -149,7 +149,7 @@ const AboutSection = () => {
           </h2>
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
             {sectionData?.description ||
-              "I'm a passionate full-stack developer with a love for creating innovative web applications. With expertise in modern technologies and a keen eye for detail, I transform ideas into digital solutions that make a difference."}
+              "I'm a passionate full-stack developer with a love for creating innovative software solutions. With expertise in modern technologies and a keen eye for detail, I transform ideas into digital applications that make a difference."}
           </p>
         </motion.div>
 
@@ -171,7 +171,7 @@ const AboutSection = () => {
               When I&apos;m not coding, you&apos;ll find me exploring new
               technologies, reading tech blogs, or experimenting with new
               frameworks. I believe in continuous learning and staying at the
-              forefront of web development trends.
+              forefront of software development and emerging technologies.
             </p>
 
             <div className="flex flex-wrap gap-2">

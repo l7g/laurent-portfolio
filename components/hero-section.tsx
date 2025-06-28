@@ -65,7 +65,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Aspiring Full-Stack Developer building modern web applications
+            Aspiring Full-Stack Developer building modern software solutions
             through 3 years of self-study and hands-on learning
           </motion.p>
           <motion.div

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --fix",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && npm run db:postinstall",
+    "db:postinstall": "node scripts/postinstall-db.js",
     "db:seed": "tsx prisma/seed.ts",
     "seed:production": "node scripts/seed-production.js",
     "seed:deployment": "node scripts/deployment-restore.js",
@@ -15,6 +16,7 @@
     "setup:admin": "node scripts/setup-admin.js",
     "db:reset": "npx prisma migrate reset --force",
     "db:deploy": "npx prisma migrate deploy",
+    "db:push": "npx prisma db push",
     "generate:secret": "node scripts/generate-secret.js"
   },
   "prisma": {

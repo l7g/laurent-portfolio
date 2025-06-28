@@ -1,7 +1,7 @@
 {
   "buildCommand": "npm run build && npm run seed:backup-restore",
   "env": {
-    "NEXTAUTH_URL": "https://your-domain.vercel.app",
+    "NEXTAUTH_URL": "https://www.laurentgagne.com",
     "NODE_ENV": "production"
   }
 }

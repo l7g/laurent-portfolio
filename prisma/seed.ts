@@ -168,111 +168,208 @@ async function main() {
     skipDuplicates: true,
   });
 
-  // Create sample projects
+  // Create sample projects based on the reference images
   await prisma.project.createMany({
     data: [
       {
-        title: "E-commerce Platform",
-        slug: "ecommerce-platform",
+        title: "E-Commerce Dashboard",
+        slug: "ecommerce-dashboard",
         description:
-          "A full-featured e-commerce platform built with Next.js and Stripe",
-        shortDesc: "Modern e-commerce solution",
+          "Modern e-commerce administration platform with comprehensive inventory management, analytics, and user interface design. Built with scalability and real-world business needs in mind.",
+        shortDesc: "Available for freelancing - Contact for custom development",
+        technologies: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
+        featured: true,
+        status: "READY",
+        image: "placeholder-ecommerce", // This will use the placeholder component
+        liveUrl: "#",
+        githubUrl: "#",
+        highlights: [
+          "Comprehensive inventory management system",
+          "Advanced analytics and reporting dashboard",
+          "Modern, responsive user interface design",
+          "Built for scalability and business growth",
+          "Real-world e-commerce workflow integration",
+        ],
+        sortOrder: 0,
+        isActive: true,
+      },
+      {
+        title: "Tracker - Political Data Platform",
+        slug: "tracker-political-platform",
+        description:
+          "A comprehensive data platform built with Next.js, designed to handle complex political information with enterprise-level architecture. Features advanced user authentication, role-based access control, and scalable database design patterns.",
+        shortDesc:
+          "Personal project currently in development. Code is private. Contact me to discuss my development approach and capabilities.",
         technologies: [
           "Next.js",
           "TypeScript",
           "Prisma",
-          "Stripe",
+          "PostgreSQL",
           "TailwindCSS",
+          "NextAuth.js",
         ],
         featured: true,
-        liveUrl: "https://example.com",
-        githubUrl: "https://github.com/username/ecommerce",
+        status: "WIP",
+        image: "/projects/tracker-preview.png",
+        liveUrl: "#", // Will be updated when ready
+        githubUrl: "#", // Private repo
         highlights: [
-          "Payment processing",
-          "Admin dashboard",
-          "Responsive design",
+          "Enterprise-grade data architecture and modeling",
+          "Advanced authentication & authorization systems",
+          "Responsive, modern UI with optimal user experience",
+          "Complex database relationships and optimization",
+          "Scalable role-based access control implementation",
         ],
-        sortOrder: 0,
+        sortOrder: 1,
+        isActive: true,
       },
       {
         title: "Task Management App",
-        slug: "task-management",
+        slug: "task-management-app",
         description:
-          "A collaborative task management application with real-time updates",
-        shortDesc: "Productivity and collaboration tool",
-        technologies: ["React", "Node.js", "Socket.io", "MongoDB"],
-        featured: true,
-        liveUrl: "https://taskapp.com",
-        githubUrl: "https://github.com/username/taskapp",
+          "Professional task management solution featuring real-time collaboration, advanced project tracking, and intuitive user experience design for team productivity.",
+        shortDesc: "Available for freelancing - Contact for custom development",
+        technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
+        featured: false,
+        status: "WIP",
+        image: "placeholder-tasks", // This will use the placeholder component
+        liveUrl: "#",
+        githubUrl: "#",
         highlights: [
-          "Real-time collaboration",
-          "Drag & drop interface",
-          "Team workspaces",
+          "Real-time collaboration features",
+          "Advanced project tracking capabilities",
+          "Intuitive user experience design",
+          "Team productivity optimization",
+          "Scalable architecture for growing teams",
         ],
-        sortOrder: 1,
+        sortOrder: 2,
+        isActive: true,
       },
     ],
     skipDuplicates: true,
   });
 
-  // Create sample skills
+  // Create sample skills based on the reference image
   await prisma.skill.createMany({
     data: [
+      // Frontend Development (🔧 icon in reference)
       {
-        name: "React",
+        name: "JavaScript",
         category: "FRONTEND" as const,
         level: 90,
-        icon: "⚛️",
+        color: "primary",
         sortOrder: 0,
+      },
+      {
+        name: "React/Next.js",
+        category: "FRONTEND" as const,
+        level: 85,
+        color: "primary",
+        sortOrder: 1,
       },
       {
         name: "TypeScript",
         category: "FRONTEND" as const,
-        level: 85,
-        icon: "📘",
-        sortOrder: 1,
-      },
-      {
-        name: "Next.js",
-        category: "FRONTEND" as const,
-        level: 88,
-        icon: "▲",
+        level: 82,
+        color: "primary",
         sortOrder: 2,
       },
       {
+        name: "TailwindCSS",
+        category: "FRONTEND" as const,
+        level: 80,
+        color: "primary",
+        sortOrder: 3,
+      },
+
+      // Backend Development (🎒 icon in reference)
+      {
         name: "Node.js",
         category: "BACKEND" as const,
+        level: 82,
+        color: "secondary",
+        sortOrder: 4,
+      },
+      {
+        name: "Express.js",
+        category: "BACKEND" as const,
+        level: 80,
+        color: "secondary",
+        sortOrder: 5,
+      },
+      {
+        name: "REST APIs",
+        category: "BACKEND" as const,
         level: 85,
-        icon: "💚",
-        sortOrder: 3,
+        color: "secondary",
+        sortOrder: 6,
+      },
+      {
+        name: "C# / .NET",
+        category: "BACKEND" as const,
+        level: 72,
+        color: "secondary",
+        sortOrder: 7,
+      },
+
+      // Database & ORM (🗃️ icon in reference)
+      {
+        name: "SQL",
+        category: "DATABASE" as const,
+        level: 85,
+        color: "success",
+        sortOrder: 8,
       },
       {
         name: "PostgreSQL",
         category: "DATABASE" as const,
         level: 80,
-        icon: "🐘",
-        sortOrder: 4,
+        color: "success",
+        sortOrder: 9,
       },
       {
         name: "Prisma",
         category: "DATABASE" as const,
-        level: 85,
-        icon: "🔺",
-        sortOrder: 5,
+        level: 82,
+        color: "success",
+        sortOrder: 10,
       },
       {
-        name: "TailwindCSS",
-        category: "FRONTEND" as const,
-        level: 90,
-        icon: "🎨",
-        sortOrder: 6,
+        name: "MS SQL",
+        category: "DATABASE" as const,
+        level: 75,
+        color: "success",
+        sortOrder: 11,
       },
+
+      // Tools & Version Control (☁️ icon in reference)
       {
-        name: "Git",
+        name: "Git/GitHub",
         category: "TOOLS" as const,
-        level: 88,
-        icon: "📦",
-        sortOrder: 7,
+        level: 90,
+        color: "warning",
+        sortOrder: 12,
+      },
+      {
+        name: "Vercel",
+        category: "TOOLS" as const,
+        level: 85,
+        color: "warning",
+        sortOrder: 13,
+      },
+      {
+        name: "MongoDB",
+        category: "TOOLS" as const,
+        level: 55,
+        color: "warning",
+        sortOrder: 14,
+      },
+      {
+        name: "GraphQL",
+        category: "TOOLS" as const,
+        level: 45,
+        color: "warning",
+        sortOrder: 15,
       },
     ],
     skipDuplicates: true,

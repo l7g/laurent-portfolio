@@ -2,10 +2,10 @@
 
 import { useState, useRef } from "react";
 import { Button } from "@heroui/button";
-import { Image } from "@heroui/image";
 import { Card, CardBody } from "@heroui/card";
-import { PhotoIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PhotoIcon, TrashIcon, FolderIcon } from "@heroicons/react/24/outline";
 import { getProjectImageUrl, validateImageFile } from "@/lib/blob-storage";
+import BlobStorageManager from "./blob-storage-manager";
 
 interface ImageUploadProps {
   currentImageUrl?: string | null;
@@ -26,6 +26,7 @@ export default function ImageUpload({
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [showBlobManager, setShowBlobManager] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (file: File) => {
@@ -119,22 +120,38 @@ export default function ImageUpload({
 
   const imageUrl = getProjectImageUrl(currentImageUrl, placeholder);
 
+  const placeholderOptions = [
+    { key: "default", label: "Default Placeholder" },
+    { key: "placeholder-ecommerce", label: "E-Commerce Placeholder" },
+    { key: "placeholder-tasks", label: "Task Management Placeholder" },
+    { key: "placeholder-web", label: "Web App Placeholder" },
+    { key: "placeholder-mobile", label: "Mobile App Placeholder" },
+    { key: "placeholder-api", label: "API/Backend Placeholder" },
+    { key: "placeholder-database", label: "Database Placeholder" },
+  ];
+
+  const handlePlaceholderSelect = (placeholderKey: string) => {
+    onImageChange(placeholderKey);
+  };
+
   return (
     <div className={`space-y-4 ${className}`}>
       <Card className="overflow-hidden">
         <CardBody className="p-0">
           {/* Image Preview */}
-          <div className="relative aspect-video bg-gray-100">
-            <Image
+          <div className="relative aspect-video bg-gray-100 overflow-hidden">
+            <img
               src={imageUrl}
               alt="Project image"
-              className="object-cover w-full h-full"
-              fallbackSrc={getProjectImageUrl(null, placeholder)}
+              className="w-full h-full object-cover object-center"
+              onError={(e) => {
+                e.currentTarget.src = getProjectImageUrl(null, placeholder);
+              }}
             />
 
             {/* Image Overlay Actions */}
             {!disabled && (
-              <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center opacity-0 hover:opacity-100">
+              <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center opacity-70 hover:opacity-100">
                 <div className="flex gap-2">
                   <Button
                     size="sm"
@@ -143,26 +160,50 @@ export default function ImageUpload({
                     onPress={() => fileInputRef.current?.click()}
                     isLoading={isUploading}
                   >
-                    {currentImageUrl ? "Change" : "Upload"}
+                    {currentImageUrl ? "Upload New" : "Upload"}
                   </Button>
 
-                  {currentImageUrl && !currentImageUrl.includes("/images/") && (
-                    <Button
-                      size="sm"
-                      color="danger"
-                      variant="flat"
-                      startContent={<TrashIcon className="w-4 h-4" />}
-                      onPress={handleRemoveImage}
-                    >
-                      Remove
-                    </Button>
-                  )}
+                  <Button
+                    size="sm"
+                    color="secondary"
+                    variant="flat"
+                    startContent={<FolderIcon className="w-4 h-4" />}
+                    onPress={() => setShowBlobManager(true)}
+                  >
+                    Browse
+                  </Button>
                 </div>
               </div>
             )}
           </div>
         </CardBody>
       </Card>
+
+      {/* Action Buttons - Always Visible */}
+      {!disabled && (
+        <div className="flex gap-2 mb-4">
+          {currentImageUrl && (
+            <Button
+              size="sm"
+              color="danger"
+              variant="flat"
+              startContent={<TrashIcon className="w-4 h-4" />}
+              onPress={handleRemoveImage}
+            >
+              Clear Current Image
+            </Button>
+          )}
+          <Button
+            size="sm"
+            color="secondary"
+            variant="flat"
+            startContent={<FolderIcon className="w-4 h-4" />}
+            onPress={() => setShowBlobManager(true)}
+          >
+            Browse Images
+          </Button>
+        </div>
+      )}
 
       {/* Drag & Drop Upload Area */}
       {!disabled && (
@@ -183,13 +224,68 @@ export default function ImageUpload({
             <p className="text-sm text-gray-600 mb-2">
               {isUploading
                 ? "Uploading..."
-                : "Drop image here or click to browse"}
+                : currentImageUrl
+                  ? "Drop new image here or click to browse"
+                  : "Drop image here or click to browse"}
             </p>
             <p className="text-xs text-gray-500">
               Supports JPEG, PNG, WebP, GIF (max 5MB)
+              {currentImageUrl && (
+                <>
+                  <br />
+                  Use "Clear" button above to remove current image
+                </>
+              )}
             </p>
           </CardBody>
         </Card>
+      )}
+
+      {/* Placeholder Selection */}
+      {!disabled && (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium">
+            Or select a placeholder:
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant={
+                currentImageUrl === "placeholder-ecommerce"
+                  ? "solid"
+                  : "bordered"
+              }
+              color="primary"
+              onPress={() => handlePlaceholderSelect("placeholder-ecommerce")}
+            >
+              E-Commerce
+            </Button>
+            <Button
+              size="sm"
+              variant={
+                currentImageUrl === "placeholder-tasks" ? "solid" : "bordered"
+              }
+              color="primary"
+              onPress={() => handlePlaceholderSelect("placeholder-tasks")}
+            >
+              Task Management
+            </Button>
+            <Button
+              size="sm"
+              variant={
+                currentImageUrl === "/projects/placeholder.png"
+                  ? "solid"
+                  : "bordered"
+              }
+              color="primary"
+              onPress={() =>
+                handlePlaceholderSelect("/projects/placeholder.png")
+              }
+            >
+              Default
+            </Button>
+          </div>
+        </div>
       )}
 
       {/* Hidden File Input */}
@@ -200,6 +296,17 @@ export default function ImageUpload({
         onChange={handleFileInputChange}
         className="hidden"
         disabled={disabled || isUploading}
+      />
+
+      {/* Blob Storage Manager Modal */}
+      <BlobStorageManager
+        isOpen={showBlobManager}
+        onClose={() => setShowBlobManager(false)}
+        onSelectImage={(imageUrl) => {
+          onImageChange(imageUrl);
+          setShowBlobManager(false);
+        }}
+        currentImageUrl={currentImageUrl || undefined}
       />
     </div>
   );

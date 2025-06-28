@@ -1,8 +1,8 @@
 ﻿"use client";
 
+import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
-import { Image } from "@heroui/image";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
 import {
@@ -13,7 +13,76 @@ import {
 import { GithubIcon } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 
+interface Project {
+  title: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  featured: boolean;
+  isWip: boolean;
+  links: {
+    live: string;
+    github: string;
+  };
+  highlights?: string[];
+  shortDesc?: string;
+  slug?: string;
+}
+
 const ProjectsSection = () => {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const response = await fetch("/api/projects");
+        if (response.ok) {
+          const dbProjects = await response.json();
+
+          // Transform database projects to match your existing format
+          const transformedProjects = dbProjects
+            .filter((p: any) => p.isActive)
+            .map((project: any) => ({
+              title: project.title,
+              description: project.description,
+              image: project.image || "/projects/placeholder.png",
+              technologies: project.technologies || [],
+              featured: project.featured,
+              isWip: project.status === "WIP",
+              links: {
+                live: project.liveUrl || "#",
+                github: project.githubUrl || "#",
+              },
+              highlights: project.highlights || [],
+              // Add any other fields your component expects
+              shortDesc: project.shortDesc,
+              slug: project.slug,
+            }));
+
+          setProjects(transformedProjects);
+        }
+      } catch (error) {
+        console.error("Failed to fetch projects:", error);
+        // Fallback to empty array
+        setProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProjects();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 px-4 sm:px-6 lg:px-8" id="projects">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="animate-pulse">Loading projects...</div>
+        </div>
+      </section>
+    );
+  }
   // Custom placeholder component for WIP projects
   const PlaceholderImage = ({
     type,
@@ -24,7 +93,7 @@ const ProjectsSection = () => {
   }) => {
     if (type === "placeholder-ecommerce") {
       return (
-        <div className="w-full h-48 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center relative overflow-hidden">
+        <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-white/80 dark:bg-gray-800/80" />
           <div className="relative z-10 text-center">
             <div className="w-16 h-16 mx-auto mb-3 bg-blue-500/20 rounded-xl flex items-center justify-center">
@@ -60,7 +129,7 @@ const ProjectsSection = () => {
 
     if (type === "placeholder-tasks") {
       return (
-        <div className="w-full h-48 bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center relative overflow-hidden">
+        <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 flex items-center justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-white/80 dark:bg-gray-800/80" />
           <div className="relative z-10 text-center">
             <div className="w-16 h-16 mx-auto mb-3 bg-purple-500/20 rounded-xl flex items-center justify-center">
@@ -97,61 +166,7 @@ const ProjectsSection = () => {
     return null;
   };
 
-  const projects = [
-    {
-      title: "Tracker - Political Data Platform",
-      description:
-        "A comprehensive data platform built with Next.js, designed to handle complex political information with enterprise-level architecture. Features advanced user authentication, role-based access control, and scalable database design patterns.",
-      image: "/projects/tracker-preview.png", // You'll need to add this image
-      technologies: [
-        "Next.js",
-        "TypeScript",
-        "Prisma",
-        "PostgreSQL",
-        "TailwindCSS",
-        "NextAuth.js",
-      ],
-      featured: true,
-      isWip: true, // Set to false when project is complete
-      links: {
-        live: siteConfig.links.tracker,
-        github: "#", // Add your tracker GitHub link
-      },
-      highlights: [
-        "Enterprise-grade data architecture and modeling",
-        "Advanced authentication & authorization systems",
-        "Responsive, modern UI with optimal user experience",
-        "Complex database relationships and optimization",
-        "Scalable role-based access control implementation",
-      ],
-    },
-    {
-      title: "E-Commerce Dashboard",
-      description:
-        "Modern e-commerce administration platform with comprehensive inventory management, analytics, and user interface design. Built with scalability and real-world business needs in mind.",
-      image: "placeholder-ecommerce",
-      technologies: ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
-      featured: false,
-      isWip: true,
-      links: {
-        live: "#",
-        github: "#",
-      },
-    },
-    {
-      title: "Task Management App",
-      description:
-        "Professional task management solution featuring real-time collaboration, advanced project tracking, and intuitive user experience design for team productivity.",
-      image: "placeholder-tasks",
-      technologies: ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
-      featured: false,
-      isWip: true,
-      links: {
-        live: "#",
-        github: "#",
-      },
-    },
-  ];
+  // Projects are now loaded from database via useEffect
 
   return (
     <section className="py-20" id="projects">
@@ -185,12 +200,16 @@ const ProjectsSection = () => {
         >
           <Card className="overflow-hidden shadow-xl">
             <div className="grid lg:grid-cols-2 gap-0">
-              <div className="relative h-48 sm:h-56 md:h-64 lg:h-auto overflow-hidden">
-                <Image
+              <div className="relative h-64 sm:h-72 md:h-80 lg:h-auto lg:min-h-[400px] overflow-hidden bg-gray-100">
+                <img
                   alt={projects[0].title}
                   className="w-full h-full object-cover object-center"
                   src={projects[0].image}
-                />{" "}
+                  style={{
+                    minHeight: "100%",
+                    minWidth: "100%",
+                  }}
+                />
                 <div className="absolute top-4 left-4 z-10">
                   <Chip color="primary" size="sm" variant="solid">
                     Flagship Project
@@ -326,7 +345,7 @@ const ProjectsSection = () => {
         </motion.div>
 
         {/* Other Projects Grid */}
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {projects.slice(1).map((project, index) => (
             <motion.div
               key={project.title}
@@ -335,21 +354,26 @@ const ProjectsSection = () => {
               viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              {" "}
-              <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden">
+              <Card className="h-full hover:shadow-lg transition-shadow duration-300 overflow-hidden">
                 <CardHeader className="p-0 overflow-hidden">
-                  {project.image.startsWith("placeholder-") ? (
-                    <PlaceholderImage
-                      title={project.title}
-                      type={project.image}
-                    />
-                  ) : (
-                    <Image
-                      alt={project.title}
-                      className="w-full h-40 sm:h-48 object-cover object-center"
-                      src={project.image}
-                    />
-                  )}
+                  <div className="w-full h-48 sm:h-56 md:h-64 overflow-hidden bg-gray-100">
+                    {project.image.startsWith("placeholder-") ? (
+                      <PlaceholderImage
+                        title={project.title}
+                        type={project.image}
+                      />
+                    ) : (
+                      <img
+                        alt={project.title}
+                        className="w-full h-full object-cover object-center"
+                        src={project.image}
+                        style={{
+                          minHeight: "100%",
+                          minWidth: "100%",
+                        }}
+                      />
+                    )}
+                  </div>
                 </CardHeader>{" "}
                 <CardBody className="p-6">
                   {" "}

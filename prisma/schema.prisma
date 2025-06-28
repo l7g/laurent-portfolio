@@ -108,6 +108,7 @@ model Project {
   featured     Boolean   @default(false)
   flagship     Boolean   @default(false)  // Flagship projects - premium showcase
   isActive     Boolean   @default(true)
+  status       ProjectStatus @default(READY) // WIP or Ready status
   sortOrder    Int       @default(0)
   liveUrl      String?
   githubUrl    String?
@@ -129,6 +130,11 @@ model Project {
   updatedAt    DateTime  @updatedAt
 
   @@map("projects")
+}
+
+enum ProjectStatus {
+  WIP
+  READY
 }
 
 // Skills Management
@@ -159,23 +165,13 @@ enum SkillCategory {
 // Site Settings
 model SiteSetting {
   id          String   @id @default(cuid())
-  key         String   @unique  // e.g., "site_title", "hero_image", etc.
-  value       String
-  type        SettingType @default(TEXT)
-  description String?
-  category    String   @default("general")
-  isPublic    Boolean  @default(true)
+  key         String   @unique  // e.g., "site_title", "hero_image", "contact_email"
+  value       String   // The setting value
+  type        String   @default("text") // "text", "number", "boolean", "json"
+  description String?  // Human-readable description
+  isPublic    Boolean  @default(false) // Whether this setting can be accessed publicly
+  createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("site_settings")
-}
-
-enum SettingType {
-  TEXT
-  URL
-  IMAGE
-  COLOR
-  JSON
-  BOOLEAN
-  NUMBER
 }

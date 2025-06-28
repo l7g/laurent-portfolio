@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Chip } from "@heroui/chip";
@@ -25,6 +25,7 @@ interface Project {
   featured: boolean;
   flagship: boolean;
   isActive: boolean;
+  status: "WIP" | "READY";
   liveUrl?: string;
   githubUrl?: string;
   highlights: string[];
@@ -51,14 +52,24 @@ export default function ProjectEditModal({
   onClose,
   onSave,
 }: ProjectEditModalProps) {
-  const [formData, setFormData] = useState<Partial<Project>>(project || {});
+  const [formData, setFormData] = useState<Partial<Project>>({});
   const [isSaving, setIsSaving] = useState(false);
-  const [technologiesInput, setTechnologiesInput] = useState(
-    project?.technologies?.join(", ") || "",
-  );
-  const [highlightsInput, setHighlightsInput] = useState(
-    project?.highlights?.join("\n") || "",
-  );
+  const [technologiesInput, setTechnologiesInput] = useState("");
+  const [highlightsInput, setHighlightsInput] = useState("");
+
+  // Update form data when project changes
+  useEffect(() => {
+    if (project) {
+      setFormData(project);
+      setTechnologiesInput(project.technologies?.join(", ") || "");
+      setHighlightsInput(project.highlights?.join("\n") || "");
+    } else {
+      // Reset form for new project
+      setFormData({});
+      setTechnologiesInput("");
+      setHighlightsInput("");
+    }
+  }, [project]);
 
   const handleSave = async () => {
     if (!formData.title) return;
@@ -244,6 +255,18 @@ export default function ProjectEditModal({
               }
             >
               Flagship Project
+            </Switch>
+
+            <Switch
+              isSelected={formData.status === "READY"}
+              onValueChange={(isSelected) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  status: isSelected ? "READY" : "WIP",
+                }))
+              }
+            >
+              Production Ready
             </Switch>
           </div>
 

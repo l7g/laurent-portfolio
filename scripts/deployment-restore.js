@@ -89,9 +89,9 @@ async function restoreFromBackup(backupData) {
     for (const user of data.users) {
       let hashedPassword;
 
-      if (user.hashedPassword) {
+      if (user.password) {
         // Use the existing hashed password from backup
-        hashedPassword = user.hashedPassword;
+        hashedPassword = user.password;
       } else {
         // Use ADMIN_PASSWORD from environment variables as fallback
         const adminPassword = process.env.ADMIN_PASSWORD;

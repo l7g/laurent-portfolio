@@ -84,29 +84,34 @@ async function ensureAdminUser() {
 async function restoreFromBackup(backupData) {
   const { data } = backupData;
 
-  // Restore users with hashed passwords
-  if (data.users && data.users.length > 0) {
-    // Get admin password from environment variables
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminPassword) {
-      console.log("⚠️  ADMIN_PASSWORD not set, skipping user restoration");
-      return;
-    }
+  // Restore admin user with secure environment password
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const adminName = process.env.ADMIN_NAME || "Admin";
 
-    const hashedPassword = await bcrypt.hash(adminPassword, 12);
+  if (adminEmail && adminPassword) {
+    // Check if admin user already exists
+    const existingAdmin = await prisma.user.findUnique({
+      where: { email: adminEmail },
+    });
 
-    for (const user of data.users) {
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 12);
       await prisma.user.create({
         data: {
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          email: adminEmail,
+          name: adminName,
+          role: "ADMIN",
           password: hashedPassword,
         },
       });
+      console.log("✅ Created admin user with secure environment password");
+    } else {
+      console.log("✅ Admin user already exists");
     }
+  } else {
     console.log(
-      `✅ Restored ${data.users.length} users with environment password`,
+      "⚠️  ADMIN_EMAIL and ADMIN_PASSWORD not set, skipping admin user creation",
     );
   }
 

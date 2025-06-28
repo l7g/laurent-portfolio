@@ -47,3 +47,135 @@ enum RequestStatus {
   COMPLETED
   DECLINED
 }
+
+// Admin User for Portfolio Management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   // Hashed password
+  role      UserRole @default(ADMIN)
+  isActive  Boolean  @default(true)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  VIEWER
+}
+
+// Portfolio Content Management
+model PortfolioSection {
+  id            String       @id @default(cuid())
+  name          String       // Internal identifier (hero, about, projects, etc.)
+  displayName   String       // User-friendly name
+  sectionType   SectionType
+  title         String?
+  subtitle      String?
+  description   String?
+  content       Json?        // Flexible content storage
+  settings      Json?        // Section-specific settings
+  isActive      Boolean      @default(true)
+  sortOrder     Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@map("portfolio_sections")
+}
+
+enum SectionType {
+  HERO
+  ABOUT
+  PROJECTS
+  SKILLS
+  CONTACT
+  CUSTOM
+}
+
+// Project Management
+model Project {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  description  String
+  shortDesc    String?
+  image        String?
+  technologies String[]  // Array of tech stack
+  featured     Boolean   @default(false)
+  flagship     Boolean   @default(false)  // Flagship projects - premium showcase
+  isActive     Boolean   @default(true)
+  sortOrder    Int       @default(0)
+  liveUrl      String?
+  githubUrl    String?
+  highlights   String[]  // Key features/achievements
+  
+  // Flagship-specific fields (mandatory when flagship = true)
+  detailedDescription String?  // Extended description for flagship projects
+  challenges          String?  // Technical challenges overcome
+  solutions           String?  // Solutions implemented
+  results             String?  // Project outcomes/results
+  clientName          String?  // Client or company name
+  projectDuration     String?  // e.g., "3 months", "6 weeks"
+  teamSize            String?  // e.g., "Solo project", "Team of 4"
+  myRole              String?  // Your specific role in the project
+  
+  startDate    DateTime?
+  endDate      DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("projects")
+}
+
+// Skills Management
+model Skill {
+  id         String      @id @default(cuid())
+  name       String
+  category   SkillCategory
+  level      Int         // 1-100 proficiency level
+  icon       String?     // Icon name or emoji
+  color      String?     // Custom color
+  isActive   Boolean     @default(true)
+  sortOrder  Int         @default(0)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@map("skills")
+}
+
+enum SkillCategory {
+  FRONTEND
+  BACKEND
+  DATABASE
+  TOOLS
+  DESIGN
+  OTHER
+}
+
+// Site Settings
+model SiteSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique  // e.g., "site_title", "hero_image", etc.
+  value       String
+  type        SettingType @default(TEXT)
+  description String?
+  category    String   @default("general")
+  isPublic    Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+enum SettingType {
+  TEXT
+  URL
+  IMAGE
+  COLOR
+  JSON
+  BOOLEAN
+  NUMBER
+}

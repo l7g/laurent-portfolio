@@ -1,0 +1,14 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#F0F9FF"/>
+  <rect x="250" y="150" width="300" height="300" rx="16" fill="#E0F2FE"/>
+  <rect x="280" y="180" width="240" height="160" rx="8" fill="#0EA5E9"/>
+  <rect x="300" y="200" width="200" height="20" rx="4" fill="#FFFFFF" opacity="0.9"/>
+  <rect x="300" y="230" width="160" height="16" rx="4" fill="#FFFFFF" opacity="0.7"/>
+  <rect x="300" y="255" width="180" height="16" rx="4" fill="#FFFFFF" opacity="0.7"/>
+  <rect x="300" y="280" width="140" height="16" rx="4" fill="#FFFFFF" opacity="0.7"/>
+  <rect x="300" y="310" width="80" height="20" rx="10" fill="#FFFFFF"/>
+  <circle cx="450" cy="320" r="30" fill="#FFFFFF" opacity="0.2"/>
+  <circle cx="480" cy="290" r="20" fill="#FFFFFF" opacity="0.3"/>
+  <text x="400" y="480" text-anchor="middle" fill="#0369A1" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">Web Application</text>
+  <text x="400" y="500" text-anchor="middle" fill="#0EA5E9" font-family="system-ui, -apple-system, sans-serif" font-size="14">Frontend • Backend • Full-Stack</text>
+</svg>

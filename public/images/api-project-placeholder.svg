@@ -1,0 +1,18 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#F0FDF4"/>
+  <rect x="200" y="200" width="400" height="200" rx="12" fill="#DCFCE7"/>
+  <rect x="220" y="220" width="80" height="40" rx="8" fill="#22C55E"/>
+  <text x="260" y="245" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">GET</text>
+  <rect x="320" y="220" width="260" height="40" rx="8" fill="#FFFFFF"/>
+  <text x="330" y="245" fill="#16A34B" font-family="Monaco, Consolas, monospace" font-size="14">/api/projects</text>
+  <rect x="220" y="280" width="80" height="40" rx="8" fill="#EF4444"/>
+  <text x="260" y="305" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">POST</text>
+  <rect x="320" y="280" width="260" height="40" rx="8" fill="#FFFFFF"/>
+  <text x="330" y="305" fill="#16A34B" font-family="Monaco, Consolas, monospace" font-size="14">/api/projects/create</text>
+  <rect x="220" y="340" width="80" height="40" rx="8" fill="#F59E0B"/>
+  <text x="260" y="365" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600">PUT</text>
+  <rect x="320" y="340" width="260" height="40" rx="8" fill="#FFFFFF"/>
+  <text x="330" y="365" fill="#16A34B" font-family="Monaco, Consolas, monospace" font-size="14">/api/projects/:id</text>
+  <text x="400" y="480" text-anchor="middle" fill="#15803D" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">API / Backend</text>
+  <text x="400" y="500" text-anchor="middle" fill="#22C55E" font-family="system-ui, -apple-system, sans-serif" font-size="14">REST API • GraphQL • Microservices</text>
+</svg>

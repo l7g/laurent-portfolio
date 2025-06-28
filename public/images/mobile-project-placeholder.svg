@@ -1,0 +1,16 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#FDF4FF"/>
+  <rect x="320" y="120" width="160" height="280" rx="24" fill="#F3E8FF"/>
+  <rect x="340" y="140" width="120" height="20" rx="10" fill="#A855F7"/>
+  <rect x="340" y="180" width="120" height="160" rx="8" fill="#FFFFFF"/>
+  <rect x="355" y="195" width="90" height="12" rx="6" fill="#E5E7EB"/>
+  <rect x="355" y="215" width="70" height="10" rx="5" fill="#E5E7EB"/>
+  <rect x="355" y="230" width="80" height="10" rx="5" fill="#E5E7EB"/>
+  <rect x="355" y="255" width="90" height="60" rx="8" fill="#F3E8FF"/>
+  <rect x="355" y="325" width="60" height="10" rx="5" fill="#A855F7"/>
+  <circle cx="390" cy="365" r="20" fill="#A855F7"/>
+  <circle cx="370" cy="385" r="15" fill="#C084FC"/>
+  <circle cx="410" cy="385" r="15" fill="#C084FC"/>
+  <text x="400" y="480" text-anchor="middle" fill="#7C3AED" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600">Mobile App</text>
+  <text x="400" y="500" text-anchor="middle" fill="#A855F7" font-family="system-ui, -apple-system, sans-serif" font-size="14">React Native • Flutter • iOS • Android</text>
+</svg>

@@ -5,7 +5,7 @@ import { IconSvgProps } from "@/types";
 export const Logo: React.FC<IconSvgProps> = (props) => (
   <svg height={32} viewBox="0 0 32 32" width={32} {...props}>
     <defs>
-      <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <linearGradient id="logoGradient" x1="0%" x2="100%" y1="0%" y2="100%">
         <stop offset="0%" stopColor="#f59e0b" />
         <stop offset="100%" stopColor="#d97706" />
       </linearGradient>
@@ -13,24 +13,24 @@ export const Logo: React.FC<IconSvgProps> = (props) => (
 
     {/* Clean rounded square */}
     <rect
-      x="2"
-      y="2"
-      width="28"
+      fill="url(#logoGradient)"
       height="28"
       rx="6"
       ry="6"
-      fill="url(#logoGradient)"
+      width="28"
+      x="2"
+      y="2"
     />
 
     {/* Simple, clean "LG" monogram */}
     <text
-      x="16"
-      y="20"
-      textAnchor="middle"
       fill="white"
+      fontFamily="system-ui, -apple-system, sans-serif"
       fontSize="12"
       fontWeight="600"
-      fontFamily="system-ui, -apple-system, sans-serif"
+      textAnchor="middle"
+      x="16"
+      y="20"
     >
       LG
     </text>

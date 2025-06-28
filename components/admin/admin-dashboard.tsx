@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { useDisclosure } from "@heroui/modal";
 import {
   PencilIcon,
   EyeIcon,
@@ -11,8 +12,12 @@ import {
   DocumentTextIcon,
   ChartBarIcon,
   CogIcon,
+  TrashIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import { getProjectImageUrl } from "@/lib/blob-storage";
+import { useApi } from "@/lib/use-api";
+import ProjectEditModal from "./project-edit-modal";
 
 interface AdminDashboardProps {
   contacts: any[];
@@ -25,11 +30,89 @@ interface AdminDashboardProps {
 export default function AdminDashboard({
   contacts,
   demoRequests,
-  projects,
-  skills,
-  sections,
+  projects: initialProjects,
+  skills: initialSkills,
+  sections: initialSections,
 }: AdminDashboardProps) {
   const [selectedTab, setSelectedTab] = useState("overview");
+  const [projects, setProjects] = useState(initialProjects);
+  const [skills, setSkills] = useState(initialSkills);
+  const [sections, setSections] = useState(initialSections);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
+
+  const {
+    isOpen: isProjectModalOpen,
+    onOpen: onProjectModalOpen,
+    onClose: onProjectModalClose,
+  } = useDisclosure();
+  const api = useApi();
+
+  // Refresh data functions
+  const refreshProjects = async () => {
+    const response = await api.projects.getAll();
+    if (response.data) {
+      setProjects(response.data);
+    }
+  };
+
+  const refreshSkills = async () => {
+    const response = await api.skills.getAll();
+    if (response.data) {
+      setSkills(response.data);
+    }
+  };
+
+  const refreshSections = async () => {
+    const response = await api.sections.getAll();
+    if (response.data) {
+      setSections(response.data);
+    }
+  };
+
+  // Project operations
+  const handleEditProject = (project: any) => {
+    setSelectedProject(project);
+    onProjectModalOpen();
+  };
+
+  const handleAddProject = () => {
+    setSelectedProject(null);
+    onProjectModalOpen();
+  };
+
+  const handleSaveProject = async (projectData: any) => {
+    if (selectedProject) {
+      // Update existing project
+      await api.projects.update(selectedProject.id, projectData, {
+        onSuccess: () => {
+          refreshProjects();
+          alert("Project updated successfully!");
+        },
+        onError: (error) => alert(`Failed to update project: ${error}`),
+      });
+    } else {
+      // Create new project
+      await api.projects.create(projectData, {
+        onSuccess: () => {
+          refreshProjects();
+          alert("Project created successfully!");
+        },
+        onError: (error) => alert(`Failed to create project: ${error}`),
+      });
+    }
+  };
+
+  const handleDeleteProject = async (projectId: string) => {
+    if (!confirm("Are you sure you want to delete this project?")) return;
+
+    await api.projects.delete(projectId, {
+      onSuccess: () => {
+        refreshProjects();
+        alert("Project deleted successfully!");
+      },
+      onError: (error) => alert(`Failed to delete project: ${error}`),
+    });
+  };
 
   const stats = [
     {
@@ -264,7 +347,13 @@ export default function AdminDashboard({
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">Manage Projects</h2>
-              <Button color="primary">Add Project</Button>
+              <Button
+                color="primary"
+                startContent={<PlusIcon className="w-4 h-4" />}
+                onPress={handleAddProject}
+              >
+                Add Project
+              </Button>
             </div>
             <Card>
               <CardBody>
@@ -275,11 +364,28 @@ export default function AdminDashboard({
                       className="flex items-center justify-between p-4 border rounded-lg"
                     >
                       <div className="flex-1">
-                        <h4 className="font-medium">{project.title}</h4>
-                        <p className="text-sm text-gray-600">
-                          {project.shortDesc}
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-medium">{project.title}</h4>
+                          {project.flagship && (
+                            <Chip size="sm" color="warning" variant="flat">
+                              Flagship
+                            </Chip>
+                          )}
+                          {project.featured && (
+                            <Chip size="sm" color="primary" variant="flat">
+                              Featured
+                            </Chip>
+                          )}
+                          {!project.isActive && (
+                            <Chip size="sm" color="danger" variant="flat">
+                              Inactive
+                            </Chip>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {project.shortDesc || project.description}
                         </p>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex gap-2">
                           {project.technologies
                             .slice(0, 3)
                             .map((tech: string) => (
@@ -287,19 +393,50 @@ export default function AdminDashboard({
                                 {tech}
                               </Chip>
                             ))}
+                          {project.technologies.length > 3 && (
+                            <Chip size="sm" variant="flat">
+                              +{project.technologies.length - 3} more
+                            </Chip>
+                          )}
                         </div>
                       </div>
 
                       {/* Project Image Preview */}
-                      <div className="w-24 h-18 flex-shrink-0">
+                      <div className="w-24 h-18 flex-shrink-0 mx-4">
                         <img
                           src={getProjectImageUrl(project.image, "default")}
                           alt={project.title}
                           className="w-full h-full object-cover rounded-lg border"
                         />
                       </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="flat"
+                          onPress={() => handleEditProject(project)}
+                        >
+                          <PencilIcon className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          color="danger"
+                          variant="flat"
+                          onPress={() => handleDeleteProject(project.id)}
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
+                  {projects.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No projects found. Add your first project to get started!
+                    </div>
+                  )}
                 </div>
               </CardBody>
             </Card>
@@ -355,6 +492,14 @@ export default function AdminDashboard({
           </div>
         )}
       </div>
+
+      {/* Project Edit Modal */}
+      <ProjectEditModal
+        project={selectedProject}
+        isOpen={isProjectModalOpen}
+        onClose={onProjectModalClose}
+        onSave={handleSaveProject}
+      />
     </div>
   );
 }

@@ -37,7 +37,7 @@ async function deploymentSeed() {
         email: adminEmail,
         name: adminName,
         role: "ADMIN",
-        hashedPassword,
+        password: hashedPassword,
       },
     });
 

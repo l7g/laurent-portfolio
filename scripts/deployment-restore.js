@@ -74,7 +74,7 @@ async function ensureAdminUser() {
       email: adminEmail,
       name: adminName,
       role: "ADMIN",
-      hashedPassword,
+      password: hashedPassword,
     },
   });
 
@@ -94,7 +94,7 @@ async function restoreFromBackup(backupData) {
           email: user.email,
           name: user.name,
           role: user.role,
-          hashedPassword,
+          password: hashedPassword,
         },
       });
     }

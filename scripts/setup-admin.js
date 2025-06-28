@@ -88,7 +88,7 @@ async function interactiveAdminSetup() {
         email,
         name: name || "Admin",
         role: "ADMIN",
-        hashedPassword,
+        password: hashedPassword,
       },
     });
 

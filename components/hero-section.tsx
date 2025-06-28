@@ -13,8 +13,8 @@ import { siteConfig } from "@/config/site";
 const HeroSection = () => {
   return (
     <section
-      id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      id="hero"
     >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-saffron-50 via-background to-saffron-100 dark:from-background dark:via-saffron-950/20 dark:to-background" />
@@ -65,7 +65,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Aspiring Full-Stack Developer building modern web applications
+            Aspiring Full-Stack Developer building modern software solutions
             through 3 years of self-study and hands-on learning
           </motion.p>
           <motion.div

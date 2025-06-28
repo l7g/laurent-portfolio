@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Progress } from "@heroui/progress";
 import { motion } from "framer-motion";
@@ -27,102 +28,197 @@ import {
   SiMysql,
 } from "react-icons/si";
 
+interface SkillItem {
+  name: string;
+  level: number;
+}
+
+interface SkillCategory {
+  title: string;
+  icon: any;
+  color: string;
+  skills: SkillItem[];
+}
+
+interface Technology {
+  name: string;
+  icon: any;
+  color?: string;
+}
+
 const SkillsSection = () => {
-  const skillCategories = [
-    {
-      title: "Frontend Development",
-      icon: <CodeBracketIcon className="w-6 h-6" />,
-      color: "primary",
-      skills: [
-        { name: "JavaScript", level: 90 },
-        { name: "React/Next.js", level: 85 },
-        { name: "TypeScript", level: 82 },
-        { name: "TailwindCSS", level: 80 },
-      ],
-    },
-    {
-      title: "Backend Development",
-      icon: <ServerIcon className="w-6 h-6" />,
-      color: "secondary",
-      skills: [
-        { name: "Node.js", level: 82 },
-        { name: "Express.js", level: 80 },
-        { name: "REST APIs", level: 85 },
-        { name: "C# / .NET", level: 72 },
-      ],
-    },
-    {
-      title: "Database & ORM",
-      icon: <CircleStackIcon className="w-6 h-6" />,
-      color: "success",
-      skills: [
-        { name: "SQL", level: 85 },
-        { name: "PostgreSQL", level: 80 },
-        { name: "Prisma", level: 82 },
-        { name: "MS SQL", level: 75 },
-      ],
-    },
-    {
-      title: "Tools & Version Control",
-      icon: <CloudIcon className="w-6 h-6" />,
-      color: "warning",
-      skills: [
-        { name: "Git/GitHub", level: 90 },
-        { name: "Vercel", level: 85 },
-        { name: "MongoDB", level: 55 },
-        { name: "GraphQL", level: 45 },
-      ],
-    },
-  ];
-  const technologies = [
-    {
-      name: "JavaScript",
-      icon: <SiJavascript className="w-8 h-8" />,
-      color: "#F7DF1E",
-    },
-    { name: "React", icon: <SiReact className="w-8 h-8" />, color: "#61DAFB" },
-    {
-      name: "Next.js",
-      icon: <SiNextdotjs className="w-8 h-8 dark:text-white" />,
-    },
-    {
-      name: "TypeScript",
-      icon: <SiTypescript className="w-8 h-8" />,
-      color: "#3178C6",
-    },
-    {
-      name: "Node.js",
-      icon: <SiNodedotjs className="w-8 h-8" />,
-      color: "#339933",
-    },
-    {
-      name: "Express",
-      icon: <SiExpress className="w-8 h-8 dark:text-white" />,
-      color: "#000000",
-    },
-    {
-      name: "C# / .NET",
-      icon: <SiSharp className="w-8 h-8" />,
-      color: "#512BD4",
-    },
-    { name: "SQL", icon: <SiMysql className="w-8 h-8" />, color: "#4479A1" },
-    {
-      name: "PostgreSQL",
-      icon: <SiPostgresql className="w-8 h-8" />,
-      color: "#336791",
-    },
-    {
-      name: "Prisma",
-      icon: <SiPrisma className="w-8 h-8" />,
-      color: "#2D3748",
-    },
-    { name: "Git", icon: <SiGit className="w-8 h-8" />, color: "#F05032" },
-    {
-      name: "TailwindCSS",
-      icon: <SiTailwindcss className="w-8 h-8" />,
-      color: "#06B6D4",
-    },
-  ];
+  const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
+  const [technologies, setTechnologies] = useState<Technology[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Icon mapping function
+  const getIconForCategory = (categoryTitle: string) => {
+    const iconMap: { [key: string]: any } = {
+      "Frontend Development": <CodeBracketIcon className="w-6 h-6" />,
+      "Backend Development": <ServerIcon className="w-6 h-6" />,
+      "Database & ORM": <CircleStackIcon className="w-6 h-6" />,
+      "Tools & Version Control": <CloudIcon className="w-6 h-6" />,
+    };
+    return iconMap[categoryTitle] || <CogIcon className="w-6 h-6" />;
+  };
+
+  // Technology icon mapping
+  const getTechIcon = (techName: string) => {
+    const iconMap: { [key: string]: { icon: any; color?: string } } = {
+      JavaScript: {
+        icon: <SiJavascript className="w-8 h-8" />,
+        color: "#F7DF1E",
+      },
+      React: { icon: <SiReact className="w-8 h-8" />, color: "#61DAFB" },
+      "Next.js": { icon: <SiNextdotjs className="w-8 h-8 dark:text-white" /> },
+      TypeScript: {
+        icon: <SiTypescript className="w-8 h-8" />,
+        color: "#3178C6",
+      },
+      "Node.js": {
+        icon: <SiNodedotjs className="w-8 h-8" />,
+        color: "#339933",
+      },
+      Express: {
+        icon: <SiExpress className="w-8 h-8 dark:text-white" />,
+        color: "#000000",
+      },
+      "C# / .NET": { icon: <SiSharp className="w-8 h-8" />, color: "#512BD4" },
+      SQL: { icon: <SiMysql className="w-8 h-8" />, color: "#4479A1" },
+      PostgreSQL: {
+        icon: <SiPostgresql className="w-8 h-8" />,
+        color: "#336791",
+      },
+      Prisma: { icon: <SiPrisma className="w-8 h-8" />, color: "#2D3748" },
+      Git: { icon: <SiGit className="w-8 h-8" />, color: "#F05032" },
+      TailwindCSS: {
+        icon: <SiTailwindcss className="w-8 h-8" />,
+        color: "#06B6D4",
+      },
+      // Additional skills from the updated seed data
+      "React/Next.js": {
+        icon: <SiReact className="w-8 h-8" />,
+        color: "#61DAFB",
+      },
+      "Express.js": {
+        icon: <SiExpress className="w-8 h-8 dark:text-white" />,
+        color: "#000000",
+      },
+      "REST APIs": {
+        icon: <CommandLineIcon className="w-8 h-8" />,
+        color: "#4F46E5",
+      },
+      "MS SQL": { icon: <SiMysql className="w-8 h-8" />, color: "#CC2927" },
+      "Git/GitHub": { icon: <SiGit className="w-8 h-8" />, color: "#F05032" },
+      Vercel: { icon: <CloudIcon className="w-8 h-8" />, color: "#000000" },
+      MongoDB: {
+        icon: <CircleStackIcon className="w-8 h-8" />,
+        color: "#47A248",
+      },
+      GraphQL: {
+        icon: <CodeBracketIcon className="w-8 h-8" />,
+        color: "#E10098",
+      },
+    };
+    return iconMap[techName] || { icon: <CogIcon className="w-8 h-8" /> };
+  };
+
+  useEffect(() => {
+    async function fetchSkills() {
+      try {
+        const response = await fetch("/api/skills");
+        if (response.ok) {
+          const dbSkills = await response.json();
+
+          // Mapping from database categories to display names
+          const categoryMapping: { [key: string]: string } = {
+            FRONTEND: "Frontend Development",
+            BACKEND: "Backend Development",
+            DATABASE: "Database & ORM",
+            TOOLS: "Tools & Version Control",
+            DESIGN: "Design",
+            OTHER: "Other",
+          };
+
+          // Color mapping for categories
+          const categoryColors: { [key: string]: string } = {
+            "Frontend Development": "primary",
+            "Backend Development": "secondary",
+            "Database & ORM": "success",
+            "Tools & Version Control": "warning",
+            Design: "danger",
+            Other: "default",
+          };
+
+          // Group skills by category and transform to match existing format
+          const categoriesMap: {
+            [key: string]: {
+              title: string;
+              color: string;
+              skills: SkillItem[];
+            };
+          } = {};
+          const techList: Technology[] = [];
+
+          dbSkills.forEach((skill: any) => {
+            const displayCategory =
+              categoryMapping[skill.category] || skill.category;
+
+            if (!categoriesMap[displayCategory]) {
+              categoriesMap[displayCategory] = {
+                title: displayCategory,
+                color: categoryColors[displayCategory] || "primary",
+                skills: [],
+              };
+            }
+
+            categoriesMap[displayCategory].skills.push({
+              name: skill.name,
+              level: skill.level,
+            });
+
+            // Add to technologies list if it's a main technology (has isFeatured field or high level)
+            if (skill.level >= 80) {
+              const techIconData = getTechIcon(skill.name);
+              techList.push({
+                name: skill.name,
+                icon: techIconData.icon,
+                color: techIconData.color,
+              });
+            }
+          });
+
+          // Convert map to array and add icons
+          const categoriesArray = Object.values(categoriesMap).map((cat) => ({
+            ...cat,
+            icon: getIconForCategory(cat.title),
+          }));
+
+          setSkillCategories(categoriesArray);
+          setTechnologies(techList);
+        }
+      } catch (error) {
+        console.error("Failed to fetch skills:", error);
+        // Fallback to empty arrays
+        setSkillCategories([]);
+        setTechnologies([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSkills();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-default-50/50" id="skills">
+        <div className="container mx-auto px-6 text-center">
+          <div className="animate-pulse">Loading skills...</div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-default-50/50" id="skills">
@@ -139,7 +235,7 @@ const SkillsSection = () => {
             Skills & <span className="text-primary">Learning Journey</span>
           </h2>{" "}
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
-            3 years of dedicated self-study in web development, with strong
+            3 years of dedicated self-study in software development, with strong
             foundations in JavaScript and modern web technologies. Recently
             completed a 3-month C#/.NET course that deepened my understanding of
             database theory and backend architecture, making me more versatile
@@ -284,7 +380,7 @@ const SkillsSection = () => {
                     Full-Stack Capabilities
                   </h4>
                   <p className="text-sm text-default-600">
-                    Proven ability to build complete web applications from
+                    Proven ability to build complete software solutions from
                     database design to frontend implementation, with experience
                     across multiple technology stacks
                   </p>

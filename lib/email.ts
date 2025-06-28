@@ -91,6 +91,7 @@ export async function sendContactEmail(data: EmailData) {
         </div>
       `,
     });
+
     console.log("✅ Confirmation email result:", {
       success: !!confirmationResult.data?.id,
       id: confirmationResult.data?.id,
@@ -99,6 +100,7 @@ export async function sendContactEmail(data: EmailData) {
 
     // Check for any errors in either email
     const hasErrors = notificationResult.error || confirmationResult.error;
+
     if (hasErrors) {
       console.warn("⚠️ Some emails had errors:", {
         notificationError: notificationResult.error,
@@ -116,6 +118,7 @@ export async function sendContactEmail(data: EmailData) {
     };
   } catch (error) {
     console.error("❌ Email sending failed:", error);
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -213,6 +216,7 @@ export async function sendWorkInquiryEmail(data: EmailData) {
         </div>
       `,
     });
+
     console.log("✅ Work inquiry confirmation result:", {
       success: !!confirmationResult.data?.id,
       id: confirmationResult.data?.id,
@@ -221,6 +225,7 @@ export async function sendWorkInquiryEmail(data: EmailData) {
 
     // Check for any errors in either email
     const hasErrors = notificationResult.error || confirmationResult.error;
+
     if (hasErrors) {
       console.warn("⚠️ Some work inquiry emails had errors:", {
         notificationError: notificationResult.error,
@@ -237,6 +242,7 @@ export async function sendWorkInquiryEmail(data: EmailData) {
     };
   } catch (error) {
     console.error("❌ Work inquiry email failed:", error);
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

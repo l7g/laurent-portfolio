@@ -1,4 +1,5 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
+
 import { sendContactEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Contact form error:", error);
+
     return NextResponse.json(
       { error: "Failed to submit contact form" },
       { status: 500 },

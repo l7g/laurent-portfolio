@@ -1,0 +1,10 @@
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#F8F9FA"/>
+  <rect x="300" y="200" width="200" height="200" rx="12" fill="#E5E7EB"/>
+  <path d="M350 250C350 241.163 357.163 234 366 234H434C442.837 234 450 241.163 450 250V350C450 358.837 442.837 366 434 366H366C357.163 366 350 358.837 350 350V250Z" fill="#9CA3AF"/>
+  <path d="M370 270C370 266.686 372.686 264 376 264H424C427.314 264 430 266.686 430 270V290C430 293.314 427.314 296 424 296H376C372.686 296 370 293.314 370 290V270Z" fill="#6B7280"/>
+  <circle cx="385" cy="280" r="6" fill="#F8F9FA"/>
+  <path d="M370 320L385 305L400 320L415 305L430 320V340C430 343.314 427.314 346 424 346H376C372.686 346 370 343.314 370 340V320Z" fill="#6B7280"/>
+  <text x="400" y="430" text-anchor="middle" fill="#6B7280" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="500">Project Image</text>
+  <text x="400" y="450" text-anchor="middle" fill="#9CA3AF" font-family="system-ui, -apple-system, sans-serif" font-size="14">Upload an image or use placeholder</text>
+</svg>

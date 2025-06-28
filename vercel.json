@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run build && npx prisma db push && npm run seed:deployment",
+  "env": {
+    "NEXTAUTH_URL": "https://www.laurentgagne.com",
+    "NODE_ENV": "production"
+  }
+}

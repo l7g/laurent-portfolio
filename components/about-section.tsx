@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
@@ -10,8 +11,85 @@ import {
   BoltIcon,
 } from "@heroicons/react/24/outline";
 
+interface Highlight {
+  icon: any;
+  title: string;
+  description: string;
+}
+
+interface AboutSectionData {
+  title: string;
+  subtitle: string;
+  description: string;
+  content?: {
+    highlights?: Array<{
+      title: string;
+      description: string;
+      iconType?: string;
+    }>;
+    skills?: string[];
+  };
+}
+
 const AboutSection = () => {
-  const highlights = [
+  const [sectionData, setSectionData] = useState<AboutSectionData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Icon mapping function
+  const getIcon = (iconType?: string) => {
+    const iconMap: { [key: string]: any } = {
+      code: <CodeBracketIcon className="w-6 h-6" />,
+      database: <CircleStackIcon className="w-6 h-6" />,
+      globe: <GlobeAltIcon className="w-6 h-6" />,
+      bolt: <BoltIcon className="w-6 h-6" />,
+    };
+    return (
+      iconMap[iconType || "code"] || <CodeBracketIcon className="w-6 h-6" />
+    );
+  };
+
+  useEffect(() => {
+    async function fetchSectionData() {
+      try {
+        const response = await fetch("/api/sections");
+        if (response.ok) {
+          const sections = await response.json();
+          const aboutSection = sections.find(
+            (section: any) => section.name === "about",
+          );
+
+          if (aboutSection) {
+            setSectionData(aboutSection);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch about section:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSectionData();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20" id="about">
+        <div className="container mx-auto px-6 text-center">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+      </section>
+    );
+  }
+
+  // Fallback to hardcoded data if database data is not available
+  const highlights: Highlight[] = sectionData?.content?.highlights?.map(
+    (h) => ({
+      icon: getIcon(h.iconType),
+      title: h.title,
+      description: h.description,
+    }),
+  ) || [
     {
       icon: <CodeBracketIcon className="w-6 h-6" />,
       title: "Full-Stack Development",
@@ -26,7 +104,7 @@ const AboutSection = () => {
     },
     {
       icon: <GlobeAltIcon className="w-6 h-6" />,
-      title: "Web Applications",
+      title: "Software Solutions",
       description:
         "Building scalable, responsive applications with focus on performance and user experience",
     },
@@ -38,7 +116,7 @@ const AboutSection = () => {
     },
   ];
 
-  const skills = [
+  const skills: string[] = sectionData?.content?.skills || [
     "TypeScript",
     "React",
     "Next.js",
@@ -49,9 +127,8 @@ const AboutSection = () => {
     "TailwindCSS",
     "C#",
     ".NET",
-    "MVC",
-    "Git",
-    "MongoDB",
+    "REST APIs",
+    "Git/GitHub",
   ];
 
   return (
@@ -65,13 +142,14 @@ const AboutSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            About <span className="text-primary">Me</span>
+            {sectionData?.title || "About"}{" "}
+            <span className="text-primary">
+              {sectionData?.subtitle || "Me"}
+            </span>
           </h2>
           <p className="text-xl text-default-600 max-w-3xl mx-auto">
-            I&apos;m a passionate full-stack developer with a love for creating
-            innovative web applications. With expertise in modern technologies
-            and a keen eye for detail, I transform ideas into digital solutions
-            that make a difference.
+            {sectionData?.description ||
+              "I'm a passionate full-stack developer with a love for creating innovative software solutions. With expertise in modern technologies and a keen eye for detail, I transform ideas into digital applications that make a difference."}
           </p>
         </motion.div>
 
@@ -93,7 +171,7 @@ const AboutSection = () => {
               When I&apos;m not coding, you&apos;ll find me exploring new
               technologies, reading tech blogs, or experimenting with new
               frameworks. I believe in continuous learning and staying at the
-              forefront of web development trends.
+              forefront of software development and emerging technologies.
             </p>
 
             <div className="flex flex-wrap gap-2">

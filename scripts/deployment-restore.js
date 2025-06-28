@@ -86,24 +86,16 @@ async function restoreFromBackup(backupData) {
 
   // Restore users with hashed passwords
   if (data.users && data.users.length > 0) {
+    // Get admin password from environment variables
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminPassword) {
+      console.log("⚠️  ADMIN_PASSWORD not set, skipping user restoration");
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(adminPassword, 12);
+
     for (const user of data.users) {
-      let hashedPassword;
-
-      if (user.password) {
-        // Use the existing hashed password from backup
-        hashedPassword = user.password;
-      } else {
-        // Use ADMIN_PASSWORD from environment variables as fallback
-        const adminPassword = process.env.ADMIN_PASSWORD;
-        if (!adminPassword) {
-          console.log(
-            `⚠️  No ADMIN_PASSWORD set for user ${user.email}, skipping user creation`,
-          );
-          continue;
-        }
-        hashedPassword = await bcrypt.hash(adminPassword, 12);
-      }
-
       await prisma.user.create({
         data: {
           email: user.email,
@@ -113,7 +105,9 @@ async function restoreFromBackup(backupData) {
         },
       });
     }
-    console.log(`✅ Restored ${data.users.length} users`);
+    console.log(
+      `✅ Restored ${data.users.length} users with environment password`,
+    );
   }
 
   // Restore portfolio sections

@@ -35,10 +35,10 @@ const ProjectsSection = () => {
                 viewBox="0 0 24 24"
               >
                 <path
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                 />
               </svg>
             </div>
@@ -50,9 +50,9 @@ const ProjectsSection = () => {
             </p>
           </div>
           <div className="absolute top-4 right-4 flex space-x-1">
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full" />
+            <div className="w-2 h-2 bg-green-400 rounded-full" />
+            <div className="w-2 h-2 bg-yellow-400 rounded-full" />
           </div>
         </div>
       );
@@ -71,10 +71,10 @@ const ProjectsSection = () => {
                 viewBox="0 0 24 24"
               >
                 <path
+                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                 />
               </svg>
             </div>
@@ -86,9 +86,9 @@ const ProjectsSection = () => {
             </p>
           </div>
           <div className="absolute top-4 right-4 flex space-x-1">
-            <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
+            <div className="w-2 h-2 bg-purple-400 rounded-full" />
+            <div className="w-2 h-2 bg-pink-400 rounded-full" />
+            <div className="w-2 h-2 bg-indigo-400 rounded-full" />
           </div>
         </div>
       );
@@ -205,10 +205,10 @@ const ProjectsSection = () => {
                       className="text-xs font-semibold animate-pulse"
                       color="warning"
                       size="sm"
-                      variant="solid"
                       startContent={
                         <div className="w-2 h-2 bg-white rounded-full" />
                       }
+                      variant="solid"
                     >
                       Work in Progress
                     </Chip>
@@ -263,10 +263,10 @@ const ProjectsSection = () => {
                             viewBox="0 0 24 24"
                           >
                             <path
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                             />
                           </svg>
                         }
@@ -274,6 +274,7 @@ const ProjectsSection = () => {
                         onPress={() => {
                           const contactSection =
                             document.getElementById("contact");
+
                           contactSection?.scrollIntoView({
                             behavior: "smooth",
                           });
@@ -339,8 +340,8 @@ const ProjectsSection = () => {
                 <CardHeader className="p-0 overflow-hidden">
                   {project.image.startsWith("placeholder-") ? (
                     <PlaceholderImage
-                      type={project.image}
                       title={project.title}
+                      type={project.image}
                     />
                   ) : (
                     <Image
@@ -359,10 +360,10 @@ const ProjectsSection = () => {
                         className="text-xs font-semibold animate-pulse"
                         color="warning"
                         size="sm"
-                        variant="solid"
                         startContent={
                           <div className="w-1.5 h-1.5 bg-white rounded-full" />
                         }
+                        variant="solid"
                       >
                         WIP
                       </Chip>
@@ -404,10 +405,10 @@ const ProjectsSection = () => {
                             viewBox="0 0 24 24"
                           >
                             <path
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
-                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                             />
                           </svg>
                         }
@@ -415,6 +416,7 @@ const ProjectsSection = () => {
                         onPress={() => {
                           const contactSection =
                             document.getElementById("contact");
+
                           contactSection?.scrollIntoView({
                             behavior: "smooth",
                           });

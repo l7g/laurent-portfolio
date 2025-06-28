@@ -33,6 +33,7 @@ export const Navbar = () => {
         const element = document.getElementById(
           section === "home" ? "hero" : section,
         );
+
         if (element) {
           const offsetTop = element.offsetTop;
           const offsetHeight = element.offsetHeight;
@@ -61,13 +62,15 @@ export const Navbar = () => {
   const isLinkActive = (href: string) => {
     if (href === "/") return activeSection === "home";
     const section = href.replace("#", "");
+
     return activeSection === section;
   };
+
   return (
     <HeroUINavbar
+      isMenuOpen={isMenuOpen}
       maxWidth="xl"
       position="sticky"
-      isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
     >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">

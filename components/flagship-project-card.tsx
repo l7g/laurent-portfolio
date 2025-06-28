@@ -51,8 +51,8 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
   return (
     <>
       <Card
-        className="hover:shadow-lg transition-shadow cursor-pointer"
         isPressable
+        className="hover:shadow-lg transition-shadow cursor-pointer"
         onPress={onOpen}
       >
         <CardHeader className="pb-2">
@@ -93,8 +93,8 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
             {project.liveUrl && (
               <Button
                 size="sm"
-                variant="flat"
                 startContent={<ArrowTopRightOnSquareIcon className="w-4 h-4" />}
+                variant="flat"
                 onPress={() => window.open(project.liveUrl, "_blank")}
               >
                 Live Demo
@@ -103,8 +103,8 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
             {project.githubUrl && (
               <Button
                 size="sm"
-                variant="flat"
                 startContent={<CodeBracketIcon className="w-4 h-4" />}
+                variant="flat"
                 onPress={() => window.open(project.githubUrl, "_blank")}
               >
                 Code
@@ -117,9 +117,9 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
       {/* Detailed Modal */}
       <Modal
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        size="3xl"
         scrollBehavior="inside"
+        size="3xl"
+        onOpenChange={onOpenChange}
       >
         <ModalContent>
           {(onClose) => (
@@ -222,7 +222,7 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {project.technologies.map((tech) => (
-                        <Chip key={tech} variant="flat" color="primary">
+                        <Chip key={tech} color="primary" variant="flat">
                           {tech}
                         </Chip>
                       ))}
@@ -244,8 +244,8 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
                     )}
                     {project.githubUrl && (
                       <Button
-                        variant="bordered"
                         startContent={<CodeBracketIcon className="w-4 h-4" />}
+                        variant="bordered"
                         onPress={() => window.open(project.githubUrl, "_blank")}
                       >
                         View Source Code

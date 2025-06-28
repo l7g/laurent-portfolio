@@ -52,21 +52,17 @@ export default function AdminLogin() {
           </div>
         </CardHeader>
         <CardBody>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <Input
+              required
+              autoComplete="email"
               label="Email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
             />
 
             <Input
-              label="Password"
-              type={isVisible ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
               endContent={
@@ -82,6 +78,10 @@ export default function AdminLogin() {
                   )}
                 </button>
               }
+              label="Password"
+              type={isVisible ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
 
             {error && (
@@ -89,10 +89,10 @@ export default function AdminLogin() {
             )}
 
             <Button
-              type="submit"
-              color="primary"
               className="w-full"
+              color="primary"
               isLoading={isLoading}
+              type="submit"
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>

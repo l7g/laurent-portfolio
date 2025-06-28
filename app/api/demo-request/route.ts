@@ -1,4 +1,5 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
+
 import { sendWorkInquiryEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
       workType,
       timeline,
     });
+
     console.log("📧 Email results:", {
       emailSuccess: emailResult.success,
       notificationSent: !!emailResult.notificationId,
@@ -72,6 +74,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Work inquiry error:", error);
+
     return NextResponse.json(
       { error: "Failed to submit work inquiry" },
       { status: 500 },

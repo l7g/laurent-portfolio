@@ -12,6 +12,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "seed:production": "node scripts/seed-production.js",
     "seed:deployment": "node scripts/deployment-restore.js",
+    "seed:deployment-seed": "node scripts/deployment-seed.js",
     "backup:create": "node scripts/create-production-backup.js",
     "setup:admin": "node scripts/setup-admin.js",
     "db:reset": "npx prisma migrate reset --force",

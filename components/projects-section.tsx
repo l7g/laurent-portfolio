@@ -190,159 +190,199 @@ const ProjectsSection = () => {
           </p>
         </motion.div>
 
-        {/* Featured Project - Tracker */}
-        <motion.div
-          className="mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          whileInView={{ opacity: 1, y: 0 }}
-        >
-          <Card className="overflow-hidden shadow-xl">
-            <div className="grid lg:grid-cols-2 gap-0">
-              <div className="relative h-64 sm:h-72 md:h-80 lg:h-auto lg:min-h-[400px] overflow-hidden bg-gray-100">
-                <img
-                  alt={projects[0].title}
-                  className="w-full h-full object-cover object-center"
-                  src={projects[0].image}
-                  style={{
-                    minHeight: "100%",
-                    minWidth: "100%",
-                  }}
-                />
-                <div className="absolute top-4 left-4 z-10">
-                  <Chip color="primary" size="sm" variant="solid">
-                    Flagship Project
-                  </Chip>
-                </div>
-              </div>{" "}
-              <CardBody className="p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <h3 className="text-2xl font-bold">{projects[0].title}</h3>
-                  {projects[0].isWip && (
-                    <Chip
-                      className="text-xs font-semibold animate-pulse"
-                      color="warning"
-                      size="sm"
-                      startContent={
-                        <div className="w-2 h-2 bg-white rounded-full" />
-                      }
-                      variant="solid"
-                    >
-                      Work in Progress
+        {/* Featured Project */}
+        {projects.length > 0 && (
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            whileInView={{ opacity: 1, y: 0 }}
+          >
+            <Card className="overflow-hidden shadow-xl">
+              <div className="grid lg:grid-cols-2 gap-0">
+                <div className="relative h-64 sm:h-72 md:h-80 lg:h-auto lg:min-h-[400px] overflow-hidden bg-gray-100">
+                  <img
+                    alt={projects[0].title}
+                    className="w-full h-full object-cover object-center"
+                    src={projects[0].image}
+                    style={{
+                      minHeight: "100%",
+                      minWidth: "100%",
+                    }}
+                  />
+                  <div className="absolute top-4 left-4 z-10">
+                    <Chip color="primary" size="sm" variant="solid">
+                      Flagship Project
                     </Chip>
-                  )}
-                </div>
-                {projects[0].isWip && (
-                  <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-                    {" "}
-                    <p className="text-sm text-warning-700 dark:text-warning-300">
-                      🚧 Personal project currently in development. Code is
-                      private. Contact me to discuss my development approach and
-                      capabilities.
-                    </p>
                   </div>
-                )}
-                <p className="text-default-600 mb-6 leading-relaxed">
-                  {projects[0].description}
-                </p>
-                <div className="mb-6">
-                  <h4 className="font-semibold mb-3">Key Features:</h4>
-                  <ul className="space-y-2">
-                    {projects[0].highlights?.map((highlight, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center text-sm text-default-600"
-                      >
-                        <ArrowRightIcon className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
-                        {highlight}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {projects[0].technologies.map((tech) => (
-                    <Chip key={tech} color="primary" size="sm" variant="flat">
-                      {tech}
-                    </Chip>
-                  ))}
                 </div>{" "}
-                <div className="flex gap-4">
-                  {projects[0].isWip ? (
-                    <>
-                      {" "}
-                      <Button
-                        className="font-semibold shadow-lg"
+                <CardBody className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <h3 className="text-2xl font-bold">{projects[0].title}</h3>
+                    {projects[0].isWip && (
+                      <Chip
+                        className="text-xs font-semibold animate-pulse"
                         color="warning"
+                        size="sm"
                         startContent={
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                            />
-                          </svg>
+                          <div className="w-2 h-2 bg-white rounded-full" />
                         }
                         variant="solid"
-                        onPress={() => {
-                          const contactSection =
-                            document.getElementById("contact");
-
-                          contactSection?.scrollIntoView({
-                            behavior: "smooth",
-                          });
-                        }}
                       >
-                        {" "}
-                        Discuss My Work
-                      </Button>
-                      <Button
-                        className="font-semibold"
-                        startContent={<GithubIcon className="w-4 h-4" />}
-                        variant="bordered"
-                        onPress={() =>
-                          window.open(projects[0].links.github, "_blank")
-                        }
-                      >
-                        View Code
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        color="primary"
-                        startContent={
-                          <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                        }
-                        variant="solid"
-                        onPress={() =>
-                          window.open(projects[0].links.live, "_blank")
-                        }
-                      >
-                        View Live Demo
-                      </Button>
-                      <Button
-                        startContent={<GithubIcon className="w-4 h-4" />}
-                        variant="bordered"
-                        onPress={() =>
-                          window.open(projects[0].links.github, "_blank")
-                        }
-                      >
-                        Source Code
-                      </Button>
-                    </>
+                        Work in Progress
+                      </Chip>
+                    )}
+                  </div>
+                  {projects[0].isWip && (
+                    <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                      {" "}
+                      <p className="text-sm text-warning-700 dark:text-warning-300">
+                        🚧 Personal project currently in development. Code is
+                        private. Contact me to discuss my development approach
+                        and capabilities.
+                      </p>
+                    </div>
                   )}
-                </div>
-              </CardBody>
-            </div>
-          </Card>
-        </motion.div>
+                  <p className="text-default-600 mb-6 leading-relaxed">
+                    {projects[0].description}
+                  </p>
+                  <div className="mb-6">
+                    <h4 className="font-semibold mb-3">Key Features:</h4>
+                    <ul className="space-y-2">
+                      {projects[0].highlights?.map((highlight, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center text-sm text-default-600"
+                        >
+                          <ArrowRightIcon className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
+                          {highlight}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {projects[0].technologies.map((tech) => (
+                      <Chip key={tech} color="primary" size="sm" variant="flat">
+                        {tech}
+                      </Chip>
+                    ))}
+                  </div>{" "}
+                  <div className="flex gap-4">
+                    {projects[0].isWip ? (
+                      <>
+                        {/* Show live demo button if available for WIP projects */}
+                        {projects[0].links.live &&
+                          projects[0].links.live !== "#" && (
+                            <Button
+                              color="warning"
+                              className="font-semibold shadow-lg"
+                              startContent={
+                                <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                              }
+                              variant="solid"
+                              onPress={() =>
+                                window.open(projects[0].links.live, "_blank")
+                              }
+                            >
+                              View Live Demo
+                            </Button>
+                          )}
+                        <Button
+                          className="font-semibold shadow-lg"
+                          color="warning"
+                          startContent={
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                              />
+                            </svg>
+                          }
+                          variant="solid"
+                          onPress={() => {
+                            const contactSection =
+                              document.getElementById("contact");
+
+                            contactSection?.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                          }}
+                        >
+                          Explore My Work
+                        </Button>
+                        {/* Only show code button if GitHub link is valid */}
+                        {projects[0].links.github &&
+                          projects[0].links.github !== "#" && (
+                            <Button
+                              className="font-semibold"
+                              startContent={<GithubIcon className="w-4 h-4" />}
+                              variant="bordered"
+                              onPress={() =>
+                                window.open(projects[0].links.github, "_blank")
+                              }
+                            >
+                              View Code
+                            </Button>
+                          )}
+                      </>
+                    ) : (
+                      <>
+                        {/* Only show live demo button if live link is valid */}
+                        {projects[0].links.live &&
+                          projects[0].links.live !== "#" && (
+                            <Button
+                              color="primary"
+                              startContent={
+                                <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                              }
+                              variant="solid"
+                              onPress={() =>
+                                window.open(projects[0].links.live, "_blank")
+                              }
+                            >
+                              View Live Demo
+                            </Button>
+                          )}
+                        {/* Only show code button if GitHub link is valid */}
+                        {projects[0].links.github &&
+                          projects[0].links.github !== "#" && (
+                            <Button
+                              startContent={<GithubIcon className="w-4 h-4" />}
+                              variant="bordered"
+                              onPress={() =>
+                                window.open(projects[0].links.github, "_blank")
+                              }
+                            >
+                              Source Code
+                            </Button>
+                          )}
+                        {/* Show message when no links are available */}
+                        {(!projects[0].links.live ||
+                          projects[0].links.live === "#") &&
+                          (!projects[0].links.github ||
+                            projects[0].links.github === "#") && (
+                            <div className="text-center py-2">
+                              <p className="text-default-500">
+                                🔗 Links coming soon
+                              </p>
+                            </div>
+                          )}
+                      </>
+                    )}
+                  </div>
+                </CardBody>
+              </div>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Other Projects Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
@@ -417,8 +457,24 @@ const ProjectsSection = () => {
                 <CardFooter className="p-6 pt-0 flex gap-3">
                   {project.isWip ? (
                     <>
+                      {/* Show live demo button if available for WIP projects */}
+                      {project.links.live && project.links.live !== "#" && (
+                        <Button
+                          color="warning"
+                          size="sm"
+                          startContent={
+                            <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                          }
+                          variant="flat"
+                          onPress={() =>
+                            window.open(project.links.live, "_blank")
+                          }
+                        >
+                          Live Demo
+                        </Button>
+                      )}
                       <Button
-                        className="flex-1 font-semibold"
+                        className={`font-semibold ${project.links.live && project.links.live !== "#" ? "" : "flex-1"}`}
                         color="warning"
                         size="sm"
                         startContent={
@@ -429,7 +485,7 @@ const ProjectsSection = () => {
                             viewBox="0 0 24 24"
                           >
                             <path
-                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                               strokeLinecap="round"
                               strokeLinejoin="round"
                               strokeWidth={2}
@@ -446,45 +502,63 @@ const ProjectsSection = () => {
                           });
                         }}
                       >
-                        {" "}
-                        Freelance Inquiry
+                        Explore My Work
                       </Button>
-                      <Button
-                        size="sm"
-                        startContent={<GithubIcon className="w-4 h-4" />}
-                        variant="light"
-                        onPress={() =>
-                          window.open(project.links.github, "_blank")
-                        }
-                      >
-                        Code
-                      </Button>
+                      {/* Only show code button if GitHub link is valid */}
+                      {project.links.github && project.links.github !== "#" && (
+                        <Button
+                          size="sm"
+                          startContent={<GithubIcon className="w-4 h-4" />}
+                          variant="light"
+                          onPress={() =>
+                            window.open(project.links.github, "_blank")
+                          }
+                        >
+                          Code
+                        </Button>
+                      )}
                     </>
                   ) : (
                     <>
-                      <Button
-                        color="primary"
-                        size="sm"
-                        startContent={
-                          <ArrowTopRightOnSquareIcon className="w-4 h-4" />
-                        }
-                        variant="flat"
-                        onPress={() =>
-                          window.open(project.links.live, "_blank")
-                        }
-                      >
-                        Live Demo
-                      </Button>
-                      <Button
-                        size="sm"
-                        startContent={<GithubIcon className="w-4 h-4" />}
-                        variant="light"
-                        onPress={() =>
-                          window.open(project.links.github, "_blank")
-                        }
-                      >
-                        Code
-                      </Button>
+                      {/* Only show live demo button if live link is valid */}
+                      {project.links.live && project.links.live !== "#" && (
+                        <Button
+                          color="primary"
+                          size="sm"
+                          startContent={
+                            <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                          }
+                          variant="flat"
+                          onPress={() =>
+                            window.open(project.links.live, "_blank")
+                          }
+                        >
+                          Live Demo
+                        </Button>
+                      )}
+                      {/* Only show code button if GitHub link is valid */}
+                      {project.links.github && project.links.github !== "#" && (
+                        <Button
+                          size="sm"
+                          startContent={<GithubIcon className="w-4 h-4" />}
+                          variant="light"
+                          onPress={() =>
+                            window.open(project.links.github, "_blank")
+                          }
+                        >
+                          Code
+                        </Button>
+                      )}
+                      {/* Show message when no links are available */}
+                      {(!project.links.live || project.links.live === "#") &&
+                        (!project.links.github ||
+                          project.links.github === "#") && (
+                          <div className="flex-1 text-center py-2">
+                            <p className="text-small text-default-500">
+                              🔗 Links coming soon
+                            </p>
+                          </div>
+                        )}
                     </>
                   )}
                 </CardFooter>

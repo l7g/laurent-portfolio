@@ -20,6 +20,9 @@ interface Project {
   technologies: string[];
   featured: boolean;
   isWip: boolean;
+  showWipWarning?: boolean;
+  wipWarningText?: string;
+  wipWarningEmoji?: string;
   links: {
     live: string;
     github: string;
@@ -50,6 +53,9 @@ const ProjectsSection = () => {
               technologies: project.technologies || [],
               featured: project.featured,
               isWip: project.status === "WIP",
+              showWipWarning: project.showWipWarning,
+              wipWarningText: project.wipWarningText,
+              wipWarningEmoji: project.wipWarningEmoji,
               links: {
                 live: project.liveUrl || "#",
                 github: project.githubUrl || "#",
@@ -234,16 +240,24 @@ const ProjectsSection = () => {
                       </Chip>
                     )}
                   </div>
-                  {projects[0].isWip && (
-                    <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
-                      {" "}
-                      <p className="text-sm text-warning-700 dark:text-warning-300">
-                        🚧 Personal project currently in development. Code is
-                        private. Contact me to discuss my development approach
-                        and capabilities.
-                      </p>
-                    </div>
-                  )}
+                  {projects[0].isWip &&
+                    projects[0].showWipWarning !== false && (
+                      <div className="mb-4 p-3 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg">
+                        {" "}
+                        <p className="text-sm text-warning-700 dark:text-warning-300">
+                          {(() => {
+                            const customText = projects[0].wipWarningText;
+                            const selectedEmoji =
+                              projects[0].wipWarningEmoji || "🚧";
+                            const defaultText =
+                              "Personal project currently in development. Code is private. Contact me to discuss my development approach and capabilities.";
+
+                            const messageText = customText || defaultText;
+                            return `${selectedEmoji} ${messageText}`;
+                          })()}
+                        </p>
+                      </div>
+                    )}
                   <p className="text-default-600 mb-6 leading-relaxed">
                     {projects[0].description}
                   </p>

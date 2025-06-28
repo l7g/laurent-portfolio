@@ -29,6 +29,9 @@ interface Project {
   liveUrl?: string;
   githubUrl?: string;
   highlights: string[];
+  showWipWarning?: boolean;
+  wipWarningText?: string;
+  wipWarningEmoji?: string;
   detailedDescription?: string;
   challenges?: string;
   solutions?: string;
@@ -56,6 +59,19 @@ export default function ProjectEditModal({
   const [isSaving, setIsSaving] = useState(false);
   const [technologiesInput, setTechnologiesInput] = useState("");
   const [highlightsInput, setHighlightsInput] = useState("");
+  const [selectedEmoji, setSelectedEmoji] = useState("🚧");
+
+  // Warning emoji options
+  const emojiOptions = [
+    { value: "🚧", label: "🚧 Construction" },
+    { value: "⚠️", label: "⚠️ Warning" },
+    { value: "🔨", label: "🔨 Building" },
+    { value: "⏳", label: "⏳ In Progress" },
+    { value: "🛠️", label: "🛠️ Tools" },
+    { value: "🔧", label: "🔧 Development" },
+    { value: "🚀", label: "🚀 Coming Soon" },
+    { value: "💡", label: "💡 Concept" },
+  ];
 
   // Update form data when project changes
   useEffect(() => {
@@ -63,11 +79,13 @@ export default function ProjectEditModal({
       setFormData(project);
       setTechnologiesInput(project.technologies?.join(", ") || "");
       setHighlightsInput(project.highlights?.join("\n") || "");
+      setSelectedEmoji(project.wipWarningEmoji || "🚧");
     } else {
       // Reset form for new project
       setFormData({});
       setTechnologiesInput("");
       setHighlightsInput("");
+      setSelectedEmoji("🚧");
     }
   }, [project]);
 
@@ -86,6 +104,7 @@ export default function ProjectEditModal({
           .split("\n")
           .map((highlight) => highlight.trim())
           .filter((highlight) => highlight.length > 0),
+        wipWarningEmoji: selectedEmoji,
       };
 
       await onSave(updatedProject);
@@ -269,6 +288,81 @@ export default function ProjectEditModal({
               Production Ready
             </Switch>
           </div>
+
+          {/* WIP Warning Configuration */}
+          {formData.status === "WIP" && (
+            <div className="space-y-4 border border-warning-200 rounded-lg p-4 bg-warning-50">
+              <h3 className="text-md font-semibold text-warning-700">
+                WIP Warning Configuration
+              </h3>
+
+              <Switch
+                isSelected={formData.showWipWarning !== false}
+                onValueChange={(isSelected) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    showWipWarning: isSelected,
+                  }))
+                }
+              >
+                Show WIP Warning Banner
+              </Switch>
+
+              {formData.showWipWarning !== false && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Warning Icon
+                    </label>
+                    <select
+                      className="w-full p-2 border border-gray-300 rounded-lg bg-white"
+                      value={selectedEmoji}
+                      onChange={(e) => setSelectedEmoji(e.target.value)}
+                    >
+                      {emojiOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Custom Warning Message
+                    </label>
+                    <textarea
+                      className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                      placeholder="Personal project currently in development. Code is private. Contact me to discuss my development approach and capabilities."
+                      value={formData.wipWarningText || ""}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          wipWarningText: e.target.value,
+                        }))
+                      }
+                      rows={3}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Selected emoji ({selectedEmoji}) will be automatically
+                      added. Leave empty to use the default message.
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-gray-50 rounded-lg border">
+                    <p className="text-sm font-medium text-gray-700 mb-1">
+                      Preview:
+                    </p>
+                    <p className="text-sm text-warning-700">
+                      {selectedEmoji}{" "}
+                      {formData.wipWarningText ||
+                        "Personal project currently in development. Code is private. Contact me to discuss my development approach and capabilities."}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Flagship-specific fields */}
           {formData.flagship && (

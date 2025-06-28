@@ -114,6 +114,11 @@ model Project {
   githubUrl    String?
   highlights   String[]  // Key features/achievements
   
+  // WIP Warning Configuration
+  showWipWarning  Boolean @default(true)   // Whether to show the warning for WIP projects
+  wipWarningText  String? // Custom warning text (falls back to default if null)
+  wipWarningEmoji String? @default("🚧") // Selected emoji for the warning
+  
   // Flagship-specific fields (mandatory when flagship = true)
   detailedDescription String?  // Extended description for flagship projects
   challenges          String?  // Technical challenges overcome

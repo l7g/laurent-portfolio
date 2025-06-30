@@ -120,10 +120,35 @@ export function useApi() {
       ),
   };
 
+  const settings = {
+    getAll: () => request<any[]>("/api/settings"),
+    getByKey: (key: string) => request<any>(`/api/settings/${key}`),
+    getPublic: () => request<Record<string, any>>("/api/public/settings"),
+    upsert: (data: any, options?: UseApiOptions) =>
+      request<any>(
+        "/api/settings",
+        { method: "POST", body: JSON.stringify(data) },
+        options,
+      ),
+    update: (key: string, data: any, options?: UseApiOptions) =>
+      request<any>(
+        `/api/settings/${key}`,
+        { method: "PUT", body: JSON.stringify(data) },
+        options,
+      ),
+    delete: (key: string, options?: UseApiOptions) =>
+      request<{ message: string }>(
+        `/api/settings/${key}`,
+        { method: "DELETE" },
+        options,
+      ),
+  };
+
   return {
     loading,
     projects,
     sections,
     skills,
+    settings,
   };
 }

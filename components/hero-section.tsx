@@ -9,8 +9,16 @@ import {
 } from "@heroicons/react/24/solid";
 
 import { siteConfig } from "@/config/site";
+import { usePublicSettings } from "@/lib/use-settings";
 
 const HeroSection = () => {
+  const { getSetting } = usePublicSettings();
+
+  // Get dynamic settings with fallbacks
+  const cvUrl = getSetting("cv_url", "/Laurent_Cv.pdf");
+  const heroSubtitle = getSetting("hero_subtitle", "Full Stack Developer");
+  const githubUrl = getSetting("github_url", siteConfig.links.github);
+  const linkedinUrl = getSetting("linkedin_url", siteConfig.links.linkedin);
   return (
     <section
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
@@ -91,7 +99,7 @@ const HeroSection = () => {
             <Button
               as="a"
               className="font-semibold"
-              href="/Laurent_Cv.pdf"
+              href={cvUrl}
               rel="noopener noreferrer"
               size="lg"
               startContent={
@@ -113,7 +121,7 @@ const HeroSection = () => {
             <motion.a
               aria-label="Visit GitHub Profile"
               className="text-default-500 hover:text-primary transition-colors"
-              href={siteConfig.links.github}
+              href={githubUrl}
               rel="noopener noreferrer"
               target="_blank"
               whileHover={{ scale: 1.1 }}
@@ -131,7 +139,7 @@ const HeroSection = () => {
             <motion.a
               aria-label="Visit LinkedIn Profile"
               className="text-default-500 hover:text-primary transition-colors"
-              href={siteConfig.links.linkedin}
+              href={linkedinUrl}
               rel="noopener noreferrer"
               target="_blank"
               whileHover={{ scale: 1.1 }}

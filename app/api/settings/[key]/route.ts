@@ -3,11 +3,12 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { key: string } },
+  { params }: { params: Promise<{ key: string }> },
 ) {
   try {
+    const { key } = await params;
     const setting = await prisma.siteSetting.findUnique({
-      where: { key: params.key },
+      where: { key },
     });
 
     if (!setting) {
@@ -26,9 +27,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { key: string } },
+  { params }: { params: Promise<{ key: string }> },
 ) {
   try {
+    const { key } = await params;
     const { value, type, description, isPublic } = await request.json();
 
     if (value === undefined) {
@@ -36,7 +38,7 @@ export async function PUT(
     }
 
     const setting = await prisma.siteSetting.update({
-      where: { key: params.key },
+      where: { key },
       data: {
         value,
         type,
@@ -58,11 +60,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { key: string } },
+  { params }: { params: Promise<{ key: string }> },
 ) {
   try {
+    const { key } = await params;
     await prisma.siteSetting.delete({
-      where: { key: params.key },
+      where: { key },
     });
 
     return NextResponse.json({ message: "Setting deleted successfully" });

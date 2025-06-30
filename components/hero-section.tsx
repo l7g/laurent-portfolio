@@ -26,13 +26,23 @@ const HeroSection = () => {
   const githubUrl = getSetting("github_url", siteConfig.links.github);
   const linkedinUrl = getSetting("linkedin_url", siteConfig.links.linkedin);
 
-  // Process greeting to ensure "Laurent" is styled if not already styled
-  const processedGreeting = heroGreeting.includes("<span")
-    ? heroGreeting
-    : heroGreeting.replace(
-        "Laurent",
-        '<span className="text-primary">Laurent</span>',
-      );
+  // Secure text processing - split text and render "Laurent" with styling
+  const renderGreeting = (text: string) => {
+    // Split text by "Laurent" (case-insensitive) to preserve the original case
+    const parts = text.split(/(laurent)/gi);
+
+    return parts.map((part, index) => {
+      // Check if this part is "Laurent" (case-insensitive)
+      if (part.toLowerCase() === "laurent") {
+        return (
+          <span key={index} className="text-primary">
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
 
   return (
     <section
@@ -79,8 +89,9 @@ const HeroSection = () => {
             className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            dangerouslySetInnerHTML={{ __html: processedGreeting }}
-          />
+          >
+            {renderGreeting(heroGreeting)}
+          </motion.h1>
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className="text-xl md:text-2xl text-default-600 mb-8 max-w-2xl mx-auto"

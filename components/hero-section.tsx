@@ -26,7 +26,7 @@ const HeroSection = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setSettings(data);
+          setSettings(data.data);
         }
       } catch (error) {
         console.error("Failed to fetch settings:", error);

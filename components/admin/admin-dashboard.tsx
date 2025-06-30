@@ -19,6 +19,7 @@ import { getProjectImageUrl } from "@/lib/blob-storage";
 import { useApi } from "@/lib/use-api";
 import ProjectEditModal from "./project-edit-modal";
 import SectionContentEditModal from "./section-content-edit-modal";
+import SettingsManager from "./settings-manager";
 
 interface AdminDashboardProps {
   contacts: any[];
@@ -497,19 +498,7 @@ export default function AdminDashboard({
           </div>
         )}
 
-        {selectedTab === "settings" && (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Site Settings</h2>
-              <Button color="primary" size="sm" onPress={refreshSections}>
-                Refresh
-              </Button>
-            </div>
-            <div className="p-8 text-center text-gray-600">
-              Site settings management coming soon...
-            </div>
-          </div>
-        )}
+        {selectedTab === "settings" && <SettingsManager />}
       </div>
 
       {/* Project Edit Modal */}

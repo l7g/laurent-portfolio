@@ -11,6 +11,15 @@ import {
 
 import { siteConfig } from "@/config/site";
 
+// Helper function to get setting value with proper null/undefined checking
+const getSettingValue = (
+  settings: Record<string, any>,
+  key: string,
+  defaultValue: any,
+) => {
+  return settings[key] !== undefined ? settings[key] : defaultValue;
+};
+
 const HeroSection = () => {
   const [settings, setSettings] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
@@ -26,7 +35,7 @@ const HeroSection = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setSettings(data.data);
+          setSettings(data.data || {});
         }
       } catch (error) {
         console.error("Failed to fetch settings:", error);
@@ -38,16 +47,38 @@ const HeroSection = () => {
     fetchSettings();
   }, []);
 
-  // Get dynamic settings with fallbacks
-  const cvUrl = settings.cv_url || "/Laurent_Cv.pdf";
-  const heroGreeting = settings.hero_greeting || "Hi, I'm Laurent";
-  const heroDescription =
-    settings.hero_description ||
-    "Building the future, one line of code at a time";
-  const heroPrimaryButton = settings.hero_primary_button || "View My Work";
-  const heroSecondaryButton = settings.hero_secondary_button || "View CV";
-  const githubUrl = settings.github_url || siteConfig.links.github;
-  const linkedinUrl = settings.linkedin_url || siteConfig.links.linkedin;
+  // Get dynamic settings with fallbacks - using proper null/undefined checking
+  const cvUrl = getSettingValue(settings, "cv_url", "/Laurent_Cv.pdf");
+  const heroGreeting = getSettingValue(
+    settings,
+    "hero_greeting",
+    "Hi, I'm Laurent",
+  );
+  const heroDescription = getSettingValue(
+    settings,
+    "hero_description",
+    "Building the future, one line of code at a time",
+  );
+  const heroPrimaryButton = getSettingValue(
+    settings,
+    "hero_primary_button",
+    "View My Work",
+  );
+  const heroSecondaryButton = getSettingValue(
+    settings,
+    "hero_secondary_button",
+    "View CV",
+  );
+  const githubUrl = getSettingValue(
+    settings,
+    "github_url",
+    siteConfig.links.github,
+  );
+  const linkedinUrl = getSettingValue(
+    settings,
+    "linkedin_url",
+    siteConfig.links.linkedin,
+  );
 
   // Secure text processing - split text and render "Laurent" with styling
   const renderGreeting = (text: string) => {

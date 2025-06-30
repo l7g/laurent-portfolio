@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -6,6 +8,11 @@ export async function GET(
   { params }: { params: Promise<{ key: string }> },
 ) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { key } = await params;
     const setting = await prisma.siteSetting.findUnique({
       where: { key },
@@ -30,6 +37,11 @@ export async function PUT(
   { params }: { params: Promise<{ key: string }> },
 ) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { key } = await params;
     const { value, type, description, isPublic } = await request.json();
 
@@ -63,6 +75,11 @@ export async function DELETE(
   { params }: { params: Promise<{ key: string }> },
 ) {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { key } = await params;
     await prisma.siteSetting.delete({
       where: { key },

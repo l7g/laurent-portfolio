@@ -16,7 +16,13 @@ const HeroSection = () => {
 
   // Get dynamic settings with fallbacks
   const cvUrl = getSetting("cv_url", "/Laurent_Cv.pdf");
-  const heroSubtitle = getSetting("hero_subtitle", "Full Stack Developer");
+  const heroGreeting = getSetting("hero_greeting", "Hi, I'm Laurent");
+  const heroDescription = getSetting(
+    "hero_description",
+    "Building the future, one line of code at a time",
+  );
+  const heroPrimaryButton = getSetting("hero_primary_button", "View My Work");
+  const heroSecondaryButton = getSetting("hero_secondary_button", "View CV");
   const githubUrl = getSetting("github_url", siteConfig.links.github);
   const linkedinUrl = getSetting("linkedin_url", siteConfig.links.linkedin);
   return (
@@ -65,16 +71,15 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Hi, I&apos;m <span className="text-primary">Laurent</span>
-          </motion.h1>{" "}
+            {heroGreeting}
+          </motion.h1>
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className="text-xl md:text-2xl text-default-600 mb-8 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Aspiring Full-Stack Developer building modern software solutions
-            through 3 years of self-study and hands-on learning
+            {heroDescription}
           </motion.p>
           <motion.div
             animate={{ opacity: 1, y: 0 }}
@@ -94,7 +99,7 @@ const HeroSection = () => {
                 });
               }}
             >
-              View My Work
+              {heroPrimaryButton}
             </Button>
             <Button
               as="a"
@@ -108,7 +113,7 @@ const HeroSection = () => {
               target="_blank"
               variant="bordered"
             >
-              View CV
+              {heroSecondaryButton}
             </Button>
           </motion.div>
           <motion.div

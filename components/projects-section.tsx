@@ -458,11 +458,10 @@ const ProjectsSection = () => {
                   </div>
                   {project.isWip && (
                     <div className="mb-3 p-2 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-md">
-                      {" "}
                       <p className="text-xs text-warning-700 dark:text-warning-300">
-                        {" "}
-                        🚧 Available for freelancing - Contact for custom
-                        development
+                        {project.wipWarningEmoji || "🚧"}{" "}
+                        {project.wipWarningText ||
+                          "Available for freelancing - Contact for custom development"}
                       </p>
                     </div>
                   )}

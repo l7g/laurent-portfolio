@@ -54,6 +54,15 @@ interface ContactContent {
   workPlaceholder: string;
 }
 
+// Helper function to get setting value with proper null/undefined checking
+const getSettingValue = (
+  settings: Record<string, any>,
+  key: string,
+  defaultValue: any,
+) => {
+  return settings[key] !== undefined ? settings[key] : defaultValue;
+};
+
 const ContactSection = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
@@ -125,31 +134,53 @@ const ContactSection = () => {
           const settings = await response.json();
 
           setContent({
-            title: settings.contact_title || "Let's Connect",
-            description:
-              settings.contact_description ||
+            title: getSettingValue(settings, "contact_title", "Let's Connect"),
+            description: getSettingValue(
+              settings,
+              "contact_description",
               "I'm enthusiastic about starting my professional journey and eager to learn from experienced developers. Whether you have entry-level opportunities, mentorship, or just want to discuss code - I'd love to hear from you!",
-            journeyTitle: settings.contact_journey_title || "My Journey",
-            journeyStats: settings.contact_journey_stats || [
+            ),
+            journeyTitle: getSettingValue(
+              settings,
+              "contact_journey_title",
+              "My Journey",
+            ),
+            journeyStats: getSettingValue(settings, "contact_journey_stats", [
               { label: "Years Learning", value: "3" },
               { label: "Accenture Intern", value: "6mo" },
               { label: "Commercial Projects", value: "3" },
               { label: "Client Work", value: "Real" },
-            ],
-            tabGeneral: settings.contact_tab_general || "General Contact",
-            tabWork: settings.contact_tab_work || "Work Inquiry",
-            successMessage:
-              settings.contact_success_message ||
+            ]),
+            tabGeneral: getSettingValue(
+              settings,
+              "contact_tab_general",
+              "General Contact",
+            ),
+            tabWork: getSettingValue(
+              settings,
+              "contact_tab_work",
+              "Work Inquiry",
+            ),
+            successMessage: getSettingValue(
+              settings,
+              "contact_success_message",
               "Message sent successfully! I'll get back to you soon.",
-            errorMessage:
-              settings.contact_error_message ||
+            ),
+            errorMessage: getSettingValue(
+              settings,
+              "contact_error_message",
               "Failed to send message. Please try again or email me directly.",
-            generalPlaceholder:
-              settings.contact_general_placeholder ||
+            ),
+            generalPlaceholder: getSettingValue(
+              settings,
+              "contact_general_placeholder",
               "Tell me about opportunities, collaborations, or just say hello!",
-            workPlaceholder:
-              settings.contact_work_placeholder ||
+            ),
+            workPlaceholder: getSettingValue(
+              settings,
+              "contact_work_placeholder",
               "Tell me about the role, responsibilities, team, and what you're looking for in a candidate.",
+            ),
           });
         }
       } catch (error) {

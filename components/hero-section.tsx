@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { motion } from "framer-motion";
 import {
@@ -9,22 +10,75 @@ import {
 } from "@heroicons/react/24/solid";
 
 import { siteConfig } from "@/config/site";
-import { usePublicSettings } from "@/lib/use-settings";
+
+// Helper function to get setting value with proper null/undefined checking
+const getSettingValue = (
+  settings: Record<string, any>,
+  key: string,
+  defaultValue: any,
+) => {
+  return settings[key] !== undefined ? settings[key] : defaultValue;
+};
 
 const HeroSection = () => {
-  const { getSetting } = usePublicSettings();
+  const [settings, setSettings] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(true);
 
-  // Get dynamic settings with fallbacks
-  const cvUrl = getSetting("cv_url", "/Laurent_Cv.pdf");
-  const heroGreeting = getSetting("hero_greeting", "Hi, I'm Laurent");
-  const heroDescription = getSetting(
-    "hero_description",
-    "Aspiring Full-Stack Developer building modern web applications through 3 years of self-study and hands-on learning",
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const response = await fetch("/api/public/settings", {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setSettings(data.data || {});
+        }
+      } catch (error) {
+        console.error("Failed to fetch settings:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSettings();
+  }, []);
+
+  // Get dynamic settings with fallbacks - using proper null/undefined checking
+  const cvUrl = getSettingValue(settings, "cv_url", "/Laurent_Cv.pdf");
+  const heroGreeting = getSettingValue(
+    settings,
+    "hero_greeting",
+    "Hi, I'm Laurent",
   );
-  const heroPrimaryButton = getSetting("hero_primary_button", "View My Work");
-  const heroSecondaryButton = getSetting("hero_secondary_button", "View CV");
-  const githubUrl = getSetting("github_url", siteConfig.links.github);
-  const linkedinUrl = getSetting("linkedin_url", siteConfig.links.linkedin);
+  const heroDescription = getSettingValue(
+    settings,
+    "hero_description",
+    "Building the future, one line of code at a time",
+  );
+  const heroPrimaryButton = getSettingValue(
+    settings,
+    "hero_primary_button",
+    "View My Work",
+  );
+  const heroSecondaryButton = getSettingValue(
+    settings,
+    "hero_secondary_button",
+    "View CV",
+  );
+  const githubUrl = getSettingValue(
+    settings,
+    "github_url",
+    siteConfig.links.github,
+  );
+  const linkedinUrl = getSettingValue(
+    settings,
+    "linkedin_url",
+    siteConfig.links.linkedin,
+  );
 
   // Secure text processing - split text and render "Laurent" with styling
   const renderGreeting = (text: string) => {

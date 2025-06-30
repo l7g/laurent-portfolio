@@ -41,7 +41,17 @@ export async function GET() {
       {} as Record<string, any>,
     );
 
-    return NextResponse.json({ data: settingsMap });
+    return NextResponse.json(
+      { data: settingsMap },
+      {
+        headers: {
+          "Cache-Control":
+            "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      },
+    );
   } catch (error) {
     console.error("Error fetching public settings:", error);
     return NextResponse.json(

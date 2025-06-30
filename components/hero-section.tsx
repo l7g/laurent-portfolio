@@ -9,8 +9,41 @@ import {
 } from "@heroicons/react/24/solid";
 
 import { siteConfig } from "@/config/site";
+import { usePublicSettings } from "@/lib/use-settings";
 
 const HeroSection = () => {
+  const { getSetting } = usePublicSettings();
+
+  // Get dynamic settings with fallbacks
+  const cvUrl = getSetting("cv_url", "/Laurent_Cv.pdf");
+  const heroGreeting = getSetting("hero_greeting", "Hi, I'm Laurent");
+  const heroDescription = getSetting(
+    "hero_description",
+    "Aspiring Full-Stack Developer building modern web applications through 3 years of self-study and hands-on learning",
+  );
+  const heroPrimaryButton = getSetting("hero_primary_button", "View My Work");
+  const heroSecondaryButton = getSetting("hero_secondary_button", "View CV");
+  const githubUrl = getSetting("github_url", siteConfig.links.github);
+  const linkedinUrl = getSetting("linkedin_url", siteConfig.links.linkedin);
+
+  // Secure text processing - split text and render "Laurent" with styling
+  const renderGreeting = (text: string) => {
+    // Split text by "Laurent" (case-insensitive) to preserve the original case
+    const parts = text.split(/(laurent)/gi);
+
+    return parts.map((part, index) => {
+      // Check if this part is "Laurent" (case-insensitive)
+      if (part.toLowerCase() === "laurent") {
+        return (
+          <span key={index} className="text-primary">
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <section
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
@@ -57,16 +90,15 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            Hi, I&apos;m <span className="text-primary">Laurent</span>
-          </motion.h1>{" "}
+            {renderGreeting(heroGreeting)}
+          </motion.h1>
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className="text-xl md:text-2xl text-default-600 mb-8 max-w-2xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Aspiring Full-Stack Developer building modern software solutions
-            through 3 years of self-study and hands-on learning
+            {heroDescription}
           </motion.p>
           <motion.div
             animate={{ opacity: 1, y: 0 }}
@@ -86,12 +118,12 @@ const HeroSection = () => {
                 });
               }}
             >
-              View My Work
+              {heroPrimaryButton}
             </Button>
             <Button
               as="a"
               className="font-semibold"
-              href="/Laurent_Cv.pdf"
+              href={cvUrl}
               rel="noopener noreferrer"
               size="lg"
               startContent={
@@ -100,7 +132,7 @@ const HeroSection = () => {
               target="_blank"
               variant="bordered"
             >
-              View CV
+              {heroSecondaryButton}
             </Button>
           </motion.div>
           <motion.div
@@ -113,7 +145,7 @@ const HeroSection = () => {
             <motion.a
               aria-label="Visit GitHub Profile"
               className="text-default-500 hover:text-primary transition-colors"
-              href={siteConfig.links.github}
+              href={githubUrl}
               rel="noopener noreferrer"
               target="_blank"
               whileHover={{ scale: 1.1 }}
@@ -131,7 +163,7 @@ const HeroSection = () => {
             <motion.a
               aria-label="Visit LinkedIn Profile"
               className="text-default-500 hover:text-primary transition-colors"
-              href={siteConfig.links.linkedin}
+              href={linkedinUrl}
               rel="noopener noreferrer"
               target="_blank"
               whileHover={{ scale: 1.1 }}

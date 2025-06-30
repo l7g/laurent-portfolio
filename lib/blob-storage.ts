@@ -2,6 +2,30 @@ import { put, del, list } from "@vercel/blob";
 
 export class BlobStorage {
   /**
+   * Upload a file to Vercel Blob storage (images, documents, etc.)
+   * @param file - File to upload
+   * @param folder - Folder to organize files (e.g., 'projects', 'profile', 'documents')
+   * @returns Promise with blob URL
+   */
+  static async uploadFile(
+    file: File,
+    folder: string = "uploads",
+  ): Promise<string> {
+    try {
+      const filename = `${folder}/${Date.now()}-${file.name}`;
+      const blob = await put(filename, file, {
+        access: "public",
+        contentType: file.type,
+      });
+
+      return blob.url;
+    } catch (error) {
+      console.error("Error uploading to blob storage:", error);
+      throw new Error("Failed to upload file");
+    }
+  }
+
+  /**
    * Upload an image to Vercel Blob storage
    * @param file - File to upload
    * @param folder - Folder to organize files (e.g., 'projects', 'profile')
@@ -132,6 +156,48 @@ export function getProjectImageUrl(
     PLACEHOLDER_IMAGES.projects[projectType] ||
     PLACEHOLDER_IMAGES.projects.default
   );
+}
+
+/**
+ * Validate file for upload (images and documents)
+ * @param file - File to validate
+ * @param type - File type expected ('image' or 'document')
+ * @returns Validation result
+ */
+export function validateFile(
+  file: File,
+  type: "image" | "document" = "image",
+): {
+  valid: boolean;
+  error?: string;
+} {
+  if (type === "image") {
+    return validateImageFile(file);
+  }
+
+  const maxSize = 10 * 1024 * 1024; // 10MB for documents
+  const allowedTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain",
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: "Invalid file type. Please upload PDF, DOC, DOCX, or TXT files.",
+    };
+  }
+
+  if (file.size > maxSize) {
+    return {
+      valid: false,
+      error: "File too large. Please upload documents smaller than 10MB.",
+    };
+  }
+
+  return { valid: true };
 }
 
 /**

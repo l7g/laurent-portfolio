@@ -19,12 +19,21 @@ const HeroSection = () => {
   const heroGreeting = getSetting("hero_greeting", "Hi, I'm Laurent");
   const heroDescription = getSetting(
     "hero_description",
-    "Building the future, one line of code at a time",
+    "Aspiring Full-Stack Developer building modern web applications through 3 years of self-study and hands-on learning",
   );
   const heroPrimaryButton = getSetting("hero_primary_button", "View My Work");
   const heroSecondaryButton = getSetting("hero_secondary_button", "View CV");
   const githubUrl = getSetting("github_url", siteConfig.links.github);
   const linkedinUrl = getSetting("linkedin_url", siteConfig.links.linkedin);
+
+  // Process greeting to ensure "Laurent" is styled if not already styled
+  const processedGreeting = heroGreeting.includes("<span")
+    ? heroGreeting
+    : heroGreeting.replace(
+        "Laurent",
+        '<span className="text-primary">Laurent</span>',
+      );
+
   return (
     <section
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
@@ -70,9 +79,8 @@ const HeroSection = () => {
             className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent"
             initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            {heroGreeting}
-          </motion.h1>
+            dangerouslySetInnerHTML={{ __html: processedGreeting }}
+          />
           <motion.p
             animate={{ opacity: 1, y: 0 }}
             className="text-xl md:text-2xl text-default-600 mb-8 max-w-2xl mx-auto"

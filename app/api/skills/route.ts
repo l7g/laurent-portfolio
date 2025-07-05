@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-// GET /api/skills - Get all skills
+// GET /api/skills - Get all skills (public endpoint)
 export async function GET() {
   try {
     const skills = await prisma.skill.findMany({

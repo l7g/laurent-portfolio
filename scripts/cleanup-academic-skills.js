@@ -45,7 +45,7 @@ async function cleanupDuplicateAcademicSkills() {
     const academicSkillsData = [
       {
         name: "International Political Theory",
-        category: "OTHER",
+        category: "ACADEMIC",
         level: 10,
         icon: "🏛️",
         color: "#10B981",
@@ -54,7 +54,7 @@ async function cleanupDuplicateAcademicSkills() {
       },
       {
         name: "Diplomatic Analysis",
-        category: "OTHER",
+        category: "ACADEMIC",
         level: 8,
         icon: "🤝",
         color: "#3B82F6",
@@ -63,7 +63,7 @@ async function cleanupDuplicateAcademicSkills() {
       },
       {
         name: "Global Political Economy",
-        category: "OTHER",
+        category: "ACADEMIC",
         level: 5,
         icon: "💼",
         color: "#8B5CF6",

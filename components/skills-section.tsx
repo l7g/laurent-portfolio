@@ -156,13 +156,11 @@ const SkillsSection = () => {
   useEffect(() => {
     async function fetchSkills() {
       try {
-        // Fetch both technical and academic skills
-        const [skillsResponse, academicResponse, programResponse] =
-          await Promise.all([
-            fetch("/api/skills"),
-            fetch("/api/academic/skills"),
-            fetch("/api/academic/programs"),
-          ]);
+        // Fetch skills and academic program data
+        const [skillsResponse, programResponse] = await Promise.all([
+          fetch("/api/skills"),
+          fetch("/api/academic/programs"),
+        ]);
 
         if (skillsResponse.ok) {
           const dbSkills = await skillsResponse.json();
@@ -174,6 +172,7 @@ const SkillsSection = () => {
             DATABASE: "Database & ORM",
             TOOLS: "Tools & Version Control",
             DESIGN: "Design",
+            ACADEMIC: "International Relations",
             OTHER: "Other",
           };
 
@@ -217,7 +216,7 @@ const SkillsSection = () => {
             });
 
             // Add to technologies list if it's a main technology (has isFeatured field or high level)
-            if (skill.level >= 80) {
+            if (skill.level >= 80 && skill.category !== "ACADEMIC") {
               const techIconData = getTechIcon(skill.name);
               techList.push({
                 name: skill.name,
@@ -226,22 +225,6 @@ const SkillsSection = () => {
               });
             }
           });
-
-          // Add academic skills if available
-          if (academicResponse.ok) {
-            const academicSkills = await academicResponse.json();
-
-            if (academicSkills.length > 0) {
-              categoriesMap["International Relations"] = {
-                title: "International Relations",
-                color: "success",
-                skills: academicSkills.map((skill: any) => ({
-                  name: skill.name,
-                  level: skill.currentLevel,
-                })),
-              };
-            }
-          }
 
           // Set academic program data
           if (programResponse.ok) {

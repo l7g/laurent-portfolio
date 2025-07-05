@@ -1,7 +1,8 @@
 ﻿import HeroSection from "@/components/hero-section";
 import AboutSection from "@/components/about-section";
+import EducationSkillsSection from "@/components/education-skills-section";
 import ProjectsSection from "@/components/projects-section";
-import SkillsSection from "@/components/skills-section";
+import BlogWidget from "@/components/blog-widget";
 import ContactSection from "@/components/contact-section";
 import { prisma } from "@/lib/prisma";
 
@@ -10,8 +11,9 @@ export default async function Home() {
     <div className="flex flex-col">
       <HeroSection />
       <AboutSection />
+      <EducationSkillsSection />
       <ProjectsSection />
-      <SkillsSection />
+      <BlogWidget />
       <ContactSection />
     </div>
   );

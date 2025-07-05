@@ -14,16 +14,16 @@ export const siteConfig = {
       href: "#about",
     },
     {
+      label: "Education & Skills",
+      href: "#education-skills",
+    },
+    {
       label: "Projects",
       href: "#projects",
     },
     {
-      label: "Skills",
-      href: "#skills",
-    },
-    {
       label: "Blog",
-      href: "/blog",
+      href: "#blog",
     },
     {
       label: "Contact",
@@ -40,16 +40,16 @@ export const siteConfig = {
       href: "#about",
     },
     {
+      label: "Education & Skills",
+      href: "#education-skills",
+    },
+    {
       label: "Projects",
       href: "#projects",
     },
     {
-      label: "Skills",
-      href: "#skills",
-    },
-    {
       label: "Blog",
-      href: "/blog",
+      href: "#blog",
     },
     {
       label: "Contact",

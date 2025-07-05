@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
+import { Link } from "@heroui/link";
 import { motion } from "framer-motion";
 import {
   ArrowTopRightOnSquareIcon,
@@ -32,7 +33,15 @@ interface Project {
   slug?: string;
 }
 
-const ProjectsSection = () => {
+interface ProjectsSectionProps {
+  showAll?: boolean;
+  className?: string;
+}
+
+const ProjectsSection = ({
+  showAll = false,
+  className = "",
+}: ProjectsSectionProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -408,186 +417,212 @@ const ProjectsSection = () => {
 
         {/* Other Projects Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-          {projects.slice(1).map((project, index) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 20 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              whileInView={{ opacity: 1, y: 0 }}
-            >
-              <Card className="h-full hover:shadow-lg transition-shadow duration-300 overflow-hidden">
-                <CardHeader className="p-0 overflow-hidden">
-                  <div className="w-full h-48 sm:h-56 md:h-64 overflow-hidden bg-gray-100">
-                    {project.image &&
-                    project.image.startsWith("placeholder-") ? (
-                      <PlaceholderImage
-                        title={project.title}
-                        type={project.image}
-                      />
-                    ) : (
-                      <img
-                        alt={project.title}
-                        className="w-full h-full object-cover object-center"
-                        src={project.image}
-                        style={{
-                          minHeight: "100%",
-                          minWidth: "100%",
-                        }}
-                      />
-                    )}
-                  </div>
-                </CardHeader>{" "}
-                <CardBody className="p-6">
-                  {" "}
-                  <div className="flex items-center gap-2 mb-3">
-                    <h3 className="text-xl font-bold">{project.title}</h3>
-                    {project.isWip && (
-                      <Chip
-                        className="text-xs font-semibold animate-pulse"
-                        color="warning"
-                        size="sm"
-                        startContent={
-                          <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                        }
-                        variant="solid"
-                      >
-                        WIP
-                      </Chip>
-                    )}
-                  </div>
-                  {project.isWip && (
-                    <div className="mb-3 p-2 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-md">
-                      <p className="text-xs text-warning-700 dark:text-warning-300">
-                        {project.wipWarningEmoji || "🚧"}{" "}
-                        {project.wipWarningText ||
-                          "Available for freelancing - Contact for custom development"}
-                      </p>
+          {projects
+            .slice(1, showAll ? projects.length : 4)
+            .map((project, index) => (
+              <motion.div
+                key={project.title}
+                initial={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                whileInView={{ opacity: 1, y: 0 }}
+              >
+                <Card className="h-full hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                  <CardHeader className="p-0 overflow-hidden">
+                    <div className="w-full h-48 sm:h-56 md:h-64 overflow-hidden bg-gray-100">
+                      {project.image &&
+                      project.image.startsWith("placeholder-") ? (
+                        <PlaceholderImage
+                          title={project.title}
+                          type={project.image}
+                        />
+                      ) : (
+                        <img
+                          alt={project.title}
+                          className="w-full h-full object-cover object-center"
+                          src={project.image}
+                          style={{
+                            minHeight: "100%",
+                            minWidth: "100%",
+                          }}
+                        />
+                      )}
                     </div>
-                  )}
-                  <p className="text-default-600 mb-4 text-sm leading-relaxed">
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech) => (
-                      <Chip key={tech} size="sm" variant="flat">
-                        {tech}
-                      </Chip>
-                    ))}
-                  </div>
-                </CardBody>
-                <CardFooter className="p-6 pt-0 flex gap-3">
-                  {project.isWip ? (
-                    <>
-                      {/* Show live demo button if available for WIP projects */}
-                      {project.links.live && project.links.live !== "#" && (
-                        <Button
+                  </CardHeader>{" "}
+                  <CardBody className="p-6">
+                    {" "}
+                    <div className="flex items-center gap-2 mb-3">
+                      <h3 className="text-xl font-bold">{project.title}</h3>
+                      {project.isWip && (
+                        <Chip
+                          className="text-xs font-semibold animate-pulse"
                           color="warning"
                           size="sm"
                           startContent={
-                            <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                            <div className="w-1.5 h-1.5 bg-white rounded-full" />
                           }
-                          variant="flat"
-                          onPress={() =>
-                            window.open(project.links.live, "_blank")
-                          }
+                          variant="solid"
                         >
-                          Live Demo
-                        </Button>
+                          WIP
+                        </Chip>
                       )}
-                      <Button
-                        className={`font-semibold ${project.links.live && project.links.live !== "#" ? "" : "flex-1"}`}
-                        color="warning"
-                        size="sm"
-                        startContent={
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                    </div>
+                    {project.isWip && (
+                      <div className="mb-3 p-2 bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-md">
+                        <p className="text-xs text-warning-700 dark:text-warning-300">
+                          {project.wipWarningEmoji || "🚧"}{" "}
+                          {project.wipWarningText ||
+                            "Available for freelancing - Contact for custom development"}
+                        </p>
+                      </div>
+                    )}
+                    <p className="text-default-600 mb-4 text-sm leading-relaxed">
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {project.technologies.map((tech) => (
+                        <Chip key={tech} size="sm" variant="flat">
+                          {tech}
+                        </Chip>
+                      ))}
+                    </div>
+                  </CardBody>
+                  <CardFooter className="p-6 pt-0 flex gap-3">
+                    {project.isWip ? (
+                      <>
+                        {/* Show live demo button if available for WIP projects */}
+                        {project.links.live && project.links.live !== "#" && (
+                          <Button
+                            color="warning"
+                            size="sm"
+                            startContent={
+                              <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                            }
+                            variant="flat"
+                            onPress={() =>
+                              window.open(project.links.live, "_blank")
+                            }
                           >
-                            <path
-                              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                            />
-                          </svg>
-                        }
-                        variant="solid"
-                        onPress={() => {
-                          const contactSection =
-                            document.getElementById("contact");
-
-                          contactSection?.scrollIntoView({
-                            behavior: "smooth",
-                          });
-                        }}
-                      >
-                        Explore My Work
-                      </Button>
-                      {/* Only show code button if GitHub link is valid */}
-                      {project.links.github && project.links.github !== "#" && (
+                            Live Demo
+                          </Button>
+                        )}
                         <Button
-                          size="sm"
-                          startContent={<GithubIcon className="w-4 h-4" />}
-                          variant="light"
-                          onPress={() =>
-                            window.open(project.links.github, "_blank")
-                          }
-                        >
-                          Code
-                        </Button>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {/* Only show live demo button if live link is valid */}
-                      {project.links.live && project.links.live !== "#" && (
-                        <Button
-                          color="primary"
+                          className={`font-semibold ${project.links.live && project.links.live !== "#" ? "" : "flex-1"}`}
+                          color="warning"
                           size="sm"
                           startContent={
-                            <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                              />
+                            </svg>
                           }
-                          variant="flat"
-                          onPress={() =>
-                            window.open(project.links.live, "_blank")
-                          }
+                          variant="solid"
+                          onPress={() => {
+                            const contactSection =
+                              document.getElementById("contact");
+
+                            contactSection?.scrollIntoView({
+                              behavior: "smooth",
+                            });
+                          }}
                         >
-                          Live Demo
+                          Explore My Work
                         </Button>
-                      )}
-                      {/* Only show code button if GitHub link is valid */}
-                      {project.links.github && project.links.github !== "#" && (
-                        <Button
-                          size="sm"
-                          startContent={<GithubIcon className="w-4 h-4" />}
-                          variant="light"
-                          onPress={() =>
-                            window.open(project.links.github, "_blank")
-                          }
-                        >
-                          Code
-                        </Button>
-                      )}
-                      {/* Show message when no links are available */}
-                      {(!project.links.live || project.links.live === "#") &&
-                        (!project.links.github ||
-                          project.links.github === "#") && (
-                          <div className="flex-1 text-center py-2">
-                            <p className="text-small text-default-500">
-                              🔗 Links coming soon
-                            </p>
-                          </div>
+                        {/* Only show code button if GitHub link is valid */}
+                        {project.links.github &&
+                          project.links.github !== "#" && (
+                            <Button
+                              size="sm"
+                              startContent={<GithubIcon className="w-4 h-4" />}
+                              variant="light"
+                              onPress={() =>
+                                window.open(project.links.github, "_blank")
+                              }
+                            >
+                              Code
+                            </Button>
+                          )}
+                      </>
+                    ) : (
+                      <>
+                        {/* Only show live demo button if live link is valid */}
+                        {project.links.live && project.links.live !== "#" && (
+                          <Button
+                            color="primary"
+                            size="sm"
+                            startContent={
+                              <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+                            }
+                            variant="flat"
+                            onPress={() =>
+                              window.open(project.links.live, "_blank")
+                            }
+                          >
+                            Live Demo
+                          </Button>
                         )}
-                    </>
-                  )}
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))}
+                        {/* Only show code button if GitHub link is valid */}
+                        {project.links.github &&
+                          project.links.github !== "#" && (
+                            <Button
+                              size="sm"
+                              startContent={<GithubIcon className="w-4 h-4" />}
+                              variant="light"
+                              onPress={() =>
+                                window.open(project.links.github, "_blank")
+                              }
+                            >
+                              Code
+                            </Button>
+                          )}
+                        {/* Show message when no links are available */}
+                        {(!project.links.live || project.links.live === "#") &&
+                          (!project.links.github ||
+                            project.links.github === "#") && (
+                            <div className="flex-1 text-center py-2">
+                              <p className="text-small text-default-500">
+                                🔗 Links coming soon
+                              </p>
+                            </div>
+                          )}
+                      </>
+                    )}
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))}
         </div>
+
+        {/* View All Projects Button - Only show on homepage */}
+        {!showAll && (
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            whileInView={{ opacity: 1, y: 0 }}
+          >
+            <Button
+              as={Link}
+              href="/projects"
+              color="primary"
+              endContent={<ArrowRightIcon className="w-5 h-5" />}
+              size="lg"
+              variant="bordered"
+            >
+              View All Projects
+            </Button>
+          </motion.div>
+        )}
 
         {/* Call to Action */}
         <motion.div

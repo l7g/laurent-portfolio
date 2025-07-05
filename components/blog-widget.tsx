@@ -160,56 +160,56 @@ const BlogWidget = ({
               viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
             >
-              <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                <CardBody className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    {showCategories && post.category && (
-                      <Chip
-                        color={getCategoryColor(post.category.name) as any}
-                        size="sm"
-                        variant="flat"
-                      >
-                        {post.category.name}
-                      </Chip>
-                    )}
-                    <div className="flex items-center gap-3 text-xs text-default-500">
-                      <div className="flex items-center gap-1">
-                        <CalendarIcon className="w-3 h-3" />
-                        {formatDate(post.publishedAt)}
-                      </div>
-                      {showReadTime && (
-                        <div className="flex items-center gap-1">
-                          <ClockIcon className="w-3 h-3" />
-                          {post.readingTime}m read
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <h3 className="text-lg font-semibold mb-3 group-hover:text-primary transition-colors">
-                    {post.title}
-                  </h3>
-
-                  <p className="text-default-600 text-sm mb-4 line-clamp-3">
-                    {post.excerpt}
-                  </p>
-
-                  {showTags && post.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-4">
-                      {post.tags.slice(0, 3).map((tag) => (
+              <Link href={`/blog/${post.slug}`}>
+                <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                  <CardBody className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      {showCategories && post.category && (
                         <Chip
-                          key={tag}
+                          color={getCategoryColor(post.category.name) as any}
                           size="sm"
-                          variant="bordered"
-                          className="text-xs"
+                          variant="flat"
                         >
-                          {tag}
+                          {post.category.name}
                         </Chip>
-                      ))}
+                      )}
+                      <div className="flex items-center gap-3 text-xs text-default-500">
+                        <div className="flex items-center gap-1">
+                          <CalendarIcon className="w-3 h-3" />
+                          {formatDate(post.publishedAt)}
+                        </div>
+                        {showReadTime && (
+                          <div className="flex items-center gap-1">
+                            <ClockIcon className="w-3 h-3" />
+                            {post.readingTime}m read
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
 
-                  <Link href={`/blog/${post.slug}`}>
+                    <h3 className="text-lg font-semibold mb-3 group-hover:text-primary transition-colors">
+                      {post.title}
+                    </h3>
+
+                    <p className="text-default-600 text-sm mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+
+                    {showTags && post.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {post.tags.slice(0, 3).map((tag) => (
+                          <Chip
+                            key={tag}
+                            size="sm"
+                            variant="bordered"
+                            className="text-xs"
+                          >
+                            {tag}
+                          </Chip>
+                        ))}
+                      </div>
+                    )}
+
                     <Button
                       variant="light"
                       color="primary"
@@ -219,9 +219,9 @@ const BlogWidget = ({
                     >
                       Read more
                     </Button>
-                  </Link>
-                </CardBody>
-              </Card>
+                  </CardBody>
+                </Card>
+              </Link>
             </motion.div>
           ))}
         </div>

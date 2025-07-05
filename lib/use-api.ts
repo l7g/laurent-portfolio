@@ -51,7 +51,7 @@ export function useApi() {
   // Project operations
   const projects = {
     getAll: () => request<any[]>("/api/projects"),
-    getById: (id: string) => request<any>(`/api/projects/${id}`),
+    getById: (id: string) => request<any>(`/api/admin/projects/${id}`),
     create: (data: any, options?: UseApiOptions) =>
       request<any>(
         "/api/projects",
@@ -60,13 +60,13 @@ export function useApi() {
       ),
     update: (id: string, data: any, options?: UseApiOptions) =>
       request<any>(
-        `/api/projects/${id}`,
+        `/api/admin/projects/${id}`,
         { method: "PUT", body: JSON.stringify(data) },
         options,
       ),
     delete: (id: string, options?: UseApiOptions) =>
       request<{ message: string }>(
-        `/api/projects/${id}`,
+        `/api/admin/projects/${id}`,
         { method: "DELETE" },
         options,
       ),

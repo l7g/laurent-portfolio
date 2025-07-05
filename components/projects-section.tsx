@@ -44,6 +44,7 @@ const ProjectsSection = ({
 }: ProjectsSectionProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [ctaData, setCtaData] = useState<any>(null);
 
   useEffect(() => {
     async function fetchProjects() {
@@ -87,6 +88,26 @@ const ProjectsSection = ({
     }
 
     fetchProjects();
+
+    // Fetch CTA section data
+    async function fetchCtaData() {
+      try {
+        const response = await fetch("/api/sections");
+        if (response.ok) {
+          const sections = await response.json();
+          const ctaSection = sections.find(
+            (section: any) => section.name === "projects-cta",
+          );
+          if (ctaSection) {
+            setCtaData(ctaSection);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch CTA data:", error);
+      }
+    }
+
+    fetchCtaData();
   }, []);
 
   if (loading) {
@@ -624,32 +645,101 @@ const ProjectsSection = ({
           </motion.div>
         )}
 
-        {/* Call to Action */}
+        {/* Enhanced Call to Action */}
         <motion.div
-          className="text-center mt-16"
+          className="mt-20 py-16 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl border border-primary/10"
           initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
           whileInView={{ opacity: 1, y: 0 }}
         >
-          {" "}
-          <p className="text-default-600 mb-6">
-            Interested in hiring me or need custom development work similar to
-            these projects?
-          </p>
-          <Button
-            color="primary"
-            endContent={<ArrowRightIcon className="w-5 h-5" />}
-            size="lg"
-            variant="bordered"
-            onPress={() => {
-              document.getElementById("contact")?.scrollIntoView({
-                behavior: "smooth",
-              });
-            }}
-          >
-            Get In Touch
-          </Button>
+          <div className="text-center max-w-4xl mx-auto px-8">
+            <h3 className="text-3xl md:text-4xl font-bold mb-4">
+              {ctaData?.title || "Ready to Build Something"}{" "}
+              <span className="text-primary">
+                {ctaData?.subtitle || "Amazing?"}
+              </span>
+            </h3>
+            <p className="text-lg text-default-600 mb-8 leading-relaxed">
+              {ctaData?.description ||
+                "I specialize in creating custom web applications that solve real business problems. From concept to deployment, I deliver professional solutions that make a difference."}
+            </p>
+
+            {/* Stats/Highlights */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+              <div className="flex flex-col items-center">
+                <div className="text-2xl font-bold text-primary mb-1">
+                  {ctaData?.content?.stats?.[0]?.value || "5+"}
+                </div>
+                <div className="text-sm text-default-600">
+                  {ctaData?.content?.stats?.[0]?.label || "Years Experience"}
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="text-2xl font-bold text-primary mb-1">
+                  {ctaData?.content?.stats?.[1]?.value || "20+"}
+                </div>
+                <div className="text-sm text-default-600">
+                  {ctaData?.content?.stats?.[1]?.label || "Projects Completed"}
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="text-2xl font-bold text-primary mb-1">
+                  {ctaData?.content?.stats?.[2]?.value || "100%"}
+                </div>
+                <div className="text-sm text-default-600">
+                  {ctaData?.content?.stats?.[2]?.label || "Client Satisfaction"}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button
+                color="primary"
+                endContent={<ArrowRightIcon className="w-5 h-5" />}
+                size="lg"
+                variant="solid"
+                className="min-w-[200px] font-semibold"
+                onPress={() => {
+                  document.getElementById("contact")?.scrollIntoView({
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                {ctaData?.content?.primaryButton?.text || "Start Your Project"}
+              </Button>
+              <Button
+                color="default"
+                variant="bordered"
+                size="lg"
+                className="min-w-[200px] font-semibold"
+                onPress={() => {
+                  const emailSubject = encodeURIComponent(
+                    ctaData?.content?.emailSubject || "Project Inquiry",
+                  );
+                  const emailBody = encodeURIComponent(
+                    ctaData?.content?.emailBody ||
+                      "Hi Laurent, I'd like to discuss a project with you.",
+                  );
+                  window.open(
+                    `mailto:contact@laurentgagne.com?subject=${emailSubject}&body=${emailBody}`,
+                    "_blank",
+                  );
+                }}
+              >
+                {ctaData?.content?.secondaryButton?.text || "Send Quick Email"}
+              </Button>
+            </div>
+
+            {/* Additional Info */}
+            <div className="mt-8 pt-6 border-t border-default-200">
+              <p className="text-sm text-default-500">
+                {ctaData?.content?.footerText ||
+                  "🚀 Available for freelance projects • 💬 Free consultation • ⚡ Fast turnaround"}
+              </p>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

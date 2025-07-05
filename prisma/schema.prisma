@@ -116,6 +116,9 @@ model Skill {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
+  // Relations
+  progressions SkillProgression[]
+
   @@map("skills")
 }
 
@@ -254,4 +257,68 @@ enum BlogStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+// Academic Progression Models
+model AcademicProgram {
+  id            String   @id @default(cuid())
+  name          String
+  degree        String   // "BSc International Relations"
+  institution   String   // "University of London"
+  accreditation String?  // "Academic direction from the London School of Economics and Political Science"
+  description   String?
+  startDate     DateTime
+  expectedEnd   DateTime
+  currentYear   Int      @default(1)
+  totalYears    Int      @default(4)
+  
+  // Academic details
+  mode          String?  // "Online", "Local teaching centre", etc.
+  status        AcademicStatus @default(ACTIVE)
+  
+  // Relations
+  progressions  SkillProgression[]
+  
+  // Timestamps
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("academic_programs")
+}
+
+model SkillProgression {
+  id            String   @id @default(cuid())
+  skillId       String
+  skill         Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  
+  // Academic Program relation
+  programId     String?
+  program       AcademicProgram? @relation(fields: [programId], references: [id], onDelete: SetNull)
+  
+  // Progression data
+  currentLevel  Int      @default(0)   // 0-100 scale
+  targetLevel   Int      @default(100) // Expected level at completion
+  
+  // Year-by-year progression
+  year1Target   Int?     // Target level after year 1
+  year2Target   Int?     // Target level after year 2
+  year3Target   Int?     // Target level after year 3
+  year4Target   Int?     // Target level after year 4
+  
+  // Progression tracking
+  lastUpdated   DateTime @default(now())
+  autoUpdate    Boolean  @default(true)
+  
+  // Skills categorization for IR
+  isAcademicSkill Boolean @default(false) // Skills gained through academic study
+  isTechnicalSkill Boolean @default(false) // Technical skills from development
+  
+  @@map("skill_progressions")
+}
+
+enum AcademicStatus {
+  ACTIVE
+  COMPLETED
+  DEFERRED
+  WITHDRAWN
 }

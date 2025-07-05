@@ -12,6 +12,8 @@ import {
   CloudIcon,
   CommandLineIcon,
   CogIcon,
+  AcademicCapIcon,
+  GlobeAltIcon,
 } from "@heroicons/react/24/outline";
 import {
   SiJavascript,
@@ -49,7 +51,33 @@ interface Technology {
 const SkillsSection = () => {
   const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
+  const [academicProgram, setAcademicProgram] = useState<any>(null);
+  const [academicSkills, setAcademicSkills] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Helper function to get current academic year
+  const getCurrentAcademicYear = () => {
+    const now = new Date();
+    const startYear = 2025;
+    const currentYear = now.getFullYear();
+    const month = now.getMonth();
+
+    // Academic year typically starts in September (month 8)
+    let academicYear = currentYear - startYear + 1;
+    if (month < 8) {
+      academicYear -= 1;
+    }
+
+    return Math.max(1, Math.min(academicYear, 4)); // Cap between 1-4
+  };
+
+  // Helper function to check if a skill is academic
+  const isAcademicSkill = (categoryTitle: string) => {
+    return (
+      categoryTitle === "International Relations" ||
+      categoryTitle === "Academic Skills"
+    );
+  };
 
   // Icon mapping function
   const getIconForCategory = (categoryTitle: string) => {
@@ -58,6 +86,8 @@ const SkillsSection = () => {
       "Backend Development": <ServerIcon className="w-6 h-6" />,
       "Database & ORM": <CircleStackIcon className="w-6 h-6" />,
       "Tools & Version Control": <CloudIcon className="w-6 h-6" />,
+      "Academic Skills": <AcademicCapIcon className="w-6 h-6" />,
+      "International Relations": <GlobeAltIcon className="w-6 h-6" />,
     };
     return iconMap[categoryTitle] || <CogIcon className="w-6 h-6" />;
   };
@@ -126,9 +156,16 @@ const SkillsSection = () => {
   useEffect(() => {
     async function fetchSkills() {
       try {
-        const response = await fetch("/api/skills");
-        if (response.ok) {
-          const dbSkills = await response.json();
+        // Fetch both technical and academic skills
+        const [skillsResponse, academicResponse, programResponse] =
+          await Promise.all([
+            fetch("/api/skills"),
+            fetch("/api/academic/skills"),
+            fetch("/api/academic/programs"),
+          ]);
+
+        if (skillsResponse.ok) {
+          const dbSkills = await skillsResponse.json();
 
           // Mapping from database categories to display names
           const categoryMapping: { [key: string]: string } = {
@@ -148,6 +185,8 @@ const SkillsSection = () => {
             "Tools & Version Control": "warning",
             Design: "danger",
             Other: "default",
+            "Academic Skills": "secondary",
+            "International Relations": "success",
           };
 
           // Group skills by category and transform to match existing format
@@ -187,6 +226,28 @@ const SkillsSection = () => {
               });
             }
           });
+
+          // Add academic skills if available
+          if (academicResponse.ok) {
+            const academicSkills = await academicResponse.json();
+
+            if (academicSkills.length > 0) {
+              categoriesMap["International Relations"] = {
+                title: "International Relations",
+                color: "success",
+                skills: academicSkills.map((skill: any) => ({
+                  name: skill.name,
+                  level: skill.currentLevel,
+                })),
+              };
+            }
+          }
+
+          // Set academic program data
+          if (programResponse.ok) {
+            const programData = await programResponse.json();
+            setAcademicProgram(programData[0] || null);
+          }
 
           // Convert map to array and add icons
           const categoriesArray = Object.values(categoriesMap).map((cat) => ({
@@ -240,6 +301,20 @@ const SkillsSection = () => {
             completed a 3-month C#/.NET course that deepened my understanding of
             database theory and backend architecture, making me more versatile
             across different tech stacks.
+            {academicProgram && (
+              <>
+                <br />
+                <br />
+                Currently pursuing a <strong>
+                  {academicProgram.degree}
+                </strong>{" "}
+                in <strong>{academicProgram.field}</strong> from{" "}
+                <strong>{academicProgram.university}</strong> with accreditation
+                from <strong>{academicProgram.accreditingBody}</strong>.
+                Expected graduation:{" "}
+                <strong>{academicProgram.expectedGraduation}</strong>.
+              </>
+            )}
           </p>
         </motion.div>
 
@@ -265,33 +340,50 @@ const SkillsSection = () => {
                   </div>
 
                   <div className="space-y-4">
-                    {category.skills.map((skill, skillIndex) => (
-                      <motion.div
-                        key={skill.name}
-                        initial={{ opacity: 0, x: -20 }}
-                        transition={{
-                          duration: 0.5,
-                          delay: index * 0.1 + skillIndex * 0.1,
-                        }}
-                        viewport={{ once: true }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                      >
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium">
-                            {skill.name}
-                          </span>
-                          <span className="text-sm text-default-500">
-                            {skill.level}%
-                          </span>
-                        </div>{" "}
-                        <Progress
-                          aria-label={`${skill.name} skill level: ${skill.level}%`}
-                          className="h-2"
-                          color={category.color as any}
-                          value={skill.level}
-                        />
-                      </motion.div>
-                    ))}
+                    {category.skills.map((skill, skillIndex) => {
+                      const isAcademic = isAcademicSkill(category.title);
+                      const currentYear = getCurrentAcademicYear();
+
+                      return (
+                        <motion.div
+                          key={`${category.title}-${skill.name}-${skillIndex}`}
+                          initial={{ opacity: 0, x: -20 }}
+                          transition={{
+                            duration: 0.5,
+                            delay: index * 0.1 + skillIndex * 0.1,
+                          }}
+                          viewport={{ once: true }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm font-medium">
+                              {skill.name}
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm text-default-500">
+                                {skill.level}%
+                              </span>
+                              {isAcademic && (
+                                <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                                  Year {currentYear}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <Progress
+                            aria-label={`${skill.name} skill level: ${skill.level}%`}
+                            className="h-2"
+                            color={category.color as any}
+                            value={skill.level}
+                          />
+                          {isAcademic && (
+                            <div className="mt-2 text-xs text-default-400">
+                              🎯 Expected by graduation: 85-90%
+                            </div>
+                          )}
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </CardBody>
               </Card>

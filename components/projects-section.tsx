@@ -669,26 +669,26 @@ const ProjectsSection = ({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
               <div className="flex flex-col items-center">
                 <div className="text-2xl font-bold text-primary mb-1">
-                  {ctaData?.content?.stats?.[0]?.value || "5+"}
+                  {ctaData?.content?.stats?.[0]?.value || "3+"}
                 </div>
                 <div className="text-sm text-default-600">
-                  {ctaData?.content?.stats?.[0]?.label || "Years Experience"}
+                  {ctaData?.content?.stats?.[0]?.label || "Years Learning"}
                 </div>
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-2xl font-bold text-primary mb-1">
-                  {ctaData?.content?.stats?.[1]?.value || "20+"}
+                  {ctaData?.content?.stats?.[1]?.value || "Multiple"}
                 </div>
                 <div className="text-sm text-default-600">
-                  {ctaData?.content?.stats?.[1]?.label || "Projects Completed"}
+                  {ctaData?.content?.stats?.[1]?.label || "Learning Projects"}
                 </div>
               </div>
               <div className="flex flex-col items-center">
                 <div className="text-2xl font-bold text-primary mb-1">
-                  {ctaData?.content?.stats?.[2]?.value || "100%"}
+                  {ctaData?.content?.stats?.[2]?.value || "Proven"}
                 </div>
                 <div className="text-sm text-default-600">
-                  {ctaData?.content?.stats?.[2]?.label || "Client Satisfaction"}
+                  {ctaData?.content?.stats?.[2]?.label || "Team Ready"}
                 </div>
               </div>
             </div>

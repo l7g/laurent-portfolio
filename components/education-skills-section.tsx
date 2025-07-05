@@ -525,22 +525,24 @@ const EducationSkillsSection = ({
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                       <CodeBracketIcon className="w-6 h-6 text-primary" />
                     </div>
-                    <h4 className="font-semibold mb-2">Real Client Projects</h4>
+                    <h4 className="font-semibold mb-2">
+                      Self-Taught Development
+                    </h4>
                     <p className="text-sm text-default-600">
-                      Successfully delivered 3+ commercial projects,
-                      demonstrating ability to translate business requirements
-                      into technical solutions
+                      3+ years of dedicated learning in modern web technologies,
+                      building expertise through hands-on practice and
+                      continuous education
                     </p>
                   </div>
                   <div className="text-center">
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                       <CalendarIcon className="w-6 h-6 text-primary" />
                     </div>
-                    <h4 className="font-semibold mb-2">Continuous Learning</h4>
+                    <h4 className="font-semibold mb-2">Academic Preparation</h4>
                     <p className="text-sm text-default-600">
-                      3+ years of dedicated self-study, completing comprehensive
-                      C#/.NET course while maintaining strong JavaScript/React
-                      expertise
+                      Starting BSc International Relations in August 2025 to
+                      bridge technical expertise with global strategic thinking
+                      and international affairs
                     </p>
                   </div>
                 </div>

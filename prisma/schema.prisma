@@ -217,6 +217,23 @@ model BlogCategory {
   @@map("blog_categories")
 }
 
+model PortfolioPage {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  description String?
+  content     Json?
+  metaTitle   String?
+  metaDescription String?
+  isPublished Boolean   @default(false)
+  isHomepage  Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("portfolio_pages")
+}
+
 enum RequestStatus {
   PENDING
   CONTACTED

@@ -19,6 +19,7 @@ import { getProjectImageUrl } from "@/lib/blob-storage";
 import { useApi } from "@/lib/use-api";
 import ProjectEditModal from "./project-edit-modal";
 import SectionContentEditModal from "./section-content-edit-modal";
+import PageEditModal from "./page-edit-modal";
 import SettingsManager from "./settings-manager";
 
 interface AdminDashboardProps {
@@ -40,8 +41,10 @@ export default function AdminDashboard({
   const [projects, setProjects] = useState(initialProjects);
   const [skills, setSkills] = useState(initialSkills);
   const [sections, setSections] = useState(initialSections);
+  const [pages, setPages] = useState<any[]>([]);
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [selectedSection, setSelectedSection] = useState<any>(null);
+  const [selectedPage, setSelectedPage] = useState<any>(null);
 
   const {
     isOpen: isProjectModalOpen,
@@ -54,6 +57,13 @@ export default function AdminDashboard({
     onOpen: onSectionModalOpen,
     onClose: onSectionModalClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isPageModalOpen,
+    onOpen: onPageModalOpen,
+    onClose: onPageModalClose,
+  } = useDisclosure();
+
   const api = useApi();
 
   // Refresh data functions
@@ -78,6 +88,23 @@ export default function AdminDashboard({
     }
   };
 
+  const refreshPages = async () => {
+    try {
+      const response = await fetch("/api/admin/pages");
+      if (response.ok) {
+        const pagesData = await response.json();
+        setPages(pagesData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch pages:", error);
+    }
+  };
+
+  // Fetch pages on component mount
+  useEffect(() => {
+    refreshPages();
+  }, []);
+
   // Project operations
   const handleEditProject = (project: any) => {
     setSelectedProject(project);
@@ -93,6 +120,57 @@ export default function AdminDashboard({
   const handleEditSection = (section: any) => {
     setSelectedSection(section);
     onSectionModalOpen();
+  };
+
+  // Page operations
+  const handleDeletePage = async (pageId: string) => {
+    if (confirm("Are you sure you want to delete this page?")) {
+      try {
+        const response = await fetch(`/api/admin/pages/${pageId}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          await refreshPages();
+        } else {
+          alert("Failed to delete page");
+        }
+      } catch (error) {
+        console.error("Error deleting page:", error);
+        alert("Failed to delete page");
+      }
+    }
+  };
+
+  const handleSavePage = async (pageData: any) => {
+    try {
+      const url = selectedPage
+        ? `/api/admin/pages/${selectedPage.id}`
+        : "/api/admin/pages";
+      const method = selectedPage ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pageData),
+      });
+
+      if (response.ok) {
+        await refreshPages();
+        alert(
+          selectedPage
+            ? "Page updated successfully!"
+            : "Page created successfully!",
+        );
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to save page: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("Error saving page:", error);
+      alert("Failed to save page");
+    }
   };
 
   const handleSaveProject = async (projectData: any) => {
@@ -158,7 +236,8 @@ export default function AdminDashboard({
 
   const tabs = [
     { key: "overview", title: "Overview" },
-    { key: "content", title: "Content" },
+    { key: "content", title: "Portfolio Sections" },
+    { key: "pages", title: "Pages" },
     { key: "projects", title: "Projects" },
     { key: "messages", title: "Messages" },
     { key: "settings", title: "Settings" },
@@ -362,6 +441,102 @@ export default function AdminDashboard({
           </div>
         )}
 
+        {selectedTab === "pages" && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Manage Pages</h2>
+              <Button
+                color="primary"
+                startContent={<PlusIcon className="w-4 h-4" />}
+                onPress={() => {
+                  setSelectedPage(null);
+                  onPageModalOpen();
+                }}
+              >
+                Add Page
+              </Button>
+            </div>
+
+            <Card>
+              <CardBody>
+                <div className="space-y-3">
+                  {pages.map((page) => (
+                    <div
+                      key={page.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="font-medium">{page.title}</h4>
+                          {page.isHomepage && (
+                            <Chip color="primary" size="sm" variant="flat">
+                              Homepage
+                            </Chip>
+                          )}
+                          <Chip
+                            color={page.isPublished ? "success" : "warning"}
+                            size="sm"
+                            variant="flat"
+                          >
+                            {page.isPublished ? "Published" : "Draft"}
+                          </Chip>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-1">
+                          /{page.slug}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {page.description}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<EyeIcon className="w-4 h-4" />}
+                          onPress={() => window.open(`/${page.slug}`, "_blank")}
+                          isDisabled={!page.isPublished}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<PencilIcon className="w-4 h-4" />}
+                          onPress={() => {
+                            setSelectedPage(page);
+                            onPageModalOpen();
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          color="danger"
+                          variant="flat"
+                          startContent={<TrashIcon className="w-4 h-4" />}
+                          onPress={() => handleDeletePage(page.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {pages.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                      <p>No pages created yet</p>
+                      <p className="text-sm">
+                        Create your first page to get started
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        )}
+
         {selectedTab === "projects" && (
           <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -515,6 +690,14 @@ export default function AdminDashboard({
         isOpen={isSectionModalOpen}
         onClose={onSectionModalClose}
         onUpdate={refreshSections}
+      />
+
+      {/* Page Edit Modal */}
+      <PageEditModal
+        page={selectedPage}
+        isOpen={isPageModalOpen}
+        onClose={onPageModalClose}
+        onSave={handleSavePage}
       />
     </div>
   );

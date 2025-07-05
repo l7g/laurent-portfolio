@@ -22,6 +22,10 @@ export const siteConfig = {
       href: "#skills",
     },
     {
+      label: "Blog",
+      href: "/blog",
+    },
+    {
       label: "Contact",
       href: "#contact",
     },
@@ -42,6 +46,10 @@ export const siteConfig = {
     {
       label: "Skills",
       href: "#skills",
+    },
+    {
+      label: "Blog",
+      href: "/blog",
     },
     {
       label: "Contact",

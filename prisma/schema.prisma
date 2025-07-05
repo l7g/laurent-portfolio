@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -26,7 +20,7 @@ model Contact {
 }
 
 model DemoRequest {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
   email       String
   company     String?
@@ -34,10 +28,190 @@ model DemoRequest {
   budget      String?
   timeline    String?
   description String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime      @default(now())
   status      RequestStatus @default(PENDING)
 
   @@map("demo_requests")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String
+  password  String
+  role      UserRole  @default(ADMIN)
+  isActive  Boolean   @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  blogPosts BlogPost[]
+
+  @@map("users")
+}
+
+model PortfolioSection {
+  id          String      @id @default(cuid())
+  name        String
+  displayName String
+  sectionType SectionType
+  title       String?
+  subtitle    String?
+  description String?
+  content     Json?
+  settings    Json?
+  isActive    Boolean     @default(true)
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("portfolio_sections")
+}
+
+model Project {
+  id                  String        @id @default(cuid())
+  title               String
+  slug                String        @unique
+  description         String
+  shortDesc           String?
+  image               String?
+  technologies        String[]
+  featured            Boolean       @default(false)
+  flagship            Boolean       @default(false)
+  isActive            Boolean       @default(true)
+  status              ProjectStatus @default(READY)
+  sortOrder           Int           @default(0)
+  liveUrl             String?
+  githubUrl           String?
+  highlights          String[]
+  detailedDescription String?
+  challenges          String?
+  solutions           String?
+  results             String?
+  clientName          String?
+  projectDuration     String?
+  teamSize            String?
+  myRole              String?
+  startDate           DateTime?
+  endDate             DateTime?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  showWipWarning      Boolean       @default(true)
+  wipWarningText      String?
+  wipWarningEmoji     String?       @default("🚧")
+
+  @@map("projects")
+}
+
+model Skill {
+  id        String        @id @default(cuid())
+  name      String
+  category  SkillCategory
+  level     Int
+  icon      String?
+  color     String?
+  isActive  Boolean       @default(true)
+  sortOrder Int           @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("skills")
+}
+
+model SiteSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  type        String   @default("text")
+  description String?
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
+model BlogPost {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  categoryId  String
+  category    BlogCategory  @relation(fields: [categoryId], references: [id])
+  tags        String[]
+  status      BlogStatus    @default(DRAFT)
+  
+  // SEO & Metadata
+  metaTitle       String?
+  metaDescription String?
+  
+  // Author info
+  authorId    String
+  author      User          @relation(fields: [authorId], references: [id])
+  
+  // Engagement
+  views       Int           @default(0)
+  likes       Int           @default(0)
+  
+  // Timestamps
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  // Relations
+  comments    BlogComment[]
+  
+  @@map("blog_posts")
+}
+
+model BlogComment {
+  id        String   @id @default(cuid())
+  content   String
+  author    String
+  email     String
+  website   String?
+  
+  // Moderation
+  isApproved Boolean @default(false)
+  
+  // Relations
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("blog_comments")
+}
+
+model BlogCategory {
+  id          String @id @default(cuid())
+  name        String @unique
+  slug        String @unique
+  description String?
+  color       String @default("#3B82F6") // Default blue
+  icon        String?
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  
+  // Display
+  isActive    Boolean @default(true)
+  sortOrder   Int     @default(0)
+  
+  // Relations
+  posts       BlogPost[]
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("blog_categories")
 }
 
 enum RequestStatus {
@@ -48,43 +222,9 @@ enum RequestStatus {
   DECLINED
 }
 
-// Admin User for Portfolio Management
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  password  String   // Hashed password
-  role      UserRole @default(ADMIN)
-  isActive  Boolean  @default(true)
-  lastLogin DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("users")
-}
-
 enum UserRole {
   ADMIN
   VIEWER
-}
-
-// Portfolio Content Management
-model PortfolioSection {
-  id            String       @id @default(cuid())
-  name          String       // Internal identifier (hero, about, projects, etc.)
-  displayName   String       // User-friendly name
-  sectionType   SectionType
-  title         String?
-  subtitle      String?
-  description   String?
-  content       Json?        // Flexible content storage
-  settings      Json?        // Section-specific settings
-  isActive      Boolean      @default(true)
-  sortOrder     Int          @default(0)
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  @@map("portfolio_sections")
 }
 
 enum SectionType {
@@ -96,66 +236,9 @@ enum SectionType {
   CUSTOM
 }
 
-// Project Management
-model Project {
-  id           String    @id @default(cuid())
-  title        String
-  slug         String    @unique
-  description  String
-  shortDesc    String?
-  image        String?
-  technologies String[]  // Array of tech stack
-  featured     Boolean   @default(false)
-  flagship     Boolean   @default(false)  // Flagship projects - premium showcase
-  isActive     Boolean   @default(true)
-  status       ProjectStatus @default(READY) // WIP or Ready status
-  sortOrder    Int       @default(0)
-  liveUrl      String?
-  githubUrl    String?
-  highlights   String[]  // Key features/achievements
-  
-  // WIP Warning Configuration
-  showWipWarning  Boolean @default(true)   // Whether to show the warning for WIP projects
-  wipWarningText  String? // Custom warning text (falls back to default if null)
-  wipWarningEmoji String? @default("🚧") // Selected emoji for the warning
-  
-  // Flagship-specific fields (mandatory when flagship = true)
-  detailedDescription String?  // Extended description for flagship projects
-  challenges          String?  // Technical challenges overcome
-  solutions           String?  // Solutions implemented
-  results             String?  // Project outcomes/results
-  clientName          String?  // Client or company name
-  projectDuration     String?  // e.g., "3 months", "6 weeks"
-  teamSize            String?  // e.g., "Solo project", "Team of 4"
-  myRole              String?  // Your specific role in the project
-  
-  startDate    DateTime?
-  endDate      DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  @@map("projects")
-}
-
 enum ProjectStatus {
   WIP
   READY
-}
-
-// Skills Management
-model Skill {
-  id         String      @id @default(cuid())
-  name       String
-  category   SkillCategory
-  level      Int         // 1-100 proficiency level
-  icon       String?     // Icon name or emoji
-  color      String?     // Custom color
-  isActive   Boolean     @default(true)
-  sortOrder  Int         @default(0)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-
-  @@map("skills")
 }
 
 enum SkillCategory {
@@ -167,16 +250,8 @@ enum SkillCategory {
   OTHER
 }
 
-// Site Settings
-model SiteSetting {
-  id          String   @id @default(cuid())
-  key         String   @unique  // e.g., "site_title", "hero_image", "contact_email"
-  value       String   // The setting value
-  type        String   @default("text") // "text", "number", "boolean", "json"
-  description String?  // Human-readable description
-  isPublic    Boolean  @default(false) // Whether this setting can be accessed publicly
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("site_settings")
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }

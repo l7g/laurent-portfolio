@@ -204,7 +204,7 @@ async function main() {
         displayName: "About Me",
         sectionType: "ABOUT" as const,
         title: "About Me",
-        subtitle: "Passionate Developer",
+        subtitle: "",
         description:
           "I'm a full-stack developer with expertise in modern web technologies...",
         isActive: true,

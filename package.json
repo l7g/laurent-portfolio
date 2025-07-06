@@ -10,6 +10,7 @@
     "lint": "eslint --fix",
     "postinstall": "prisma generate && npm run db:postinstall",
     "db:postinstall": "node scripts/postinstall-db.js",
+    "db:migrate": "node scripts/migrate.js",
     "db:seed": "tsx prisma/seed.ts",
     "seed:production": "node scripts/seed-production.js",
     "seed:deployment": "node scripts/deployment-restore.js",

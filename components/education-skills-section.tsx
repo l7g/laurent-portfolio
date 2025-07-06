@@ -33,6 +33,7 @@ import {
   SiTailwindcss,
   SiMysql,
 } from "react-icons/si";
+import CompactAcademicSkills from "./compact-academic-skills";
 
 interface SkillItem {
   name: string;
@@ -266,6 +267,11 @@ const EducationSkillsSection = ({
             const displayCategory =
               categoryMapping[skill.category] || skill.category;
 
+            // Skip academic skills since we show them separately
+            if (isAcademicSkill(displayCategory)) {
+              return;
+            }
+
             if (!categoriesMap[displayCategory]) {
               categoriesMap[displayCategory] = {
                 title: displayCategory,
@@ -299,6 +305,11 @@ const EducationSkillsSection = ({
               const skillData = skill_progressionsData[skillName];
               const categoryName = skillData.category;
 
+              // Skip academic skills since we show them separately
+              if (isAcademicSkill(categoryName)) {
+                return;
+              }
+
               if (!categoriesMap[categoryName]) {
                 categoriesMap[categoryName] = {
                   title: categoryName,
@@ -329,11 +340,13 @@ const EducationSkillsSection = ({
             });
           }
 
-          // Convert to array and add icons
-          const categoriesArray = Object.values(categoriesMap).map((cat) => ({
-            ...cat,
-            icon: getIconForCategory(cat.title),
-          }));
+          // Convert to array and add icons, but filter out academic skills since we show them separately
+          const categoriesArray = Object.values(categoriesMap)
+            .filter((cat) => !isAcademicSkill(cat.title)) // Filter out academic skills
+            .map((cat) => ({
+              ...cat,
+              icon: getIconForCategory(cat.title),
+            }));
 
           setSkillCategories(categoriesArray);
           setTechnologies(techList);
@@ -484,6 +497,24 @@ const EducationSkillsSection = ({
                 </CardBody>
               </Card>
             </Link>
+          </motion.div>
+        )}
+
+        {/* Academic Skills - Most Relevant */}
+        {showAcademicProgress && (
+          <motion.div
+            className="mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            whileInView={{ opacity: 1, y: 0 }}
+          >
+            <CompactAcademicSkills
+              maxSkills={6}
+              showViewAllLink={true}
+              title="Most Relevant Academic Skills"
+              description="Key skills being developed through coursework, prioritized by frequency across courses"
+            />
           </motion.div>
         )}
 

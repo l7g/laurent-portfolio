@@ -29,6 +29,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { BookmarkIcon, StarIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import AcademicSkillsDisplay from "@/components/academic-skills-display";
 
 interface academic_programs {
   id: string;
@@ -53,9 +54,9 @@ interface Course {
   credits: number;
   year: number;
   semester: string;
-  objectives: string[];
-  topics: string[];
-  prerequisites: string[];
+  objectives?: string[];
+  topics?: string[];
+  prerequisites?: string[];
   status: string;
   startDate?: string;
   endDate?: string;
@@ -64,12 +65,12 @@ interface Course {
   instructorBio?: string;
   officeHours?: string;
   syllabus?: string;
-  textbooks: string[];
-  resources: string[];
+  textbooks?: string[];
+  resources?: string[];
   isPublic: boolean;
   featured: boolean;
-  assessments: CourseAssessment[];
-  blogPosts: BlogPost[];
+  assessments?: CourseAssessment[];
+  blogPosts?: BlogPost[];
 }
 
 interface CourseAssessment {
@@ -454,14 +455,15 @@ const DegreePage = () => {
                                   {course.semester}
                                 </span>
                               </div>
-                              {course.blogPosts.length > 0 && (
-                                <div className="flex items-center gap-1">
-                                  <ChatBubbleLeftRightIcon className="w-4 h-4" />
-                                  <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
-                                    {course.blogPosts.length}
-                                  </span>
-                                </div>
-                              )}
+                              {course.blogPosts &&
+                                course.blogPosts.length > 0 && (
+                                  <div className="flex items-center gap-1">
+                                    <ChatBubbleLeftRightIcon className="w-4 h-4" />
+                                    <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
+                                      {course.blogPosts.length}
+                                    </span>
+                                  </div>
+                                )}
                             </div>
                           </CardBody>
                         </Card>
@@ -469,6 +471,16 @@ const DegreePage = () => {
                     </div>
                   </motion.div>
                 ))}
+            </div>
+          </Tab>
+
+          <Tab key="academic-skills" title="Academic Skills">
+            <div className="space-y-8">
+              <AcademicSkillsDisplay
+                showProgressionTargets={true}
+                showCourseBreakdown={true}
+                maxSkillsPerCategory={15}
+              />
             </div>
           </Tab>
         </Tabs>
@@ -507,38 +519,40 @@ const DegreePage = () => {
                     </div>
                   )}
 
-                  {selectedCourse.objectives.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-2">
-                        Learning Objectives
-                      </h4>
-                      <ul className="list-disc list-inside space-y-1">
-                        {selectedCourse.objectives.map((objective, index) => (
-                          <li key={index} className="text-default-700">
-                            {objective}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {selectedCourse.topics.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-2">Topics Covered</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedCourse.topics.map((topic, index) => (
-                          <Chip
-                            key={index}
-                            color="primary"
-                            variant="flat"
-                            size="sm"
-                          >
-                            {topic}
-                          </Chip>
-                        ))}
+                  {selectedCourse.objectives &&
+                    selectedCourse.objectives.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">
+                          Learning Objectives
+                        </h4>
+                        <ul className="list-disc list-inside space-y-1">
+                          {selectedCourse.objectives.map((objective, index) => (
+                            <li key={index} className="text-default-700">
+                              {objective}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                    </div>
-                  )}
+                    )}
+
+                  {selectedCourse.topics &&
+                    selectedCourse.topics.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">Topics Covered</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedCourse.topics.map((topic, index) => (
+                            <Chip
+                              key={index}
+                              color="primary"
+                              variant="flat"
+                              size="sm"
+                            >
+                              {topic}
+                            </Chip>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                   {selectedCourse.instructor && (
                     <div>
@@ -559,58 +573,64 @@ const DegreePage = () => {
                     </div>
                   )}
 
-                  {selectedCourse.assessments.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-2">Assessments</h4>
-                      <div className="space-y-2">
-                        {selectedCourse.assessments.map((assessment) => (
-                          <div
-                            key={assessment.id}
-                            className="flex items-center justify-between p-3 rounded-lg bg-default-50"
-                          >
-                            <div>
-                              <p className="font-medium">{assessment.title}</p>
-                              <p className="text-sm text-default-600">
-                                {assessment.type} • {assessment.weight}%
-                              </p>
-                            </div>
-                            <Chip
-                              color={
-                                assessment.completed ? "success" : "warning"
-                              }
-                              variant="flat"
-                              size="sm"
+                  {selectedCourse.assessments &&
+                    selectedCourse.assessments.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">Assessments</h4>
+                        <div className="space-y-2">
+                          {selectedCourse.assessments.map((assessment) => (
+                            <div
+                              key={assessment.id}
+                              className="flex items-center justify-between p-3 rounded-lg bg-default-50"
                             >
-                              {assessment.completed ? "Completed" : "Pending"}
-                            </Chip>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedCourse.blogPosts.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-2">Related Blog Posts</h4>
-                      <div className="space-y-2">
-                        {selectedCourse.blogPosts.map((post) => (
-                          <Link key={post.id} href={`/blog/${post.slug}`}>
-                            <div className="flex items-center gap-3 p-3 rounded-lg bg-default-50 hover:bg-default-100 transition-colors">
-                              <DocumentTextIcon className="w-5 h-5 text-primary" />
-                              <div className="flex-1">
-                                <p className="font-medium">{post.title}</p>
-                                {post.excerpt && (
-                                  <p className="text-sm text-default-600 line-clamp-2">
-                                    {post.excerpt}
-                                  </p>
-                                )}
+                              <div>
+                                <p className="font-medium">
+                                  {assessment.title}
+                                </p>
+                                <p className="text-sm text-default-600">
+                                  {assessment.type} • {assessment.weight}%
+                                </p>
                               </div>
+                              <Chip
+                                color={
+                                  assessment.completed ? "success" : "warning"
+                                }
+                                variant="flat"
+                                size="sm"
+                              >
+                                {assessment.completed ? "Completed" : "Pending"}
+                              </Chip>
                             </div>
-                          </Link>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+
+                  {selectedCourse.blogPosts &&
+                    selectedCourse.blogPosts.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2">
+                          Related Blog Posts
+                        </h4>
+                        <div className="space-y-2">
+                          {selectedCourse.blogPosts.map((post) => (
+                            <Link key={post.id} href={`/blog/${post.slug}`}>
+                              <div className="flex items-center gap-3 p-3 rounded-lg bg-default-50 hover:bg-default-100 transition-colors">
+                                <DocumentTextIcon className="w-5 h-5 text-primary" />
+                                <div className="flex-1">
+                                  <p className="font-medium">{post.title}</p>
+                                  {post.excerpt && (
+                                    <p className="text-sm text-default-600 line-clamp-2">
+                                      {post.excerpt}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                 </div>
               </ModalBody>
 

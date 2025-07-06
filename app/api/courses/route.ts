@@ -31,7 +31,20 @@ export async function GET() {
       orderBy: [{ year: "asc" }, { semester: "asc" }, { sortOrder: "asc" }],
     });
 
-    return NextResponse.json(courses);
+    // Ensure all arrays are properly initialized
+    const normalizedCourses = courses.map((course) => ({
+      ...course,
+      objectives: course.objectives || [],
+      topics: course.topics || [],
+      prerequisites: course.prerequisites || [],
+      textbooks: course.textbooks || [],
+      resources: course.resources || [],
+      skillsDelivered: course.skillsDelivered || [],
+      assessments: course.course_assessments || [],
+      blogPosts: course.blog_posts || [],
+    }));
+
+    return NextResponse.json(normalizedCourses);
   } catch (error) {
     console.error("Error fetching courses:", error);
     return NextResponse.json(

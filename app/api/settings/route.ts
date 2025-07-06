@@ -78,3 +78,54 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const key = searchParams.get("key");
+    const id = searchParams.get("id");
+
+    if (!key && !id) {
+      return NextResponse.json(
+        { error: "Key or ID is required" },
+        { status: 400 },
+      );
+    }
+
+    let setting;
+    try {
+      if (key) {
+        setting = await prisma.site_settings.delete({
+          where: { key },
+        });
+      } else if (id) {
+        setting = await prisma.site_settings.delete({
+          where: { id },
+        });
+      }
+    } catch (error: any) {
+      if (error.code === "P2025") {
+        return NextResponse.json(
+          {
+            error: `Setting not found with ${key ? "key" : "id"}: ${key || id}`,
+          },
+          { status: 404 },
+        );
+      }
+      throw error;
+    }
+
+    return NextResponse.json({ data: setting });
+  } catch (error) {
+    console.error("Error deleting setting:", error);
+    return NextResponse.json(
+      { error: "Failed to delete setting" },
+      { status: 500 },
+    );
+  }
+}

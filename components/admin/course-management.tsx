@@ -54,6 +54,8 @@ interface Course {
   skillsDelivered: string[];
   assessments: any[];
   blogPosts: any[];
+  course_assessments?: any[];
+  blog_posts?: any[];
   program?: {
     id: string;
     name: string;
@@ -96,15 +98,23 @@ const CourseManagement = () => {
 
       if (coursesResponse.ok) {
         const coursesData = await coursesResponse.json();
-        setCourses(coursesData);
+        setCourses(Array.isArray(coursesData) ? coursesData : []);
+      } else {
+        console.error("Failed to fetch courses");
+        setCourses([]);
       }
 
       if (programsResponse.ok) {
         const programsData = await programsResponse.json();
-        setAcademicPrograms(programsData);
+        setAcademicPrograms(Array.isArray(programsData) ? programsData : []);
+      } else {
+        console.error("Failed to fetch academic programs");
+        setAcademicPrograms([]);
       }
     } catch (error) {
       console.error("Failed to fetch data:", error);
+      setCourses([]);
+      setAcademicPrograms([]);
     } finally {
       setLoading(false);
     }
@@ -225,7 +235,8 @@ const CourseManagement = () => {
     const matchesSearch =
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      course.instructor?.toLowerCase().includes(searchTerm.toLowerCase());
+      (course.instructor &&
+        course.instructor.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const matchesStatus =
       filterStatus === "all" ||
@@ -236,7 +247,7 @@ const CourseManagement = () => {
     return matchesSearch && matchesStatus && matchesYear;
   });
 
-  const coursesByYear = filteredCourses.reduce(
+  const coursesByYear = (filteredCourses || []).reduce(
     (acc, course) => {
       const year = course.year;
       if (!acc[year]) acc[year] = [];
@@ -247,14 +258,15 @@ const CourseManagement = () => {
   );
 
   const courseStats = {
-    total: courses.length,
-    completed: courses.filter((c) => c.status === "COMPLETED").length,
-    inProgress: courses.filter((c) => c.status === "IN_PROGRESS").length,
-    upcoming: courses.filter((c) => c.status === "UPCOMING").length,
-    totalCredits: courses.reduce((sum, c) => sum + c.credits, 0),
-    completedCredits: courses
+    total: (courses || []).length,
+    completed: (courses || []).filter((c) => c.status === "COMPLETED").length,
+    inProgress: (courses || []).filter((c) => c.status === "IN_PROGRESS")
+      .length,
+    upcoming: (courses || []).filter((c) => c.status === "UPCOMING").length,
+    totalCredits: (courses || []).reduce((sum, c) => sum + (c.credits || 0), 0),
+    completedCredits: (courses || [])
       .filter((c) => c.status === "COMPLETED")
-      .reduce((sum, c) => sum + c.credits, 0),
+      .reduce((sum, c) => sum + (c.credits || 0), 0),
   };
 
   if (loading) {
@@ -416,167 +428,195 @@ const CourseManagement = () => {
 
       {/* Courses by Year */}
       <div className="space-y-8">
-        {Object.keys(coursesByYear)
-          .sort()
-          .map((year) => (
-            <motion.div
-              key={year}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex items-center gap-4 mb-4">
-                <h2 className="text-2xl font-bold">Year {year}</h2>
-                <Chip color="default" variant="flat">
-                  {coursesByYear[parseInt(year)].length} courses
-                </Chip>
-              </div>
+        {Object.keys(coursesByYear).length === 0 ? (
+          <Card>
+            <CardBody className="p-8 text-center">
+              <BookOpenIcon className="w-12 h-12 text-default-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No courses found</h3>
+              <p className="text-default-600 mb-4">
+                {searchTerm || filterStatus !== "all" || filterYear !== "all"
+                  ? "No courses match your current filters."
+                  : "You haven't added any courses yet."}
+              </p>
+              <Button
+                color="primary"
+                onPress={handleCreateCourse}
+                startContent={<PlusIcon className="w-4 h-4" />}
+              >
+                Add Your First Course
+              </Button>
+            </CardBody>
+          </Card>
+        ) : (
+          Object.keys(coursesByYear)
+            .sort()
+            .map((year) => (
+              <motion.div
+                key={year}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <h2 className="text-2xl font-bold">Year {year}</h2>
+                  <Chip color="default" variant="flat">
+                    {(coursesByYear[parseInt(year)] || []).length} courses
+                  </Chip>
+                </div>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {coursesByYear[parseInt(year)].map((course) => (
-                  <Card
-                    key={course.id}
-                    className="hover:shadow-lg transition-shadow"
-                  >
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between w-full">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                            <BookOpenIcon className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold">{course.title}</h3>
-                            <p className="text-sm text-default-600">
-                              {course.code}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {course.featured && (
-                            <StarIcon className="w-4 h-4 text-warning" />
-                          )}
-                          <Chip
-                            color={getStatusColor(course.status)}
-                            variant="flat"
-                            size="sm"
-                            startContent={getStatusIcon(course.status)}
-                          >
-                            {course.status}
-                          </Chip>
-                        </div>
-                      </div>
-                    </CardHeader>
-
-                    <CardBody className="pt-0">
-                      <div className="space-y-3">
-                        {course.description && (
-                          <p className="text-sm text-default-700 line-clamp-2">
-                            {course.description}
-                          </p>
-                        )}
-
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-default-600">
-                            {course.credits} credits • {course.semester}
-                          </span>
-                          {course.grade && (
-                            <span className="font-medium text-success">
-                              Grade: {course.grade}
-                            </span>
-                          )}
-                        </div>
-
-                        {course.instructor && (
-                          <p className="text-sm text-default-600">
-                            Instructor: {course.instructor}
-                          </p>
-                        )}
-
-                        {course.skillsDelivered &&
-                          course.skillsDelivered.length > 0 && (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {(coursesByYear[parseInt(year)] || []).map((course) => (
+                    <Card
+                      key={course.id}
+                      className="hover:shadow-lg transition-shadow"
+                    >
+                      <CardHeader className="pb-2">
+                        <div className="flex items-start justify-between w-full">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                              <BookOpenIcon className="w-5 h-5" />
+                            </div>
                             <div>
-                              <p className="text-xs text-default-500 mb-1">
-                                Skills Delivered:
+                              <h3 className="font-semibold">{course.title}</h3>
+                              <p className="text-sm text-default-600">
+                                {course.code}
                               </p>
-                              <div className="flex flex-wrap gap-1">
-                                {course.skillsDelivered
-                                  .slice(0, 3)
-                                  .map((skill) => (
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {course.featured && (
+                              <StarIcon className="w-4 h-4 text-warning" />
+                            )}
+                            <Chip
+                              color={getStatusColor(course.status)}
+                              variant="flat"
+                              size="sm"
+                              startContent={getStatusIcon(course.status)}
+                            >
+                              {course.status}
+                            </Chip>
+                          </div>
+                        </div>
+                      </CardHeader>
+
+                      <CardBody className="pt-0">
+                        <div className="space-y-3">
+                          {course.description && (
+                            <p className="text-sm text-default-700 line-clamp-2">
+                              {course.description}
+                            </p>
+                          )}
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-default-600">
+                              {course.credits} credits • {course.semester}
+                            </span>
+                            {course.grade && (
+                              <span className="font-medium text-success">
+                                Grade: {course.grade}
+                              </span>
+                            )}
+                          </div>
+
+                          {course.instructor && (
+                            <p className="text-sm text-default-600">
+                              Instructor: {course.instructor}
+                            </p>
+                          )}
+
+                          {course.skillsDelivered &&
+                            Array.isArray(course.skillsDelivered) &&
+                            course.skillsDelivered.length > 0 && (
+                              <div>
+                                <p className="text-xs text-default-500 mb-1">
+                                  Skills Delivered:
+                                </p>
+                                <div className="flex flex-wrap gap-1">
+                                  {course.skillsDelivered
+                                    .slice(0, 3)
+                                    .map((skill) => (
+                                      <Chip
+                                        key={skill}
+                                        color="secondary"
+                                        variant="flat"
+                                        size="sm"
+                                      >
+                                        {skill}
+                                      </Chip>
+                                    ))}
+                                  {course.skillsDelivered.length > 3 && (
                                     <Chip
-                                      key={skill}
-                                      color="secondary"
+                                      color="default"
                                       variant="flat"
                                       size="sm"
                                     >
-                                      {skill}
+                                      +{course.skillsDelivered.length - 3} more
                                     </Chip>
-                                  ))}
-                                {course.skillsDelivered.length > 3 && (
-                                  <Chip
-                                    color="default"
-                                    variant="flat"
-                                    size="sm"
-                                  >
-                                    +{course.skillsDelivered.length - 3} more
-                                  </Chip>
-                                )}
+                                  )}
+                                </div>
                               </div>
+                            )}
+
+                          <div className="flex items-center justify-between pt-2 border-t">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-default-500">
+                                {Array.isArray(course.course_assessments)
+                                  ? course.course_assessments.length
+                                  : 0}{" "}
+                                assessments
+                              </span>
+                              <span className="text-xs text-default-500">
+                                {Array.isArray(course.blog_posts)
+                                  ? course.blog_posts.length
+                                  : 0}{" "}
+                                blog posts
+                              </span>
                             </div>
-                          )}
 
-                        <div className="flex items-center justify-between pt-2 border-t">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-default-500">
-                              {course.assessments.length} assessments
-                            </span>
-                            <span className="text-xs text-default-500">
-                              {course.blogPosts.length} blog posts
-                            </span>
-                          </div>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                size="sm"
+                                variant="light"
+                                onPress={() =>
+                                  toggleCourseVisibility(
+                                    course.id,
+                                    course.isPublic,
+                                  )
+                                }
+                              >
+                                {course.isPublic ? (
+                                  <EyeIcon className="w-4 h-4" />
+                                ) : (
+                                  <EyeSlashIcon className="w-4 h-4" />
+                                )}
+                              </Button>
 
-                          <div className="flex items-center gap-1">
-                            <Button
-                              size="sm"
-                              variant="light"
-                              onPress={() =>
-                                toggleCourseVisibility(
-                                  course.id,
-                                  course.isPublic,
-                                )
-                              }
-                            >
-                              {course.isPublic ? (
-                                <EyeIcon className="w-4 h-4" />
-                              ) : (
-                                <EyeSlashIcon className="w-4 h-4" />
-                              )}
-                            </Button>
+                              <Button
+                                size="sm"
+                                variant="light"
+                                onPress={() => handleEditCourse(course)}
+                              >
+                                <PencilIcon className="w-4 h-4" />
+                              </Button>
 
-                            <Button
-                              size="sm"
-                              variant="light"
-                              onPress={() => handleEditCourse(course)}
-                            >
-                              <PencilIcon className="w-4 h-4" />
-                            </Button>
-
-                            <Button
-                              size="sm"
-                              variant="light"
-                              color="danger"
-                              onPress={() => handleDeleteCourse(course.id)}
-                            >
-                              <TrashIcon className="w-4 h-4" />
-                            </Button>
+                              <Button
+                                size="sm"
+                                variant="light"
+                                color="danger"
+                                onPress={() => handleDeleteCourse(course.id)}
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardBody>
-                  </Card>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+                      </CardBody>
+                    </Card>
+                  ))}
+                </div>
+              </motion.div>
+            ))
+        )}
       </div>
 
       {/* Course Edit Modal */}

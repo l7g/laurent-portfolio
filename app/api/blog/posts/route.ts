@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const category = searchParams.get("category");
+    const series = searchParams.get("series");
     const published = searchParams.get("published");
     const status = searchParams.get("status");
     const tag = searchParams.get("tag");
@@ -32,6 +33,12 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    if (series) {
+      where.blog_series = {
+        slug: series,
+      };
+    }
+
     if (tag) {
       where.tags = {
         has: tag,
@@ -52,6 +59,15 @@ export async function GET(request: NextRequest) {
         where,
         include: {
           blog_categories: true,
+          blog_series: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              color: true,
+              icon: true,
+            },
+          },
           users: {
             select: {
               id: true,
@@ -65,7 +81,12 @@ export async function GET(request: NextRequest) {
             },
           },
         },
-        orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+        orderBy: [
+          { blog_series: { sortOrder: "asc" } },
+          { seriesOrder: "asc" },
+          { publishedAt: "desc" },
+          { createdAt: "desc" },
+        ],
         skip,
         take: limit,
       }),
@@ -78,6 +99,7 @@ export async function GET(request: NextRequest) {
     const transformedPosts = posts.map((post) => ({
       ...post,
       category: post.blog_categories, // Rename for component compatibility
+      series: post.blog_series, // Include series info
       readingTime: Math.ceil(post.content.length / 1000), // Rough reading time calculation
     }));
 

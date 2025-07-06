@@ -69,6 +69,8 @@ model blog_posts {
   content         String
   coverImage      String?
   categoryId      String
+  seriesId        String?
+  seriesOrder     Int?
   tags            String[]
   status          BlogStatus      @default(DRAFT)
   metaTitle       String?
@@ -83,7 +85,33 @@ model blog_posts {
   blog_comments   blog_comments[]
   users           users           @relation(fields: [authorId], references: [id])
   blog_categories blog_categories @relation(fields: [categoryId], references: [id])
+  blog_series     blog_series?    @relation(fields: [seriesId], references: [id])
   courses         courses?        @relation(fields: [courseId], references: [id])
+}
+
+model blog_series {
+  id              String       @id @default(cuid())
+  title           String
+  slug            String       @unique
+  description     String?
+  coverImage      String?
+  color           String       @default("#3B82F6")
+  icon            String?
+  sortOrder       Int          @default(0)
+  isActive        Boolean      @default(true)
+  authorId        String
+  totalPosts      Int          @default(0)
+  estimatedTime   Int?         // Total estimated reading time in minutes
+  difficulty      String?      // beginner, intermediate, advanced
+  tags            String[]
+  metaTitle       String?
+  metaDescription String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  // Relations
+  users           users        @relation(fields: [authorId], references: [id])
+  blog_posts      blog_posts[]
 }
 
 model contacts {
@@ -265,16 +293,17 @@ model skills {
 }
 
 model users {
-  id         String       @id
-  email      String       @unique
-  name       String
-  password   String
-  role       UserRole     @default(ADMIN)
-  isActive   Boolean      @default(true)
-  lastLogin  DateTime?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime
-  blog_posts blog_posts[]
+  id          String        @id
+  email       String        @unique
+  name        String
+  password    String
+  role        UserRole      @default(ADMIN)
+  isActive    Boolean       @default(true)
+  lastLogin   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime
+  blog_posts  blog_posts[]
+  blog_series blog_series[]
 }
 
 enum AcademicStatus {

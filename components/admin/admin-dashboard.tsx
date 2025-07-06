@@ -31,6 +31,7 @@ interface AdminDashboardProps {
   projects: any[];
   skills: any[];
   sections: any[];
+  blogPosts?: any[];
 }
 
 export default function AdminDashboard({
@@ -39,6 +40,7 @@ export default function AdminDashboard({
   projects: initialProjects,
   skills: initialSkills,
   sections: initialSections,
+  blogPosts: initialBlogPosts = [],
 }: AdminDashboardProps) {
   const [selectedTab, setSelectedTab] = useState("overview");
   const [projects, setProjects] = useState(initialProjects);

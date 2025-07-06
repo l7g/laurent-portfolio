@@ -13,7 +13,7 @@ export default async function AdminPage() {
   }
 
   // Fetch all necessary data
-  const [contacts, demoRequests, projects, skills, sections] =
+  const [contacts, demoRequests, projects, skills, sections, blogPosts] =
     await Promise.all([
       prisma.contacts.findMany({
         orderBy: { createdAt: "desc" },
@@ -32,6 +32,23 @@ export default async function AdminPage() {
       prisma.portfolio_sections.findMany({
         orderBy: { sortOrder: "asc" },
       }),
+      prisma.blog_posts.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        include: {
+          blog_categories: {
+            select: {
+              name: true,
+              color: true,
+            },
+          },
+          _count: {
+            select: {
+              blog_comments: true,
+            },
+          },
+        },
+      }),
     ]);
 
   return (
@@ -41,6 +58,7 @@ export default async function AdminPage() {
       projects={projects}
       sections={sections}
       skills={skills}
+      blogPosts={blogPosts}
     />
   );
 }

@@ -1,0 +1,497 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Button } from "@heroui/button";
+import { Input } from "@heroui/input";
+import { Chip } from "@heroui/chip";
+import { Avatar } from "@heroui/avatar";
+import { motion } from "framer-motion";
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  EyeIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  EllipsisVerticalIcon,
+  DocumentDuplicateIcon,
+  ArchiveBoxIcon,
+  ChartBarIcon,
+} from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { title } from "@/components/primitives";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  category: {
+    id: string;
+    name: string;
+    color: string;
+    icon: string;
+  };
+  tags: string[];
+  views: number;
+  likes: number;
+  publishedAt: string | null;
+  updatedAt: string;
+  author: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  _count: {
+    comments: number;
+  };
+}
+
+interface BlogCategory {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+}
+
+const statusColors = {
+  DRAFT: "warning",
+  PUBLISHED: "success",
+  ARCHIVED: "default",
+} as const;
+
+export default function BlogAdminPage() {
+  const { data: session, status } = useSession();
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+
+  // Redirect if not admin
+  if (status === "loading") return <div>Loading...</div>;
+  if (!session || session.user?.role !== "ADMIN") {
+    redirect("/admin/login");
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const [postsResponse, categoriesResponse] = await Promise.all([
+        fetch("/api/admin/blog/posts"),
+        fetch("/api/admin/blog/categories"),
+      ]);
+
+      if (postsResponse.ok && categoriesResponse.ok) {
+        const [postsData, categoriesData] = await Promise.all([
+          postsResponse.json(),
+          categoriesResponse.json(),
+        ]);
+        setPosts(postsData);
+        setCategories(categoriesData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this post?")) {
+      try {
+        const response = await fetch(`/api/admin/blog/posts/${id}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          setPosts(posts.filter((post) => post.id !== id));
+        }
+      } catch (error) {
+        console.error("Failed to delete post:", error);
+      }
+    }
+  };
+
+  const handleStatusChange = async (id: string, status: string) => {
+    try {
+      const response = await fetch(`/api/admin/blog/posts/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (response.ok) {
+        setPosts(
+          posts.map((post) =>
+            post.id === id ? { ...post, status: status as any } : post,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
+  };
+
+  const handleDuplicate = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/blog/posts/${id}/duplicate`, {
+        method: "POST",
+      });
+      if (response.ok) {
+        fetchData(); // Refresh the list
+      }
+    } catch (error) {
+      console.error("Failed to duplicate post:", error);
+    }
+  };
+
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch =
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || post.status === statusFilter;
+    const matchesCategory =
+      categoryFilter === "all" || post.category.id === categoryFilter;
+
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "Never";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-default-300 rounded w-1/4"></div>
+            <div className="h-12 bg-default-300 rounded"></div>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-20 bg-default-300 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className={title({ size: "lg" })}>Blog Management</h1>
+              <p className="text-default-600 mt-2">
+                Manage your blog posts, categories, and content
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                as={Link}
+                href="/admin/blog/categories"
+                variant="bordered"
+                startContent={<FunnelIcon className="w-4 h-4" />}
+              >
+                Categories
+              </Button>
+              <Button
+                as={Link}
+                href="/admin/blog/new"
+                color="primary"
+                startContent={<PlusIcon className="w-4 h-4" />}
+              >
+                New Post
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mb-6"
+        >
+          <Card>
+            <CardBody className="p-4">
+              <div className="flex flex-wrap gap-4 items-center">
+                <Input
+                  placeholder="Search posts..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
+                  className="max-w-sm"
+                />
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
+                >
+                  <option value="all">All Status</option>
+                  <option value="DRAFT">Draft</option>
+                  <option value="PUBLISHED">Published</option>
+                  <option value="ARCHIVED">Archived</option>
+                </select>
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
+                >
+                  <option value="all">All Categories</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.icon} {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="mb-6"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/10">
+              <CardBody className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                    <ChartBarIcon className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-default-600">Total Posts</p>
+                    <p className="text-xl font-bold">{posts.length}</p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+            <Card className="bg-gradient-to-r from-green-500/10 to-green-600/10">
+              <CardBody className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-500/20 rounded-lg">
+                    <EyeIcon className="w-5 h-5 text-green-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-default-600">Published</p>
+                    <p className="text-xl font-bold">
+                      {posts.filter((p) => p.status === "PUBLISHED").length}
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+            <Card className="bg-gradient-to-r from-yellow-500/10 to-yellow-600/10">
+              <CardBody className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-yellow-500/20 rounded-lg">
+                    <PencilIcon className="w-5 h-5 text-yellow-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-default-600">Drafts</p>
+                    <p className="text-xl font-bold">
+                      {posts.filter((p) => p.status === "DRAFT").length}
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+            <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10">
+              <CardBody className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-purple-500/20 rounded-lg">
+                    <EyeIcon className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-default-600">Total Views</p>
+                    <p className="text-xl font-bold">
+                      {posts.reduce((acc, post) => acc + post.views, 0)}
+                    </p>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        </motion.div>
+
+        {/* Posts Table */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center w-full">
+                <h2 className="text-xl font-semibold">Posts</h2>
+                <p className="text-default-600">
+                  {filteredPosts.length} of {posts.length} posts
+                </p>
+              </div>
+            </CardHeader>
+            <CardBody className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-default-50">
+                    <tr>
+                      <th className="text-left p-4 font-medium">Title</th>
+                      <th className="text-left p-4 font-medium">Category</th>
+                      <th className="text-left p-4 font-medium">Status</th>
+                      <th className="text-left p-4 font-medium">Stats</th>
+                      <th className="text-left p-4 font-medium">Updated</th>
+                      <th className="text-left p-4 font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredPosts.map((post) => (
+                      <tr
+                        key={post.id}
+                        className="border-b border-default-200 hover:bg-default-50/50"
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <Avatar
+                              size="sm"
+                              name={post.author.name}
+                              className="w-8 h-8"
+                            />
+                            <div>
+                              <p className="font-medium">{post.title}</p>
+                              <p className="text-sm text-default-600 truncate max-w-xs">
+                                {post.excerpt}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            style={{
+                              backgroundColor: `${post.category.color}20`,
+                              color: post.category.color,
+                            }}
+                          >
+                            <span className="mr-1">{post.category.icon}</span>
+                            {post.category.name}
+                          </Chip>
+                        </td>
+                        <td className="p-4">
+                          <Chip
+                            size="sm"
+                            color={statusColors[post.status]}
+                            variant="flat"
+                          >
+                            {post.status.toLowerCase()}
+                          </Chip>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex gap-4 text-sm text-default-600">
+                            <span>{post.views} views</span>
+                            <span>{post.likes} likes</span>
+                            <span>{post._count.comments} comments</span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="text-sm">
+                            <p>{formatDate(post.updatedAt)}</p>
+                            {post.publishedAt && (
+                              <p className="text-default-500">
+                                Published {formatDate(post.publishedAt)}
+                              </p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              as={Link}
+                              href={`/blog/${post.slug}`}
+                              size="sm"
+                              variant="light"
+                              isIconOnly
+                            >
+                              <EyeIcon className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              as={Link}
+                              href={`/admin/blog/edit/${post.id}`}
+                              size="sm"
+                              variant="light"
+                              isIconOnly
+                            >
+                              <PencilIcon className="w-4 h-4" />
+                            </Button>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                size="sm"
+                                variant="light"
+                                isIconOnly
+                                onClick={() => handleDuplicate(post.id)}
+                                title="Duplicate"
+                              >
+                                <DocumentDuplicateIcon className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="light"
+                                isIconOnly
+                                onClick={() =>
+                                  handleStatusChange(post.id, "ARCHIVED")
+                                }
+                                title="Archive"
+                              >
+                                <ArchiveBoxIcon className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="light"
+                                isIconOnly
+                                onClick={() => handleDelete(post.id)}
+                                title="Delete"
+                                color="danger"
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
+      </div>
+    </div>
+  );
+}

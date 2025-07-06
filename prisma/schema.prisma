@@ -32,6 +32,7 @@ model academic_programs {
   skill_progressions         skill_progressions[]
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model blog_categories {
   id              String       @id
   name            String       @unique
@@ -48,6 +49,7 @@ model blog_categories {
   blog_posts      blog_posts[]
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model blog_comments {
   id         String     @id
   content    String
@@ -55,12 +57,14 @@ model blog_comments {
   email      String
   website    String?
   isApproved Boolean    @default(false)
+  likes      Int        @default(0)
   postId     String
   createdAt  DateTime   @default(now())
   updatedAt  DateTime
   blog_posts blog_posts @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model blog_posts {
   id              String          @id
   title           String
@@ -69,8 +73,6 @@ model blog_posts {
   content         String
   coverImage      String?
   categoryId      String
-  seriesId        String?
-  seriesOrder     Int?
   tags            String[]
   status          BlogStatus      @default(DRAFT)
   metaTitle       String?
@@ -82,15 +84,17 @@ model blog_posts {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime
   courseId        String?
+  seriesId        String?
+  seriesOrder     Int?
   blog_comments   blog_comments[]
   users           users           @relation(fields: [authorId], references: [id])
   blog_categories blog_categories @relation(fields: [categoryId], references: [id])
-  blog_series     blog_series?    @relation(fields: [seriesId], references: [id])
   courses         courses?        @relation(fields: [courseId], references: [id])
+  blog_series     blog_series?    @relation(fields: [seriesId], references: [id])
 }
 
 model blog_series {
-  id              String       @id @default(cuid())
+  id              String       @id
   title           String
   slug            String       @unique
   description     String?
@@ -101,19 +105,18 @@ model blog_series {
   isActive        Boolean      @default(true)
   authorId        String
   totalPosts      Int          @default(0)
-  estimatedTime   Int?         // Total estimated reading time in minutes
-  difficulty      String?      // beginner, intermediate, advanced
+  estimatedTime   Int?
+  difficulty      String?
   tags            String[]
   metaTitle       String?
   metaDescription String?
   createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  
-  // Relations
-  users           users        @relation(fields: [authorId], references: [id])
+  updatedAt       DateTime
   blog_posts      blog_posts[]
+  users           users        @relation(fields: [authorId], references: [id])
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model contacts {
   id        String   @id
   name      String
@@ -124,6 +127,7 @@ model contacts {
   read      Boolean  @default(false)
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model course_assessments {
   id        String         @id
   courseId  String
@@ -139,6 +143,7 @@ model course_assessments {
   courses   courses        @relation(fields: [courseId], references: [id], onDelete: Cascade)
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model courses {
   id                 String               @id
   code               String
@@ -172,6 +177,7 @@ model courses {
   academic_programs  academic_programs?   @relation(fields: [programId], references: [id])
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model demo_requests {
   id          String        @id
   name        String
@@ -185,6 +191,7 @@ model demo_requests {
   status      RequestStatus @default(PENDING)
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model portfolio_pages {
   id              String   @id
   slug            String   @unique
@@ -200,6 +207,7 @@ model portfolio_pages {
   updatedAt       DateTime
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model portfolio_sections {
   id          String      @id
   name        String
@@ -216,6 +224,7 @@ model portfolio_sections {
   updatedAt   DateTime
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model projects {
   id                  String        @id
   title               String
@@ -249,6 +258,7 @@ model projects {
   wipWarningEmoji     String?       @default("🚧")
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model site_settings {
   id          String   @id
   key         String   @unique
@@ -260,6 +270,7 @@ model site_settings {
   updatedAt   DateTime
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model skill_progressions {
   id                String             @id
   skillId           String
@@ -278,6 +289,7 @@ model skill_progressions {
   skills            skills             @relation(fields: [skillId], references: [id], onDelete: Cascade)
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model skills {
   id                 String               @id
   name               String
@@ -292,6 +304,7 @@ model skills {
   skill_progressions skill_progressions[]
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model users {
   id          String        @id
   email       String        @unique

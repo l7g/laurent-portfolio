@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -6,8 +7,9 @@ async function main() {
   console.log("🎓 Seeding academic progression (simplified)...");
 
   // Create the BSc International Relations program
-  const irProgram = await prisma.academicProgram.create({
+  const irProgram = await prisma.academic_programs.create({
     data: {
+      id: randomUUID(),
       name: "BSc International Relations",
       degree: "Bachelor of Science (BSc) in International Relations",
       institution: "University of London",
@@ -52,8 +54,9 @@ async function main() {
   ];
 
   for (const skillData of irSkills) {
-    const skill = await prisma.skill.create({
+    const skill = await prisma.skills.create({
       data: {
+        id: randomUUID(),
         ...skillData,
         isActive: true,
         sortOrder: 0,
@@ -61,8 +64,9 @@ async function main() {
     });
 
     // Create skill progression
-    await prisma.skillProgression.create({
+    await prisma.skill_progressions.create({
       data: {
+        id: randomUUID(),
         skillId: skill.id,
         programId: irProgram.id,
         currentLevel: skill.level,

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import path from "path";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -20,43 +21,67 @@ async function restoreFromBackup(backupFile: string) {
 
     // Clear existing data (be careful!)
     console.log("🗑️ Clearing existing data...");
-    await prisma.contact.deleteMany();
-    await prisma.demoRequest.deleteMany();
-    await prisma.project.deleteMany();
-    await prisma.skill.deleteMany();
-    await prisma.portfolioSection.deleteMany();
-    await prisma.siteSetting.deleteMany();
+    await prisma.contacts.deleteMany();
+    await prisma.demo_requests.deleteMany();
+    await prisma.projects.deleteMany();
+    await prisma.skills.deleteMany();
+    await prisma.portfolio_sections.deleteMany();
+    await prisma.site_settings.deleteMany();
 
     // Restore data
     console.log("📥 Restoring data...");
 
     if (backupData.data.contacts.length > 0) {
-      await prisma.contact.createMany({ data: backupData.data.contacts });
+      await prisma.contacts.createMany({
+        data: backupData.data.contacts.map((item: any) => ({
+          ...item,
+          id: randomUUID(),
+        })),
+      });
     }
 
     if (backupData.data.demoRequests.length > 0) {
-      await prisma.demoRequest.createMany({
-        data: backupData.data.demoRequests,
+      await prisma.demo_requests.createMany({
+        data: backupData.data.demoRequests.map((item: any) => ({
+          ...item,
+          id: randomUUID(),
+        })),
       });
     }
 
     if (backupData.data.projects.length > 0) {
-      await prisma.project.createMany({ data: backupData.data.projects });
-    }
-
-    if (backupData.data.skills.length > 0) {
-      await prisma.skill.createMany({ data: backupData.data.skills });
-    }
-
-    if (backupData.data.sections.length > 0) {
-      await prisma.portfolioSection.createMany({
-        data: backupData.data.sections,
+      await prisma.projects.createMany({
+        data: backupData.data.projects.map((item: any) => ({
+          ...item,
+          id: randomUUID(),
+        })),
       });
     }
 
-    if (backupData.data.siteSettings.length > 0) {
-      await prisma.siteSetting.createMany({
-        data: backupData.data.siteSettings,
+    if (backupData.data.skills.length > 0) {
+      await prisma.skills.createMany({
+        data: backupData.data.skills.map((item: any) => ({
+          ...item,
+          id: randomUUID(),
+        })),
+      });
+    }
+
+    if (backupData.data.sections.length > 0) {
+      await prisma.portfolio_sections.createMany({
+        data: backupData.data.sections.map((item: any) => ({
+          ...item,
+          id: randomUUID(),
+        })),
+      });
+    }
+
+    if (backupData.data.site_settingss.length > 0) {
+      await prisma.site_settings.createMany({
+        data: backupData.data.site_settingss.map((item: any) => ({
+          ...item,
+          id: randomUUID(),
+        })),
       });
     }
 
@@ -67,7 +92,7 @@ async function restoreFromBackup(backupFile: string) {
     console.log(`  - ${backupData.counts.projects} projects`);
     console.log(`  - ${backupData.counts.skills} skills`);
     console.log(`  - ${backupData.counts.sections} portfolio sections`);
-    console.log(`  - ${backupData.counts.siteSettings} site settings`);
+    console.log(`  - ${backupData.counts.site_settingss} site settings`);
   } catch (error) {
     console.error("❌ Error restoring backup:", error);
     throw error;

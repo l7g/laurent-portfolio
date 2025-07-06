@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -7,12 +8,12 @@ async function restructurePortfolio() {
 
   try {
     // 1. Update existing sections with new confident tone
-    const aboutSection = await prisma.portfolioSection.findFirst({
+    const aboutSection = await prisma.portfolio_sections.findFirst({
       where: { name: "about" },
     });
 
     if (aboutSection) {
-      await prisma.portfolioSection.update({
+      await prisma.portfolio_sections.update({
         where: { id: aboutSection.id },
         data: {
           description:
@@ -23,12 +24,12 @@ async function restructurePortfolio() {
     }
 
     // 2. Rename Skills section to Education & Skills
-    const skillsSection = await prisma.portfolioSection.findFirst({
+    const skillsSection = await prisma.portfolio_sections.findFirst({
       where: { name: "skills" },
     });
 
     if (skillsSection) {
-      await prisma.portfolioSection.update({
+      await prisma.portfolio_sections.update({
         where: { id: skillsSection.id },
         data: {
           name: "education-skills",
@@ -44,12 +45,12 @@ async function restructurePortfolio() {
     }
 
     // 3. Update Projects section with more confident tone
-    const projectsSection = await prisma.portfolioSection.findFirst({
+    const projectsSection = await prisma.portfolio_sections.findFirst({
       where: { name: "projects" },
     });
 
     if (projectsSection) {
-      await prisma.portfolioSection.update({
+      await prisma.portfolio_sections.update({
         where: { id: projectsSection.id },
         data: {
           title: "Featured Projects",
@@ -63,13 +64,14 @@ async function restructurePortfolio() {
     }
 
     // 4. Create new Blog section (only if it doesn't exist)
-    const existingBlogSection = await prisma.portfolioSection.findFirst({
+    const existingBlogSection = await prisma.portfolio_sections.findFirst({
       where: { name: "blog" },
     });
 
     if (!existingBlogSection) {
-      await prisma.portfolioSection.create({
+      await prisma.portfolio_sections.create({
         data: {
+          id: randomUUID(),
           name: "blog",
           displayName: "Blog & Insights",
           sectionType: "CUSTOM",
@@ -90,12 +92,12 @@ async function restructurePortfolio() {
     }
 
     // 5. Update Contact section
-    const contactSection = await prisma.portfolioSection.findFirst({
+    const contactSection = await prisma.portfolio_sections.findFirst({
       where: { name: "contact" },
     });
 
     if (contactSection) {
-      await prisma.portfolioSection.update({
+      await prisma.portfolio_sections.update({
         where: { id: contactSection.id },
         data: {
           title: "Let's Connect",
@@ -109,12 +111,12 @@ async function restructurePortfolio() {
     }
 
     // 6. Update site settings with more confident tone
-    const siteDescSetting = await prisma.siteSetting.findFirst({
+    const siteDescSetting = await prisma.site_settings.findFirst({
       where: { key: "site_description" },
     });
 
     if (siteDescSetting) {
-      await prisma.siteSetting.update({
+      await prisma.site_settings.update({
         where: { id: siteDescSetting.id },
         data: {
           value:
@@ -124,12 +126,12 @@ async function restructurePortfolio() {
       console.log("✅ Updated site description");
     }
 
-    const contactDescSetting = await prisma.siteSetting.findFirst({
+    const contactDescSetting = await prisma.site_settings.findFirst({
       where: { key: "contact_description" },
     });
 
     if (contactDescSetting) {
-      await prisma.siteSetting.update({
+      await prisma.site_settings.update({
         where: { id: contactDescSetting.id },
         data: {
           value:

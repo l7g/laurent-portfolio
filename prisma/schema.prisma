@@ -7,20 +7,145 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Contact {
-  id        String   @id @default(cuid())
+model academic_programs {
+  id                         String               @id
+  name                       String
+  degree                     String
+  institution                String
+  accreditation              String?
+  description                String?
+  startDate                  DateTime
+  expectedEnd                DateTime
+  currentYear                Int                  @default(1)
+  totalYears                 Int                  @default(4)
+  mode                       String?
+  status                     AcademicStatus       @default(ACTIVE)
+  createdAt                  DateTime             @default(now())
+  updatedAt                  DateTime
+  actualGraduationDate       DateTime?
+  dissertationDeadline       DateTime?
+  dissertationStarted        Boolean              @default(false)
+  dissertationSubmissionDate DateTime?
+  dissertationSubmitted      Boolean              @default(false)
+  dissertationTitle          String?
+  courses                    courses[]
+  skill_progressions         skill_progressions[]
+}
+
+model blog_categories {
+  id              String       @id
+  name            String       @unique
+  slug            String       @unique
+  description     String?
+  color           String       @default("#3B82F6")
+  icon            String?
+  metaTitle       String?
+  metaDescription String?
+  isActive        Boolean      @default(true)
+  sortOrder       Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime
+  blog_posts      blog_posts[]
+}
+
+model blog_comments {
+  id         String     @id
+  content    String
+  author     String
+  email      String
+  website    String?
+  isApproved Boolean    @default(false)
+  postId     String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime
+  blog_posts blog_posts @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model blog_posts {
+  id              String          @id
+  title           String
+  slug            String          @unique
+  excerpt         String?
+  content         String
+  coverImage      String?
+  categoryId      String
+  tags            String[]
+  status          BlogStatus      @default(DRAFT)
+  metaTitle       String?
+  metaDescription String?
+  authorId        String
+  views           Int             @default(0)
+  likes           Int             @default(0)
+  publishedAt     DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime
+  courseId        String?
+  blog_comments   blog_comments[]
+  users           users           @relation(fields: [authorId], references: [id])
+  blog_categories blog_categories @relation(fields: [categoryId], references: [id])
+  courses         courses?        @relation(fields: [courseId], references: [id])
+}
+
+model contacts {
+  id        String   @id
   name      String
   email     String
   subject   String?
   message   String
   createdAt DateTime @default(now())
   read      Boolean  @default(false)
-
-  @@map("contacts")
 }
 
-model DemoRequest {
-  id          String        @id @default(cuid())
+model course_assessments {
+  id        String         @id
+  courseId  String
+  title     String
+  type      AssessmentType
+  weight    Int
+  dueDate   DateTime?
+  completed Boolean        @default(false)
+  grade     String?
+  feedback  String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime
+  courses   courses        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+model courses {
+  id                 String               @id
+  code               String
+  title              String
+  description        String?
+  credits            Int                  @default(15)
+  programId          String?
+  year               Int
+  semester           String
+  objectives         String[]
+  topics             String[]
+  prerequisites      String[]
+  status             CourseStatus         @default(UPCOMING)
+  startDate          DateTime?
+  endDate            DateTime?
+  grade              String?
+  syllabus           String?
+  textbooks          String[]
+  resources          String[]
+  instructor         String?
+  instructorBio      String?
+  officeHours        String?
+  isPublic           Boolean              @default(true)
+  featured           Boolean              @default(false)
+  sortOrder          Int                  @default(0)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  skillsDelivered    String[]
+  blog_posts         blog_posts[]
+  course_assessments course_assessments[]
+  academic_programs  academic_programs?   @relation(fields: [programId], references: [id])
+}
+
+model demo_requests {
+  id          String        @id
   name        String
   email       String
   company     String?
@@ -30,29 +155,25 @@ model DemoRequest {
   description String
   createdAt   DateTime      @default(now())
   status      RequestStatus @default(PENDING)
-
-  @@map("demo_requests")
 }
 
-model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  name      String
-  password  String
-  role      UserRole  @default(ADMIN)
-  isActive  Boolean   @default(true)
-  lastLogin DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  // Relations
-  blogPosts BlogPost[]
-
-  @@map("users")
+model portfolio_pages {
+  id              String   @id
+  slug            String   @unique
+  title           String
+  description     String?
+  content         Json?
+  metaTitle       String?
+  metaDescription String?
+  isPublished     Boolean  @default(false)
+  isHomepage      Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
 }
 
-model PortfolioSection {
-  id          String      @id @default(cuid())
+model portfolio_sections {
+  id          String      @id
   name        String
   displayName String
   sectionType SectionType
@@ -64,13 +185,11 @@ model PortfolioSection {
   isActive    Boolean     @default(true)
   sortOrder   Int         @default(0)
   createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@map("portfolio_sections")
+  updatedAt   DateTime
 }
 
-model Project {
-  id                  String        @id @default(cuid())
+model projects {
+  id                  String        @id
   title               String
   slug                String        @unique
   description         String
@@ -96,142 +215,102 @@ model Project {
   startDate           DateTime?
   endDate             DateTime?
   createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  updatedAt           DateTime
   showWipWarning      Boolean       @default(true)
   wipWarningText      String?
   wipWarningEmoji     String?       @default("🚧")
-
-  @@map("projects")
 }
 
-model Skill {
-  id        String        @id @default(cuid())
-  name      String
-  category  SkillCategory
-  level     Int
-  icon      String?
-  color     String?
-  isActive  Boolean       @default(true)
-  sortOrder Int           @default(0)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-
-  // Relations
-  progressions SkillProgression[]
-
-  @@map("skills")
-}
-
-model SiteSetting {
-  id          String   @id @default(cuid())
+model site_settings {
+  id          String   @id
   key         String   @unique
   value       String
   type        String   @default("text")
   description String?
   isPublic    Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("site_settings")
+  updatedAt   DateTime
 }
 
-model BlogPost {
-  id          String        @id @default(cuid())
-  title       String
-  slug        String        @unique
-  excerpt     String?
-  content     String
-  coverImage  String?
-  categoryId  String
-  category    BlogCategory  @relation(fields: [categoryId], references: [id])
-  tags        String[]
-  status      BlogStatus    @default(DRAFT)
-  
-  // SEO & Metadata
-  metaTitle       String?
-  metaDescription String?
-  
-  // Author info
-  authorId    String
-  author      User          @relation(fields: [authorId], references: [id])
-  
-  // Engagement
-  views       Int           @default(0)
-  likes       Int           @default(0)
-  
-  // Timestamps
-  publishedAt DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  
-  // Relations
-  comments    BlogComment[]
-  
-  @@map("blog_posts")
+model skill_progressions {
+  id                String             @id
+  skillId           String
+  programId         String?
+  currentLevel      Int                @default(0)
+  targetLevel       Int                @default(100)
+  year1Target       Int?
+  year2Target       Int?
+  year3Target       Int?
+  year4Target       Int?
+  lastUpdated       DateTime           @default(now())
+  autoUpdate        Boolean            @default(true)
+  isAcademicSkill   Boolean            @default(false)
+  isTechnicalSkill  Boolean            @default(false)
+  academic_programs academic_programs? @relation(fields: [programId], references: [id])
+  skills            skills             @relation(fields: [skillId], references: [id], onDelete: Cascade)
 }
 
-model BlogComment {
-  id        String   @id @default(cuid())
-  content   String
-  author    String
-  email     String
-  website   String?
-  
-  // Moderation
-  isApproved Boolean @default(false)
-  
-  // Relations
-  postId    String
-  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
-  
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@map("blog_comments")
+model skills {
+  id                 String               @id
+  name               String
+  category           SkillCategory
+  level              Int
+  icon               String?
+  color              String?
+  isActive           Boolean              @default(true)
+  sortOrder          Int                  @default(0)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  skill_progressions skill_progressions[]
 }
 
-model BlogCategory {
-  id          String @id @default(cuid())
-  name        String @unique
-  slug        String @unique
-  description String?
-  color       String @default("#3B82F6") // Default blue
-  icon        String?
-  
-  // SEO
-  metaTitle       String?
-  metaDescription String?
-  
-  // Display
-  isActive    Boolean @default(true)
-  sortOrder   Int     @default(0)
-  
-  // Relations
-  posts       BlogPost[]
-  
-  // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  @@map("blog_categories")
+model users {
+  id         String       @id
+  email      String       @unique
+  name       String
+  password   String
+  role       UserRole     @default(ADMIN)
+  isActive   Boolean      @default(true)
+  lastLogin  DateTime?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime
+  blog_posts blog_posts[]
 }
 
-model PortfolioPage {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  title       String
-  description String?
-  content     Json?
-  metaTitle   String?
-  metaDescription String?
-  isPublished Boolean   @default(false)
-  isHomepage  Boolean   @default(false)
-  sortOrder   Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+enum AcademicStatus {
+  ACTIVE
+  COMPLETED
+  DEFERRED
+  WITHDRAWN
+}
 
-  @@map("portfolio_pages")
+enum AssessmentType {
+  EXAM
+  ASSIGNMENT
+  PROJECT
+  PRESENTATION
+  ESSAY
+  QUIZ
+  PARTICIPATION
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum CourseStatus {
+  UPCOMING
+  IN_PROGRESS
+  COMPLETED
+  DEFERRED
+  WITHDRAWN
+}
+
+enum ProjectStatus {
+  WIP
+  READY
 }
 
 enum RequestStatus {
@@ -240,11 +319,6 @@ enum RequestStatus {
   IN_PROGRESS
   COMPLETED
   DECLINED
-}
-
-enum UserRole {
-  ADMIN
-  VIEWER
 }
 
 enum SectionType {
@@ -256,87 +330,17 @@ enum SectionType {
   CUSTOM
 }
 
-enum ProjectStatus {
-  WIP
-  READY
-}
-
 enum SkillCategory {
   FRONTEND
   BACKEND
   DATABASE
   TOOLS
   DESIGN
-  ACADEMIC
   OTHER
+  ACADEMIC
 }
 
-enum BlogStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-// Academic Progression Models
-model AcademicProgram {
-  id            String   @id @default(cuid())
-  name          String
-  degree        String   // "BSc International Relations"
-  institution   String   // "University of London"
-  accreditation String?  // "Academic direction from the London School of Economics and Political Science"
-  description   String?
-  startDate     DateTime
-  expectedEnd   DateTime
-  currentYear   Int      @default(1)
-  totalYears    Int      @default(4)
-  
-  // Academic details
-  mode          String?  // "Online", "Local teaching centre", etc.
-  status        AcademicStatus @default(ACTIVE)
-  
-  // Relations
-  progressions  SkillProgression[]
-  
-  // Timestamps
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  @@map("academic_programs")
-}
-
-model SkillProgression {
-  id            String   @id @default(cuid())
-  skillId       String
-  skill         Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  
-  // Academic Program relation
-  programId     String?
-  program       AcademicProgram? @relation(fields: [programId], references: [id], onDelete: SetNull)
-  
-  // Progression data
-  currentLevel  Int      @default(0)   // 0-100 scale
-  targetLevel   Int      @default(100) // Expected level at completion
-  
-  // Year-by-year progression
-  year1Target   Int?     // Target level after year 1
-  year2Target   Int?     // Target level after year 2
-  year3Target   Int?     // Target level after year 3
-  year4Target   Int?     // Target level after year 4
-  
-  // Progression tracking
-  lastUpdated   DateTime @default(now())
-  autoUpdate    Boolean  @default(true)
-  
-  // Skills categorization for IR
-  isAcademicSkill Boolean @default(false) // Skills gained through academic study
-  isTechnicalSkill Boolean @default(false) // Technical skills from development
-  
-  @@map("skill_progressions")
-}
-
-enum AcademicStatus {
-  ACTIVE
-  COMPLETED
-  DEFERRED
-  WITHDRAWN
+enum UserRole {
+  ADMIN
+  VIEWER
 }

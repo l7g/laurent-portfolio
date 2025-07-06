@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
+const { randomUUID } = require("crypto");
 
 const prisma = new PrismaClient();
 
@@ -13,15 +14,16 @@ async function seedProduction() {
     const adminName = process.env.ADMIN_NAME || "Admin";
 
     if (adminEmail && adminPassword) {
-      const existingAdmin = await prisma.user.findUnique({
+      const existingAdmin = await prisma.users.findUnique({
         where: { email: adminEmail },
       });
 
       if (!existingAdmin) {
         const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
-        await prisma.user.create({
+        await prisma.users.create({
           data: {
+            id: randomUUID(),
             email: adminEmail,
             name: adminName,
             role: "ADMIN",
@@ -87,12 +89,17 @@ async function seedProduction() {
     ];
 
     for (const section of sections) {
-      const existing = await prisma.portfolioSection.findFirst({
+      const existing = await prisma.portfolio_sections.findFirst({
         where: { name: section.name },
       });
 
       if (!existing) {
-        await prisma.portfolioSection.create({ data: section });
+        await prisma.portfolio_sections.create({
+          data: {
+            ...section,
+            id: randomUUID(),
+          },
+        });
         console.log(`✅ Created section: ${section.name}`);
       }
     }
@@ -108,12 +115,17 @@ async function seedProduction() {
     ];
 
     for (const skill of basicSkills) {
-      const existing = await prisma.skill.findFirst({
+      const existing = await prisma.skills.findFirst({
         where: { name: skill.name },
       });
 
       if (!existing) {
-        await prisma.skill.create({ data: skill });
+        await prisma.skills.create({
+          data: {
+            ...skill,
+            id: randomUUID(),
+          },
+        });
         console.log(`✅ Created skill: ${skill.name}`);
       }
     }

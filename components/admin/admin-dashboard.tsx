@@ -21,6 +21,9 @@ import ProjectEditModal from "./project-edit-modal";
 import SectionContentEditModal from "./section-content-edit-modal";
 import PageEditModal from "./page-edit-modal";
 import SettingsManager from "./settings-manager";
+import CourseManagement from "./course-management";
+import CourseProgressTracker from "./course-progress-tracker";
+import GraduationTracker from "./graduation-tracker";
 
 interface AdminDashboardProps {
   contacts: any[];
@@ -239,6 +242,9 @@ export default function AdminDashboard({
     { key: "content", title: "Portfolio Sections" },
     { key: "pages", title: "Pages" },
     { key: "projects", title: "Projects" },
+    { key: "courses", title: "Courses" },
+    { key: "progress", title: "Academic Progress" },
+    { key: "graduation", title: "Graduation" },
     { key: "messages", title: "Messages" },
     { key: "settings", title: "Settings" },
   ];
@@ -670,6 +676,54 @@ export default function AdminDashboard({
                 </div>
               </CardBody>
             </Card>
+          </div>
+        )}
+
+        {selectedTab === "courses" && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Course Management
+                </h2>
+                <p className="text-gray-600">
+                  Manage your academic courses and track progress
+                </p>
+              </div>
+            </div>
+            <CourseManagement />
+          </div>
+        )}
+
+        {selectedTab === "progress" && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Academic Progress
+                </h2>
+                <p className="text-gray-600">
+                  Track your degree progress and course completion
+                </p>
+              </div>
+            </div>
+            <CourseProgressTracker />
+          </div>
+        )}
+
+        {selectedTab === "graduation" && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Graduation Tracking
+                </h2>
+                <p className="text-gray-600">
+                  Manage dissertation progress and graduation timeline
+                </p>
+              </div>
+            </div>
+            <GraduationTracker />
           </div>
         )}
 

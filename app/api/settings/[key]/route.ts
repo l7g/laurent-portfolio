@@ -14,7 +14,7 @@ export async function GET(
     }
 
     const { key } = await params;
-    const setting = await prisma.siteSetting.findUnique({
+    const setting = await prisma.site_settings.findUnique({
       where: { key },
     });
 
@@ -49,7 +49,7 @@ export async function PUT(
       return NextResponse.json({ error: "Value is required" }, { status: 400 });
     }
 
-    const setting = await prisma.siteSetting.update({
+    const setting = await prisma.site_settings.update({
       where: { key },
       data: {
         value,
@@ -81,7 +81,7 @@ export async function DELETE(
     }
 
     const { key } = await params;
-    await prisma.siteSetting.delete({
+    await prisma.site_settings.delete({
       where: { key },
     });
 

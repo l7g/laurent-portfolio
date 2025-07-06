@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     // Get all portfolio sections
-    const sections = await prisma.portfolioSection.findMany({
+    const sections = await prisma.portfolio_sections.findMany({
       orderBy: { sortOrder: "asc" },
     });
 

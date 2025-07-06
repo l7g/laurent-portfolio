@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -8,11 +9,11 @@ async function restructurePortfolio() {
   try {
     // Helper function to find and update sections
     const updateSection = async (name, updates) => {
-      const section = await prisma.portfolioSection.findFirst({
+      const section = await prisma.portfolio_sections.findFirst({
         where: { name },
       });
       if (section) {
-        return await prisma.portfolioSection.update({
+        return await prisma.portfolio_sections.update({
           where: { id: section.id },
           data: updates,
         });
@@ -51,13 +52,14 @@ async function restructurePortfolio() {
 
     // 4. Create new Blog section
     console.log("Creating Blog section...");
-    const existingBlog = await prisma.portfolioSection.findFirst({
+    const existingBlog = await prisma.portfolio_sections.findFirst({
       where: { name: "blog" },
     });
 
     if (!existingBlog) {
-      await prisma.portfolioSection.create({
+      await prisma.portfolio_sections.create({
         data: {
+          id: randomUUID(),
           name: "blog",
           displayName: "Blog & Insights",
           sectionType: "CUSTOM",
@@ -89,7 +91,7 @@ async function restructurePortfolio() {
     // 6. Update site settings with more confident tone
     console.log("Updating site settings...");
     const updateSetting = async (key, value) => {
-      await prisma.siteSetting.upsert({
+      await prisma.site_settings.upsert({
         where: { key },
         update: { value },
         create: { key, value, type: "text", description: `Updated ${key}` },

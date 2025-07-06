@@ -1,6 +1,7 @@
 require("dotenv").config({ path: ".env.local" });
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
+const { randomUUID } = require("crypto");
 
 const prisma = new PrismaClient();
 
@@ -20,7 +21,7 @@ async function deploymentSeed() {
     }
 
     // Check if admin already exists
-    const existingAdmin = await prisma.user.findUnique({
+    const existingAdmin = await prisma.users.findUnique({
       where: { email: adminEmail },
     });
 
@@ -33,8 +34,9 @@ async function deploymentSeed() {
     const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
     // Create admin user
-    const admin = await prisma.user.create({
+    const admin = await prisma.users.create({
       data: {
+        id: randomUUID(),
         email: adminEmail,
         name: adminName,
         role: "ADMIN",

@@ -7,7 +7,7 @@ async function fixAboutSection() {
 
   try {
     // First find the about section
-    const aboutSection = await prisma.portfolioSection.findFirst({
+    const aboutSection = await prisma.portfolio_sections.findFirst({
       where: { name: "about" },
     });
 
@@ -17,7 +17,7 @@ async function fixAboutSection() {
     }
 
     // Update the about section to have "About" as title and "Me" as subtitle
-    const updatedSection = await prisma.portfolioSection.update({
+    const updatedSection = await prisma.portfolio_sections.update({
       where: { id: aboutSection.id },
       data: {
         title: "About",

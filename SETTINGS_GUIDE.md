@@ -136,7 +136,7 @@ const HeroSection = () => {
 ## Database Schema
 
 ```prisma
-model SiteSetting {
+model site_settings {
   id          String   @id @default(cuid())
   key         String   @unique
   value       String

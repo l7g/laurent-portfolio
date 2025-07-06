@@ -1,0 +1,2 @@
+-- Add missing foreign key constraint for blog_posts.courseId
+ALTER TABLE "blog_posts" ADD CONSTRAINT "blog_posts_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "courses"("id") ON DELETE SET NULL ON UPDATE CASCADE; 

@@ -1,9 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 export async function GET() {
   try {
-    const pages = await prisma.portfolioPage.findMany({
+    const pages = await prisma.portfolio_pages.findMany({
       orderBy: { sortOrder: "asc" },
     });
 
@@ -25,14 +26,15 @@ export async function POST(request: Request) {
 
     // If this is set as homepage, unset others
     if (data.isHomepage) {
-      await prisma.portfolioPage.updateMany({
+      await prisma.portfolio_pages.updateMany({
         where: { isHomepage: true },
         data: { isHomepage: false },
       });
     }
 
-    const page = await prisma.portfolioPage.create({
+    const page = await prisma.portfolio_pages.create({
       data: {
+        id: randomUUID(),
         slug: data.slug,
         title: data.title,
         description: data.description,
@@ -42,6 +44,7 @@ export async function POST(request: Request) {
         isPublished: data.isPublished || false,
         isHomepage: data.isHomepage || false,
         sortOrder: data.sortOrder || 0,
+        updatedAt: new Date(),
       },
     });
 

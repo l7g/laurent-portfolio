@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -7,10 +8,11 @@ async function main() {
   console.log("🌱 Seeding blog data...");
 
   // Create blog categories
-  const techCategory = await prisma.blogCategory.upsert({
+  const techCategory = await prisma.blog_categories.upsert({
     where: { slug: "tech-dev" },
     update: {},
     create: {
+      id: randomUUID(),
       name: "Tech & Development",
       slug: "tech-dev",
       description:
@@ -22,13 +24,15 @@ async function main() {
         "Follow my journey in software development, programming insights, and technical discoveries.",
       isActive: true,
       sortOrder: 1,
+      updatedAt: new Date(),
     },
   });
 
-  const irCategory = await prisma.blogCategory.upsert({
+  const irCategory = await prisma.blog_categories.upsert({
     where: { slug: "international-relations" },
     update: {},
     create: {
+      id: randomUUID(),
       name: "International Relations",
       slug: "international-relations",
       description:
@@ -40,11 +44,12 @@ async function main() {
         "Insights from my Bachelor's studies in International Relations and global perspectives.",
       isActive: true,
       sortOrder: 2,
+      updatedAt: new Date(),
     },
   });
 
   // Get or create admin user
-  const adminUser = await prisma.user.findFirst({
+  const adminUser = await prisma.users.findFirst({
     where: { role: "ADMIN" },
   });
 
@@ -284,10 +289,24 @@ The intersection of technology and other fields (like IR) creates unique opportu
 
   // Create blog posts
   for (const post of samplePosts) {
-    await prisma.blogPost.upsert({
+    await prisma.blog_posts.upsert({
       where: { slug: post.slug },
       update: {},
-      create: post,
+      create: {
+        id: randomUUID(),
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        content: post.content,
+        categoryId: post.categoryId,
+        tags: post.tags,
+        status: post.status as any,
+        authorId: post.authorId,
+        publishedAt: post.publishedAt,
+        metaTitle: post.metaTitle,
+        metaDescription: post.metaDescription,
+        updatedAt: new Date(),
+      },
     });
   }
 

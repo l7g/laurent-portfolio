@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 export async function GET() {
   try {
     // Get all skills that have academic progressions
-    const academicSkills = await prisma.skillProgression.findMany({
+    const academicSkills = await prisma.skill_progressions.findMany({
       where: {
         isAcademicSkill: true,
       },
       include: {
-        skill: true,
-        program: true,
+        skills: true,
+        academic_programs: true,
       },
       orderBy: {
-        skill: {
+        skills: {
           name: "asc",
         },
       },
@@ -21,19 +22,19 @@ export async function GET() {
 
     // Transform to match expected format
     const skills = academicSkills.map((progression) => ({
-      id: progression.skill.id,
-      name: progression.skill.name,
-      category: progression.skill.category,
-      level: progression.skill.level,
+      id: progression.skills.id,
+      name: progression.skills.name,
+      category: progression.skills.category,
+      level: progression.skills.level,
       currentLevel: progression.currentLevel,
       targetLevel: progression.targetLevel,
       year1Target: progression.year1Target,
       year2Target: progression.year2Target,
       year3Target: progression.year3Target,
       year4Target: progression.year4Target,
-      icon: progression.skill.icon,
-      color: progression.skill.color,
-      isActive: progression.skill.isActive,
+      icon: progression.skills.icon,
+      color: progression.skills.color,
+      isActive: progression.skills.isActive,
       progression: progression,
     }));
 
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
     const { skillId, programId, currentLevel } = await request.json();
 
     // Calculate expected level based on current year of the program
-    const program = await prisma.academicProgram.findUnique({
+    const program = await prisma.academic_programs.findUnique({
       where: { id: programId },
     });
 
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     );
     const yearProgress = Math.min(monthsSinceStart / 12, program.totalYears);
 
-    const progression = await prisma.skillProgression.findFirst({
+    const progression = await prisma.skill_progressions.findFirst({
       where: {
         skillId,
         programId,
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (progression) {
-      const updated = await prisma.skillProgression.update({
+      const updated = await prisma.skill_progressions.update({
         where: { id: progression.id },
         data: {
           currentLevel,
@@ -83,8 +84,9 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json(updated);
     } else {
-      const created = await prisma.skillProgression.create({
+      const created = await prisma.skill_progressions.create({
         data: {
+          id: randomUUID(),
           skillId,
           programId,
           currentLevel,

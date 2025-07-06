@@ -15,21 +15,21 @@ export default async function AdminPage() {
   // Fetch all necessary data
   const [contacts, demoRequests, projects, skills, sections] =
     await Promise.all([
-      prisma.contact.findMany({
+      prisma.contacts.findMany({
         orderBy: { createdAt: "desc" },
         take: 10,
       }),
-      prisma.demoRequest.findMany({
+      prisma.demo_requests.findMany({
         orderBy: { createdAt: "desc" },
         take: 10,
       }),
-      prisma.project.findMany({
+      prisma.projects.findMany({
         orderBy: { sortOrder: "asc" },
       }),
-      prisma.skill.findMany({
+      prisma.skills.findMany({
         orderBy: { sortOrder: "asc" },
       }),
-      prisma.portfolioSection.findMany({
+      prisma.portfolio_sections.findMany({
         orderBy: { sortOrder: "asc" },
       }),
     ]);

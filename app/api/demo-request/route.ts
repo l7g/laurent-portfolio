@@ -1,4 +1,5 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 import { sendWorkInquiryEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
@@ -24,8 +25,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Save to database
-    const demoRequest = await prisma.demoRequest.create({
+    const demoRequest = await prisma.demo_requests.create({
       data: {
+        id: randomUUID(),
         name,
         email,
         company: company || null,

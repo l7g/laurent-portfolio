@@ -3,10 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const page = await prisma.portfolioPage.findUnique({
+    const params = await context.params;
+    const page = await prisma.portfolio_pages.findUnique({
       where: { id: params.id },
     });
 
@@ -28,14 +29,15 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
+    const params = await context.params;
     const data = await request.json();
 
     // If this is set as homepage, unset others
     if (data.isHomepage) {
-      await prisma.portfolioPage.updateMany({
+      await prisma.portfolio_pages.updateMany({
         where: {
           isHomepage: true,
           id: { not: params.id },
@@ -44,7 +46,7 @@ export async function PUT(
       });
     }
 
-    const page = await prisma.portfolioPage.update({
+    const page = await prisma.portfolio_pages.update({
       where: { id: params.id },
       data: {
         slug: data.slug,
@@ -74,10 +76,11 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    await prisma.portfolioPage.delete({
+    const params = await context.params;
+    await prisma.portfolio_pages.delete({
       where: { id: params.id },
     });
 

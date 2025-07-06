@@ -10,7 +10,7 @@ async function checkAboutSection() {
       process.env.DATABASE_URL?.slice(0, 50) + "...",
     );
 
-    const aboutSection = await prisma.portfolioSection.findFirst({
+    const aboutSection = await prisma.portfolio_sections.findFirst({
       where: { name: "about" },
     });
 
@@ -19,20 +19,20 @@ async function checkAboutSection() {
     console.log("Subtitle:", aboutSection?.subtitle);
 
     // Check if we have our skills data
-    const skillsCount = await prisma.skill.count();
+    const skillsCount = await prisma.skills.count();
     console.log("\n📊 Database inventory:");
     console.log("Total skills in database:", skillsCount);
 
     // Check if we have our projects
-    const projectsCount = await prisma.project.count();
+    const projectsCount = await prisma.projects.count();
     console.log("Total projects in database:", projectsCount);
 
     // Check if we have our blog posts
-    const postsCount = await prisma.blogPost.count();
+    const postsCount = await prisma.blog_posts.count();
     console.log("Total blog posts in database:", postsCount);
 
     // Check if we have our academic data
-    const academicCount = await prisma.academicProgram.count();
+    const academicCount = await prisma.academic_programs.count();
     console.log("Total academic programs in database:", academicCount);
   } catch (error) {
     console.error("❌ Error:", error);

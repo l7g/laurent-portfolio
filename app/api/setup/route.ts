@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { SectionType } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 // This endpoint should only be used once for initial setup
 // Remove or disable after first use!
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if admin already exists
-    const existingAdmin = await prisma.user.findFirst({
+    const existingAdmin = await prisma.users.findFirst({
       where: { role: "ADMIN" },
     });
 
@@ -46,18 +47,21 @@ export async function POST(request: NextRequest) {
     // Create admin user
     const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
-    const admin = await prisma.user.create({
+    const admin = await prisma.users.create({
       data: {
+        id: randomUUID(),
         email: adminEmail,
         name: adminName,
         role: "ADMIN",
         password: hashedPassword,
+        updatedAt: new Date(),
       },
     });
 
     // Create basic portfolio data
     const sections = [
       {
+        id: randomUUID(),
         name: "hero",
         displayName: "Hero Section",
         sectionType: SectionType.HERO,
@@ -70,8 +74,10 @@ export async function POST(request: NextRequest) {
         }),
         isActive: true,
         sortOrder: 1,
+        updatedAt: new Date(),
       },
       {
+        id: randomUUID(),
         name: "about",
         displayName: "About Section",
         sectionType: SectionType.ABOUT,
@@ -80,8 +86,10 @@ export async function POST(request: NextRequest) {
           "Experienced developer with expertise in modern web technologies.",
         isActive: true,
         sortOrder: 2,
+        updatedAt: new Date(),
       },
       {
+        id: randomUUID(),
         name: "projects",
         displayName: "Projects Section",
         sectionType: SectionType.PROJECTS,
@@ -89,8 +97,10 @@ export async function POST(request: NextRequest) {
         description: "Showcasing my work and technical capabilities.",
         isActive: true,
         sortOrder: 3,
+        updatedAt: new Date(),
       },
       {
+        id: randomUUID(),
         name: "contact",
         displayName: "Contact Section",
         sectionType: SectionType.CONTACT,
@@ -98,16 +108,17 @@ export async function POST(request: NextRequest) {
         description: "Let's discuss your next project.",
         isActive: true,
         sortOrder: 4,
+        updatedAt: new Date(),
       },
     ];
 
     for (const section of sections) {
-      const existing = await prisma.portfolioSection.findFirst({
+      const existing = await prisma.portfolio_sections.findFirst({
         where: { name: section.name },
       });
 
       if (!existing) {
-        await prisma.portfolioSection.create({ data: section });
+        await prisma.portfolio_sections.create({ data: section });
       }
     }
 

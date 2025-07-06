@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { BlogStatus } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,19 +8,26 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const category = searchParams.get("category");
-    const status = searchParams.get("status") || "PUBLISHED";
+    const published = searchParams.get("published");
+    const status = searchParams.get("status");
     const tag = searchParams.get("tag");
     const search = searchParams.get("search");
 
     const skip = (page - 1) * limit;
 
-    // Build where clause
-    const where: any = {
-      status: status,
-    };
+    // Build where clause - handle both 'published=true' and 'status=PUBLISHED'
+    const where: any = {};
+
+    if (published === "true" || status === "PUBLISHED") {
+      where.status = "PUBLISHED";
+    } else if (status) {
+      where.status = status as BlogStatus;
+    } else {
+      where.status = "PUBLISHED"; // Default to published only
+    }
 
     if (category) {
-      where.category = {
+      where.blog_categories = {
         slug: category,
       };
     }
@@ -40,11 +48,11 @@ export async function GET(request: NextRequest) {
 
     // Get posts with pagination
     const [posts, totalCount] = await Promise.all([
-      prisma.blogPost.findMany({
+      prisma.blog_posts.findMany({
         where,
         include: {
-          category: true,
-          author: {
+          blog_categories: true,
+          users: {
             select: {
               id: true,
               name: true,
@@ -53,7 +61,7 @@ export async function GET(request: NextRequest) {
           },
           _count: {
             select: {
-              comments: true,
+              blog_comments: true,
             },
           },
         },
@@ -61,13 +69,21 @@ export async function GET(request: NextRequest) {
         skip,
         take: limit,
       }),
-      prisma.blogPost.count({ where }),
+      prisma.blog_posts.count({ where }),
     ]);
 
     const totalPages = Math.ceil(totalCount / limit);
 
+    // Transform posts to match component expectations
+    const transformedPosts = posts.map((post) => ({
+      ...post,
+      category: post.blog_categories, // Rename for component compatibility
+      readingTime: Math.ceil(post.content.length / 1000), // Rough reading time calculation
+    }));
+
     return NextResponse.json({
-      posts,
+      posts: transformedPosts,
+      total: totalCount,
       pagination: {
         page,
         limit,

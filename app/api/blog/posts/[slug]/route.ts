@@ -8,25 +8,25 @@ export async function GET(
   try {
     const { slug } = await params;
 
-    const post = await prisma.blogPost.findUnique({
+    const post = await prisma.blog_posts.findUnique({
       where: { slug },
       include: {
-        category: true,
-        author: {
+        blog_categories: true,
+        users: {
           select: {
             id: true,
             name: true,
             email: true,
           },
         },
-        comments: {
+        blog_comments: {
           where: { isApproved: true },
           orderBy: { createdAt: "desc" },
           take: 10,
         },
         _count: {
           select: {
-            comments: true,
+            blog_comments: true,
           },
         },
       },
@@ -40,7 +40,7 @@ export async function GET(
     }
 
     // Increment view count
-    await prisma.blogPost.update({
+    await prisma.blog_posts.update({
       where: { slug },
       data: { views: { increment: 1 } },
     });

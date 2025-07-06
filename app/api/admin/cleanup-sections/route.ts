@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 export async function POST() {
   try {
     console.log("🧹 Starting database cleanup and setup...");
 
     // Step 1: Remove duplicates - keep the first one of each name
-    const sections = await prisma.portfolioSection.findMany({
+    const sections = await prisma.portfolio_sections.findMany({
       orderBy: { createdAt: "asc" },
     });
 
@@ -29,7 +30,7 @@ export async function POST() {
         keptSections.push(keep);
 
         for (const section of toDelete) {
-          await prisma.portfolioSection.delete({
+          await prisma.portfolio_sections.delete({
             where: { id: section.id },
           });
           deletedCount++;
@@ -41,14 +42,15 @@ export async function POST() {
     }
 
     // Step 2: Add missing projects-cta section
-    const ctaSection = await prisma.portfolioSection.findFirst({
+    const ctaSection = await prisma.portfolio_sections.findFirst({
       where: { name: "projects-cta" },
     });
 
     let ctaCreated = false;
     if (!ctaSection) {
-      const newCta = await prisma.portfolioSection.create({
+      const newCta = await prisma.portfolio_sections.create({
         data: {
+          id: randomUUID(),
           name: "projects-cta",
           displayName: "Projects Call to Action",
           sectionType: "CUSTOM",
@@ -58,6 +60,7 @@ export async function POST() {
             "I'm passionate about creating innovative solutions that make a real difference. Whether you need a complete web application, want to modernize your existing system, or have a unique project in mind, I'd love to help bring your vision to life.",
           isActive: true,
           sortOrder: 15,
+          updatedAt: new Date(),
           content: {
             headline: "Ready to Build Something Amazing?",
             subheadline: "Let's Work Together",
@@ -102,7 +105,7 @@ export async function POST() {
     }
 
     // Step 3: Ensure proper sort order for all sections
-    const finalSections = await prisma.portfolioSection.findMany({
+    const finalSections = await prisma.portfolio_sections.findMany({
       orderBy: { sortOrder: "asc" },
     });
 
@@ -120,7 +123,7 @@ export async function POST() {
     for (const section of finalSections) {
       const expectedOrder = sortOrderMap[section.name];
       if (expectedOrder && section.sortOrder !== expectedOrder) {
-        await prisma.portfolioSection.update({
+        await prisma.portfolio_sections.update({
           where: { id: section.id },
           data: { sortOrder: expectedOrder },
         });
@@ -132,7 +135,7 @@ export async function POST() {
     }
 
     // Step 4: Get final state
-    const cleanedSections = await prisma.portfolioSection.findMany({
+    const cleanedSections = await prisma.portfolio_sections.findMany({
       orderBy: { sortOrder: "asc" },
     });
 

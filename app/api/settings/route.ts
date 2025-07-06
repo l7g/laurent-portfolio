@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 export async function GET() {
   try {
@@ -10,7 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const settings = await prisma.siteSetting.findMany({
+    const settings = await prisma.site_settings.findMany({
       orderBy: {
         key: "asc",
       },
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const setting = await prisma.siteSetting.upsert({
+    const setting = await prisma.site_settings.upsert({
       where: { key },
       update: {
         value,
@@ -58,11 +59,13 @@ export async function POST(request: NextRequest) {
         updatedAt: new Date(),
       },
       create: {
+        id: randomUUID(),
         key,
         value,
         type,
         description,
         isPublic,
+        updatedAt: new Date(),
       },
     });
 

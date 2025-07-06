@@ -3,10 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  context: { params: Promise<{ slug: string }> },
 ) {
   try {
-    const project = await prisma.project.findUnique({
+    const params = await context.params;
+    const project = await prisma.projects.findUnique({
       where: {
         slug: params.slug,
         isActive: true,

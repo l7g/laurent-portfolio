@@ -12,14 +12,14 @@ import { motion } from "framer-motion";
 import { prisma } from "@/lib/prisma";
 
 interface ProjectPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 async function getProject(slug: string) {
   try {
-    const project = await prisma.project.findUnique({
+    const project = await prisma.projects.findUnique({
       where: { slug },
     });
 
@@ -35,7 +35,8 @@ async function getProject(slug: string) {
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const project = await getProject(params.slug);
+  const resolvedParams = await params;
+  const project = await getProject(resolvedParams.slug);
 
   if (!project) {
     notFound();
@@ -254,7 +255,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 // Generate static params for all projects
 export async function generateStaticParams() {
   try {
-    const projects = await prisma.project.findMany({
+    const projects = await prisma.projects.findMany({
       where: { isActive: true },
       select: { slug: true },
     });
@@ -270,7 +271,8 @@ export async function generateStaticParams() {
 
 // Generate metadata for each project
 export async function generateMetadata({ params }: ProjectPageProps) {
-  const project = await getProject(params.slug);
+  const resolvedParams = await params;
+  const project = await getProject(resolvedParams.slug);
 
   if (!project) {
     return {

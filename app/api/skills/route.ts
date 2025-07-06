@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 // GET /api/skills - Get all skills (public endpoint)
 export async function GET() {
   try {
-    const skills = await prisma.skill.findMany({
+    const skills = await prisma.skills.findMany({
       orderBy: [{ category: "asc" }, { name: "asc" }],
     });
 
@@ -39,8 +40,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const skill = await prisma.skill.create({
+    const skill = await prisma.skills.create({
       data: {
+        id: randomUUID(),
         name,
         category,
         level: level || 1,
@@ -48,6 +50,7 @@ export async function POST(request: NextRequest) {
         color,
         isActive: isActive !== undefined ? isActive : true,
         sortOrder: sortOrder || 0,
+        updatedAt: new Date(),
       },
     });
 

@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 export async function POST() {
   try {
     // Check if the section already exists
-    const existingSection = await prisma.portfolioSection.findFirst({
+    const existingSection = await prisma.portfolio_sections.findFirst({
       where: { name: "projects-cta" },
     });
 
@@ -16,8 +17,9 @@ export async function POST() {
     }
 
     // Create the new section
-    const newSection = await prisma.portfolioSection.create({
+    const newSection = await prisma.portfolio_sections.create({
       data: {
+        id: randomUUID(),
         name: "projects-cta",
         displayName: "Projects CTA",
         sectionType: "CUSTOM",
@@ -27,6 +29,7 @@ export async function POST() {
           "I'm passionate about creating innovative solutions that make a real difference. Whether you need a complete web application, want to modernize your existing system, or have a unique project in mind, I'd love to help bring your vision to life.",
         isActive: true,
         sortOrder: 15,
+        updatedAt: new Date(),
         content: {
           headline: "Ready to Build Something Amazing?",
           subheadline: "Let's Work Together",

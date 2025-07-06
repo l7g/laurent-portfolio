@@ -12,7 +12,7 @@
         "role": "ADMIN"
       }
     ],
-    "portfolioSections": [
+    "portfolio_sectionss": [
       {
         "id": "cmcglrzgr000vmj84jujub1s4",
         "name": "hero",
@@ -82,12 +82,7 @@
         "description": "Professional task management solution featuring real-time collaboration, advanced project tracking, and intuitive user experience design for team productivity.",
         "shortDesc": "Available for freelancing - Contact for custom development",
         "image": "placeholder-tasks",
-        "technologies": [
-          "Vue.js",
-          "Socket.io",
-          "Express",
-          "PostgreSQL"
-        ],
+        "technologies": ["Vue.js", "Socket.io", "Express", "PostgreSQL"],
         "featured": false,
         "flagship": false,
         "isActive": true,
@@ -170,13 +165,7 @@
         "description": "Modern e-commerce administration platform with comprehensive inventory management, analytics, and user interface design. Built with scalability and real-world business needs in mind.",
         "shortDesc": "Available for freelancing - Contact for custom development",
         "image": "https://o9tjswk2bdgo27hm.public.blob.vercel-storage.com/projects/1751127205338-shopcraft_landing.png",
-        "technologies": [
-          "React",
-          "Node.js",
-          "Express",
-          "MongoDB",
-          "Chart.js"
-        ],
+        "technologies": ["React", "Node.js", "Express", "MongoDB", "Chart.js"],
         "featured": true,
         "flagship": false,
         "isActive": true,
@@ -402,7 +391,7 @@
         "updatedAt": "2025-06-28T18:57:14.823Z"
       }
     ],
-    "siteSettings": [
+    "site_settingss": [
       {
         "id": "cmcglryog0001mj8468ckk2kk",
         "key": "hero_greeting",
@@ -707,9 +696,9 @@
   },
   "stats": {
     "users": 1,
-    "portfolioSections": 4,
+    "portfolio_sectionss": 4,
     "projects": 3,
     "skills": 16,
-    "siteSettings": 30
+    "site_settingss": 30
   }
 }

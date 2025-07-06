@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const params = await context.params;
-    const section = await prisma.portfolioSection.findUnique({
+    const section = await prisma.portfolio_sections.findUnique({
       where: { id: params.id },
     });
 
@@ -55,7 +55,7 @@ export async function PUT(
     } = body;
 
     // Check if section exists
-    const existingSection = await prisma.portfolioSection.findUnique({
+    const existingSection = await prisma.portfolio_sections.findUnique({
       where: { id: params.id },
     });
 
@@ -63,7 +63,7 @@ export async function PUT(
       return NextResponse.json({ error: "Section not found" }, { status: 404 });
     }
 
-    const section = await prisma.portfolioSection.update({
+    const section = await prisma.portfolio_sections.update({
       where: { id: params.id },
       data: {
         ...(displayName && {
@@ -105,7 +105,7 @@ export async function DELETE(
     const params = await context.params;
 
     // Check if section exists
-    const existingSection = await prisma.portfolioSection.findUnique({
+    const existingSection = await prisma.portfolio_sections.findUnique({
       where: { id: params.id },
     });
 
@@ -113,7 +113,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Section not found" }, { status: 404 });
     }
 
-    await prisma.portfolioSection.delete({
+    await prisma.portfolio_sections.delete({
       where: { id: params.id },
     });
 

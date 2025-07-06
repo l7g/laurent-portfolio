@@ -5,6 +5,7 @@ import { Card, CardBody } from "@heroui/card";
 import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import {
   CodeBracketIcon,
   CircleStackIcon,
@@ -45,17 +46,23 @@ interface SkillCategory {
   skills: SkillItem[];
 }
 
-interface AcademicProgram {
+interface academic_programs {
   id: string;
+  name: string;
   degree: string;
-  field: string;
-  university: string;
-  accreditingBody: string;
+  institution: string;
+  accreditation?: string;
+  description?: string;
   startDate: string;
-  expectedGraduation: string;
+  expectedEnd: string;
   currentYear: number;
   totalYears: number;
+  mode?: string;
   status: string;
+  actualGraduationDate?: string;
+  dissertationStarted?: boolean;
+  dissertationTitle?: string;
+  dissertationSubmitted?: boolean;
 }
 
 interface Technology {
@@ -85,23 +92,48 @@ const EducationSkillsSection = ({
 }: EducationSkillsSectionProps) => {
   const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
-  const [academicProgram, setAcademicProgram] =
-    useState<AcademicProgram | null>(null);
+  const [academic_programs, setacademic_programs] =
+    useState<academic_programs | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Helper function to get color for category
+  const getColorForCategory = (categoryTitle: string) => {
+    const colorMap: { [key: string]: string } = {
+      "Frontend Development": "primary",
+      "Backend Development": "secondary",
+      "Database & ORM": "success",
+      "Tools & Version Control": "warning",
+      "Academic Skills": "success",
+      "International Relations": "primary",
+      "Language & Communication": "secondary",
+      "Analytical Skills": "warning",
+      Other: "default",
+    };
+    return colorMap[categoryTitle] || "primary";
+  };
 
   // Helper function to get current academic year
   const getCurrentAcademicYear = () => {
     const now = new Date();
-    const startYear = 2025;
+    const startDate = new Date(2025, 7, 1); // August 1st, 2025 (month is 0-indexed)
+
+    // If we haven't started yet, return 0
+    if (now < startDate) {
+      return 0;
+    }
+
     const currentYear = now.getFullYear();
     const month = now.getMonth();
 
-    let academicYear = currentYear - startYear + 1;
-    if (month < 8) {
+    let academicYear = currentYear - 2025;
+
+    // If we're before August, we're still in the previous academic year
+    if (month < 7) {
+      // July is month 6
       academicYear -= 1;
     }
 
-    return Math.max(1, Math.min(academicYear, 4));
+    return Math.max(0, academicYear);
   };
 
   // Helper function to check if a skill is academic
@@ -188,10 +220,12 @@ const EducationSkillsSection = ({
   useEffect(() => {
     async function fetchData() {
       try {
-        const [skillsResponse, programResponse] = await Promise.all([
-          fetch("/api/skills"),
-          fetch("/api/academic/programs"),
-        ]);
+        const [skillsResponse, programResponse, skill_progressionsResponse] =
+          await Promise.all([
+            fetch("/api/skills"),
+            fetch("/api/academic-program"),
+            fetch("/api/skill-progression"),
+          ]);
 
         if (skillsResponse.ok) {
           const dbSkills = await skillsResponse.json();
@@ -256,6 +290,45 @@ const EducationSkillsSection = ({
             }
           });
 
+          // Add course-delivered skills for academic categories
+          if (skill_progressionsResponse.ok) {
+            const skill_progressionsData =
+              await skill_progressionsResponse.json();
+
+            Object.keys(skill_progressionsData).forEach((skillName) => {
+              const skillData = skill_progressionsData[skillName];
+              const categoryName = skillData.category;
+
+              if (!categoriesMap[categoryName]) {
+                categoriesMap[categoryName] = {
+                  title: categoryName,
+                  color: getColorForCategory(categoryName),
+                  skills: [],
+                };
+              }
+
+              // Add skill to the category
+              const skillEntry = {
+                name: skillName,
+                level: Math.round(skillData.level),
+              };
+
+              // Check if skill already exists in category
+              const existingSkillIndex = categoriesMap[
+                categoryName
+              ].skills.findIndex((s) => s.name === skillName);
+
+              if (existingSkillIndex >= 0) {
+                // Update existing skill level
+                categoriesMap[categoryName].skills[existingSkillIndex].level =
+                  skillEntry.level;
+              } else {
+                // Add new skill
+                categoriesMap[categoryName].skills.push(skillEntry);
+              }
+            });
+          }
+
           // Convert to array and add icons
           const categoriesArray = Object.values(categoriesMap).map((cat) => ({
             ...cat,
@@ -268,7 +341,7 @@ const EducationSkillsSection = ({
 
         if (programResponse.ok) {
           const programData = await programResponse.json();
-          setAcademicProgram(programData[0] || null);
+          setacademic_programs(programData[0] || null);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -312,7 +385,7 @@ const EducationSkillsSection = ({
         </motion.div>
 
         {/* Academic Progress Section */}
-        {showAcademicProgress && academicProgram && (
+        {showAcademicProgress && academic_programs && (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -320,67 +393,97 @@ const EducationSkillsSection = ({
             viewport={{ once: true }}
             whileInView={{ opacity: 1, y: 0 }}
           >
-            <Card className="mb-8">
-              <CardBody className="p-8">
-                <div className="flex items-start gap-6">
-                  <div className="p-3 rounded-lg bg-success/10 text-success">
-                    <AcademicCapIcon className="w-8 h-8" />
+            <Link href="/degree" className="block">
+              <Card className="mb-8 hover:shadow-lg transition-shadow cursor-pointer group">
+                <CardBody className="p-8">
+                  <div className="flex items-start gap-6">
+                    <div className="p-3 rounded-lg bg-success/10 text-success group-hover:bg-success/20 transition-colors">
+                      <AcademicCapIcon className="w-8 h-8" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-4">
+                          <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
+                            {academic_programs.degree}
+                          </h3>
+                          <Chip color="success" variant="flat" size="sm">
+                            Year {getCurrentAcademicYear()}
+                          </Chip>
+                        </div>
+                        <motion.div
+                          className="text-primary opacity-0 group-hover:opacity-100 transition-opacity"
+                          whileHover={{ x: 5 }}
+                        >
+                          <GlobeAltIcon className="w-5 h-5" />
+                        </motion.div>
+                      </div>
+                      <p className="text-lg text-default-600 mb-2">
+                        <strong>{academic_programs.institution}</strong>
+                      </p>
+                      {academic_programs.accreditation && (
+                        <p className="text-base text-default-500 mb-6">
+                          {academic_programs.accreditation}
+                        </p>
+                      )}
+
+                      {/* Enhanced Info Grid */}
+                      <div className="grid md:grid-cols-1 gap-6 mb-6">
+                        <div>
+                          <p className="text-sm text-default-500 mb-2">
+                            Expected Graduation
+                          </p>
+                          <p className="font-medium">
+                            {new Date(
+                              academic_programs.expectedEnd,
+                            ).getFullYear()}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Academic Progress Bar */}
+                      <div className="mb-6">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm font-medium">
+                            Academic Progress
+                          </span>
+                          <span className="text-sm text-default-500">
+                            {getCurrentAcademicYear()}/
+                            {academic_programs.totalYears} years
+                          </span>
+                        </div>
+                        <Progress
+                          color="success"
+                          value={
+                            (getCurrentAcademicYear() /
+                              academic_programs.totalYears) *
+                            100
+                          }
+                          className="h-3"
+                        />
+                      </div>
+
+                      {/* Call to Action */}
+                      <div className="flex items-center justify-between pt-4 border-t border-default-200">
+                        <div className="text-sm text-default-600">
+                          {academic_programs.status === "COMPLETED"
+                            ? academic_programs.actualGraduationDate
+                              ? `Graduated ${new Date(academic_programs.actualGraduationDate).getFullYear()} • Bridging Technology & Global Affairs`
+                              : "Completed • Bridging Technology & Global Affairs"
+                            : academic_programs.dissertationStarted
+                              ? academic_programs.dissertationTitle
+                                ? `Dissertation: "${academic_programs.dissertationTitle}"`
+                                : "Dissertation Phase • Final Year"
+                              : "Academic Journey • Bridging Technology & Global Affairs"}
+                        </div>
+                        <div className="text-sm text-primary font-medium group-hover:text-primary-600 transition-colors">
+                          View Details →
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-4">
-                      <h3 className="text-2xl font-bold">
-                        {academicProgram.degree}
-                      </h3>
-                      <Chip color="success" variant="flat" size="sm">
-                        Year {getCurrentAcademicYear()}
-                      </Chip>
-                    </div>
-                    <p className="text-lg text-default-600 mb-4">
-                      <strong>{academicProgram.field}</strong> at{" "}
-                      <strong>{academicProgram.university}</strong>
-                    </p>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <p className="text-sm text-default-500 mb-2">
-                          Accreditation
-                        </p>
-                        <p className="font-medium">
-                          {academicProgram.accreditingBody}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-default-500 mb-2">
-                          Expected Graduation
-                        </p>
-                        <p className="font-medium">
-                          {academicProgram.expectedGraduation}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-6">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium">
-                          Academic Progress
-                        </span>
-                        <span className="text-sm text-default-500">
-                          {getCurrentAcademicYear()}/
-                          {academicProgram.totalYears} years
-                        </span>
-                      </div>
-                      <Progress
-                        color="success"
-                        value={
-                          (getCurrentAcademicYear() /
-                            academicProgram.totalYears) *
-                          100
-                        }
-                        className="h-2"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
+                </CardBody>
+              </Card>
+            </Link>
           </motion.div>
         )}
 

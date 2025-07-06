@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 export async function GET() {
   try {
-    const settings = await prisma.siteSetting.findMany({
+    const settings = await prisma.site_settings.findMany({
       where: { isPublic: true },
       select: {
         key: true,
@@ -57,7 +58,7 @@ export async function PUT(request: NextRequest) {
     // Convert value to string for storage
     const stringValue = type === "json" ? JSON.stringify(value) : String(value);
 
-    const setting = await prisma.siteSetting.upsert({
+    const setting = await prisma.site_settings.upsert({
       where: { key },
       update: {
         value: stringValue,
@@ -66,11 +67,13 @@ export async function PUT(request: NextRequest) {
         isPublic,
       },
       create: {
+        id: randomUUID(),
         key,
         value: stringValue,
         type,
         description,
         isPublic,
+        updatedAt: new Date(),
       },
     });
 

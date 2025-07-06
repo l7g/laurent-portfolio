@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const params = await context.params;
-    const project = await prisma.project.findUnique({
+    const project = await prisma.projects.findUnique({
       where: { id: params.id },
     });
 
@@ -70,7 +70,7 @@ export async function PUT(
     } = body;
 
     // Check if project exists
-    const existingProject = await prisma.project.findUnique({
+    const existingProject = await prisma.projects.findUnique({
       where: { id: params.id },
     });
 
@@ -80,7 +80,7 @@ export async function PUT(
 
     // If slug is being changed, check if new slug already exists
     if (slug && slug !== existingProject.slug) {
-      const slugExists = await prisma.project.findUnique({
+      const slugExists = await prisma.projects.findUnique({
         where: { slug },
       });
 
@@ -92,7 +92,7 @@ export async function PUT(
       }
     }
 
-    const project = await prisma.project.update({
+    const project = await prisma.projects.update({
       where: { id: params.id },
       data: {
         ...(title && { title }),
@@ -146,7 +146,7 @@ export async function DELETE(
     const params = await context.params;
 
     // Check if project exists
-    const existingProject = await prisma.project.findUnique({
+    const existingProject = await prisma.projects.findUnique({
       where: { id: params.id },
     });
 
@@ -154,7 +154,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    await prisma.project.delete({
+    await prisma.projects.delete({
       where: { id: params.id },
     });
 

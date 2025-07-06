@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 
 export async function POST() {
   try {
     console.log("📄 Setting up initial pages...");
 
     // Check if pages already exist
-    const existingPages = await prisma.portfolioPage.findMany();
+    const existingPages = await prisma.portfolio_pages.findMany();
     if (existingPages.length > 0) {
       return NextResponse.json({
         message: "Pages already exist",
@@ -114,8 +115,12 @@ export async function POST() {
 
     const createdPages = [];
     for (const pageData of initialPages) {
-      const page = await prisma.portfolioPage.create({
-        data: pageData,
+      const page = await prisma.portfolio_pages.create({
+        data: {
+          ...pageData,
+          id: randomUUID(),
+          updatedAt: new Date(),
+        },
       });
       createdPages.push(page);
       console.log(`✅ Created page: ${page.title} (${page.slug})`);

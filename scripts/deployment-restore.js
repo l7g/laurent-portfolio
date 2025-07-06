@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
+const { randomUUID } = require("crypto");
 
 const prisma = new PrismaClient();
 
@@ -10,9 +11,9 @@ async function deploymentSeed() {
     console.log("🚀 Starting deployment seed process...");
 
     // Check if any data exists in the database
-    const existingUsers = await prisma.user.count();
-    const existingProjects = await prisma.project.count();
-    const existingSections = await prisma.portfolioSection.count();
+    const existingUsers = await prisma.users.count();
+    const existingProjects = await prisma.projects.count();
+    const existingSections = await prisma.portfolio_sections.count();
 
     if (existingUsers > 0 || existingProjects > 0 || existingSections > 0) {
       console.log("✅ Database already contains data, skipping full restore");
@@ -59,7 +60,7 @@ async function ensureAdminUser() {
     return;
   }
 
-  const existingAdmin = await prisma.user.findUnique({
+  const existingAdmin = await prisma.users.findUnique({
     where: { email: adminEmail },
   });
 
@@ -69,8 +70,9 @@ async function ensureAdminUser() {
   }
 
   const hashedPassword = await bcrypt.hash(adminPassword, 12);
-  await prisma.user.create({
+  await prisma.users.create({
     data: {
+      id: randomUUID(),
       email: adminEmail,
       name: adminName,
       role: "ADMIN",
@@ -91,14 +93,15 @@ async function restoreFromBackup(backupData) {
 
   if (adminEmail && adminPassword) {
     // Check if admin user already exists
-    const existingAdmin = await prisma.user.findUnique({
+    const existingAdmin = await prisma.users.findUnique({
       where: { email: adminEmail },
     });
 
     if (!existingAdmin) {
       const hashedPassword = await bcrypt.hash(adminPassword, 12);
-      await prisma.user.create({
+      await prisma.users.create({
         data: {
+          id: randomUUID(),
           email: adminEmail,
           name: adminName,
           role: "ADMIN",
@@ -116,10 +119,11 @@ async function restoreFromBackup(backupData) {
   }
 
   // Restore portfolio sections
-  if (data.portfolioSections && data.portfolioSections.length > 0) {
-    for (const section of data.portfolioSections) {
-      await prisma.portfolioSection.create({
+  if (data.portfolio_sectionss && data.portfolio_sectionss.length > 0) {
+    for (const section of data.portfolio_sectionss) {
+      await prisma.portfolio_sections.create({
         data: {
+          id: randomUUID(),
           name: section.name,
           displayName: section.displayName,
           sectionType: section.sectionType,
@@ -130,15 +134,16 @@ async function restoreFromBackup(backupData) {
       });
     }
     console.log(
-      `✅ Restored ${data.portfolioSections.length} portfolio sections`,
+      `✅ Restored ${data.portfolio_sectionss.length} portfolio sections`,
     );
   }
 
   // Restore projects
   if (data.projects && data.projects.length > 0) {
     for (const project of data.projects) {
-      await prisma.project.create({
+      await prisma.projects.create({
         data: {
+          id: randomUUID(),
           title: project.title,
           description: project.description,
           longDescription: project.longDescription,
@@ -158,8 +163,9 @@ async function restoreFromBackup(backupData) {
   // Restore skills
   if (data.skills && data.skills.length > 0) {
     for (const skill of data.skills) {
-      await prisma.skill.create({
+      await prisma.skills.create({
         data: {
+          id: randomUUID(),
           name: skill.name,
           category: skill.category,
           proficiency: skill.proficiency,
@@ -171,10 +177,11 @@ async function restoreFromBackup(backupData) {
   }
 
   // Restore site settings
-  if (data.siteSettings && data.siteSettings.length > 0) {
-    for (const setting of data.siteSettings) {
-      await prisma.siteSetting.create({
+  if (data.site_settingss && data.site_settingss.length > 0) {
+    for (const setting of data.site_settingss) {
+      await prisma.site_settings.create({
         data: {
+          id: randomUUID(),
           key: setting.key,
           value: setting.value,
           category: setting.category,
@@ -182,7 +189,7 @@ async function restoreFromBackup(backupData) {
         },
       });
     }
-    console.log(`✅ Restored ${data.siteSettings.length} site settings`);
+    console.log(`✅ Restored ${data.site_settingss.length} site settings`);
   }
 }
 
@@ -221,7 +228,7 @@ async function createMinimalSeedData() {
   ];
 
   for (const setting of basicSettings) {
-    await prisma.siteSetting.upsert({
+    await prisma.site_settings.upsert({
       where: { key: setting.key },
       update: {},
       create: setting,

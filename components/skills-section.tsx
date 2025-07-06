@@ -51,7 +51,7 @@ interface Technology {
 const SkillsSection = () => {
   const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
-  const [academicProgram, setAcademicProgram] = useState<any>(null);
+  const [academic_programs, setacademic_programs] = useState<any>(null);
   const [academicSkills, setAcademicSkills] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -229,7 +229,7 @@ const SkillsSection = () => {
           // Set academic program data
           if (programResponse.ok) {
             const programData = await programResponse.json();
-            setAcademicProgram(programData[0] || null);
+            setacademic_programs(programData[0] || null);
           }
 
           // Convert map to array and add icons
@@ -284,18 +284,19 @@ const SkillsSection = () => {
             completed a 3-month C#/.NET course that deepened my understanding of
             database theory and backend architecture, making me more versatile
             across different tech stacks.
-            {academicProgram && (
+            {academic_programs && (
               <>
                 <br />
                 <br />
                 Currently pursuing a <strong>
-                  {academicProgram.degree}
+                  {academic_programs.degree}
                 </strong>{" "}
-                in <strong>{academicProgram.field}</strong> from{" "}
-                <strong>{academicProgram.university}</strong> with accreditation
-                from <strong>{academicProgram.accreditingBody}</strong>.
-                Expected graduation:{" "}
-                <strong>{academicProgram.expectedGraduation}</strong>.
+                in <strong>{academic_programs.field}</strong> from{" "}
+                <strong>{academic_programs.university}</strong> with
+                accreditation from{" "}
+                <strong>{academic_programs.accreditingBody}</strong>. Expected
+                graduation:{" "}
+                <strong>{academic_programs.expectedGraduation}</strong>.
               </>
             )}
           </p>

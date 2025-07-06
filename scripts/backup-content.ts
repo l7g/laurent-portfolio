@@ -9,14 +9,14 @@ async function backupPortfolioContent() {
 
   try {
     // Get all current data
-    const [contacts, demoRequests, projects, skills, sections, siteSettings] =
+    const [contacts, demoRequests, projects, skills, sections, site_settingss] =
       await Promise.all([
-        prisma.contact.findMany({ orderBy: { createdAt: "desc" } }),
-        prisma.demoRequest.findMany({ orderBy: { createdAt: "desc" } }),
-        prisma.project.findMany({ orderBy: { sortOrder: "asc" } }),
-        prisma.skill.findMany({ orderBy: { sortOrder: "asc" } }),
-        prisma.portfolioSection.findMany({ orderBy: { sortOrder: "asc" } }),
-        prisma.siteSetting.findMany({ orderBy: { key: "asc" } }),
+        prisma.contacts.findMany({ orderBy: { createdAt: "desc" } }),
+        prisma.demo_requests.findMany({ orderBy: { createdAt: "desc" } }),
+        prisma.projects.findMany({ orderBy: { sortOrder: "asc" } }),
+        prisma.skills.findMany({ orderBy: { sortOrder: "asc" } }),
+        prisma.portfolio_sections.findMany({ orderBy: { sortOrder: "asc" } }),
+        prisma.site_settings.findMany({ orderBy: { key: "asc" } }),
       ]);
 
     // Create backup object
@@ -29,7 +29,7 @@ async function backupPortfolioContent() {
         projects,
         skills,
         sections,
-        siteSettings,
+        site_settingss,
       },
       counts: {
         contacts: contacts.length,
@@ -37,7 +37,7 @@ async function backupPortfolioContent() {
         projects: projects.length,
         skills: skills.length,
         sections: sections.length,
-        siteSettings: siteSettings.length,
+        site_settingss: site_settingss.length,
       },
     };
 
@@ -61,7 +61,7 @@ async function backupPortfolioContent() {
     console.log(`  - ${backup.counts.projects} projects`);
     console.log(`  - ${backup.counts.skills} skills`);
     console.log(`  - ${backup.counts.sections} portfolio sections`);
-    console.log(`  - ${backup.counts.siteSettings} site settings`);
+    console.log(`  - ${backup.counts.site_settingss} site settings`);
 
     return backupPath;
   } catch (error) {

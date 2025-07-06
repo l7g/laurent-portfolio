@@ -3,10 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const section = await prisma.portfolioSection.findUnique({
+    const params = await context.params;
+    const section = await prisma.portfolio_sections.findUnique({
       where: { id: params.id },
     });
 
@@ -26,12 +27,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
+    const params = await context.params;
     const data = await request.json();
 
-    const section = await prisma.portfolioSection.update({
+    const section = await prisma.portfolio_sections.update({
       where: { id: params.id },
       data: {
         title: data.title,
@@ -56,10 +58,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
-    await prisma.portfolioSection.delete({
+    const params = await context.params;
+    await prisma.portfolio_sections.delete({
       where: { id: params.id },
     });
 

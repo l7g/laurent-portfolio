@@ -14,7 +14,7 @@ import {
   ClockIcon,
 } from "@heroicons/react/24/outline";
 
-interface SkillProgression {
+interface skill_progressions {
   id: string;
   skillId: string;
   currentLevel: number;
@@ -42,7 +42,7 @@ interface SkillProgression {
   };
 }
 
-interface AcademicProgram {
+interface academic_programs {
   id: string;
   name: string;
   degree: string;
@@ -58,8 +58,8 @@ interface AcademicProgram {
 }
 
 export default function DynamicSkillsSection() {
-  const [skills, setSkills] = useState<SkillProgression[]>([]);
-  const [programs, setPrograms] = useState<AcademicProgram[]>([]);
+  const [skills, setSkills] = useState<skill_progressions[]>([]);
+  const [programs, setPrograms] = useState<academic_programs[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
@@ -99,7 +99,7 @@ export default function DynamicSkillsSection() {
     }
   };
 
-  const calculateExpectedLevel = (progression: SkillProgression) => {
+  const calculateExpectedLevel = (progression: skill_progressions) => {
     if (!progression.program) return progression.currentLevel;
 
     const now = new Date();
@@ -135,7 +135,7 @@ export default function DynamicSkillsSection() {
     return progression.currentLevel;
   };
 
-  const getYearTargets = (progression: SkillProgression) => {
+  const getYearTargets = (progression: skill_progressions) => {
     return [
       { year: 1, target: progression.year1Target || 0, label: "Year 1" },
       { year: 2, target: progression.year2Target || 0, label: "Year 2" },
@@ -144,7 +144,7 @@ export default function DynamicSkillsSection() {
     ].filter((item) => item.target > 0);
   };
 
-  const getCurrentYearProgress = (program: AcademicProgram) => {
+  const getCurrentYearProgress = (program: academic_programs) => {
     const now = new Date();
     const startDate = new Date(program.startDate);
     const monthsElapsed = Math.floor(

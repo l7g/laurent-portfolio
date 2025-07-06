@@ -1,225 +1,131 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("🎓 Seeding academic progression data...");
 
-  // Create the BSc International Relations program
-  const irProgram = await prisma.academicProgram.upsert({
-    where: { id: "ir-program-2025" },
+  // Create the BSc International Relations program (reflecting current DB state)
+  const irProgram = await prisma.academic_programs.upsert({
+    where: { id: "cmcpuhvxx0000mj2gyoc9pgdn" }, // Use actual ID from DB
     update: {},
     create: {
-      id: "ir-program-2025",
-      name: "BSc International Relations",
-      degree: "Bachelor of Science (BSc) in International Relations",
+      id: "cmcpuhvxx0000mj2gyoc9pgdn",
+      name: "BSc (Hons) International Relations",
+      degree: "BSc (Hons) International Relations",
       institution: "University of London",
       accreditation:
         "Academic direction from the London School of Economics and Political Science (LSE)",
       description:
-        "Studying how diverse forces, actors and events shape our global community, gaining communication and problem-solving skills to help bridge cultural gaps and address contemporary global challenges.",
-      startDate: new Date("2025-01-01"),
-      expectedEnd: new Date("2028-12-31"),
+        "An Honours Bachelor of Science degree in International Relations, providing comprehensive understanding of global politics, international law, economics, and diplomatic relations. The Honours designation indicates advanced academic study including independent research and dissertation components.",
+      startDate: new Date("2025-01-01"), // Current start date from DB
+      expectedEnd: new Date("2028-06-30"), // Current expected end from DB
       currentYear: 1,
-      totalYears: 4,
-      mode: "Online with local teaching centre support",
+      totalYears: 3,
+      mode: null,
       status: "ACTIVE",
+      updatedAt: new Date(),
     },
   });
 
-  // Define International Relations skills that will be developed
-  const irSkills = [
+  // Define the academic skills that are currently in the database
+  const existingAcademicSkills = [
     {
       name: "International Political Theory",
-      category: "OTHER",
+      category: "ACADEMIC",
       icon: "🌍",
       color: "#10B981",
-      year1Target: 25,
-      year2Target: 50,
-      year3Target: 75,
-      year4Target: 90,
+      level: 10,
+      currentLevel: 10,
+      targetLevel: 90,
     },
     {
       name: "Diplomatic Analysis",
-      category: "OTHER",
-      icon: "🤝",
+      category: "ACADEMIC",
+      icon: "�",
       color: "#3B82F6",
-      year1Target: 20,
-      year2Target: 45,
-      year3Target: 70,
-      year4Target: 85,
+      level: 8,
+      currentLevel: 8,
+      targetLevel: 90,
     },
     {
       name: "Global Political Economy",
-      category: "OTHER",
-      icon: "💼",
+      category: "ACADEMIC",
+      icon: "�",
       color: "#8B5CF6",
-      year1Target: 15,
-      year2Target: 40,
-      year3Target: 65,
-      year4Target: 85,
-    },
-    {
-      name: "Research Methods (Political Science)",
-      category: "OTHER",
-      icon: "📊",
-      color: "#F59E0B",
-      year1Target: 30,
-      year2Target: 55,
-      year3Target: 80,
-      year4Target: 95,
-    },
-    {
-      name: "Critical Thinking & Analysis",
-      category: "OTHER",
-      icon: "🧠",
-      color: "#EF4444",
-      year1Target: 35,
-      year2Target: 60,
-      year3Target: 80,
-      year4Target: 95,
-    },
-    {
-      name: "Cross-Cultural Communication",
-      category: "OTHER",
-      icon: "🗣️",
-      color: "#06B6D4",
-      year1Target: 25,
-      year2Target: 50,
-      year3Target: 75,
-      year4Target: 90,
-    },
-    {
-      name: "Policy Analysis",
-      category: "OTHER",
-      icon: "📋",
-      color: "#84CC16",
-      year1Target: 10,
-      year2Target: 35,
-      year3Target: 65,
-      year4Target: 85,
-    },
-    {
-      name: "International Law Understanding",
-      category: "OTHER",
-      icon: "⚖️",
-      color: "#6366F1",
-      year1Target: 15,
-      year2Target: 40,
-      year3Target: 70,
-      year4Target: 85,
+      level: 5,
+      currentLevel: 5,
+      targetLevel: 90,
     },
   ];
 
-  // Create or update IR skills
-  for (const skillData of irSkills) {
-    const skill = await prisma.skill.upsert({
+  // Ensure the existing academic skills are properly set up
+  for (const skillData of existingAcademicSkills) {
+    // Try to find existing skill by name
+    let skill = await prisma.skills.findFirst({
       where: { name: skillData.name },
-      update: {
-        category: skillData.category as any,
-        icon: skillData.icon,
-        color: skillData.color,
-        level: 5, // Initial level
-        isActive: true,
-      },
-      create: {
-        name: skillData.name,
-        category: skillData.category as any,
-        level: 5, // Initial level
-        icon: skillData.icon,
-        color: skillData.color,
-        isActive: true,
-        sortOrder: 0,
-      },
-    });
-
-    // Create skill progression for this skill
-    await prisma.skillProgression.upsert({
-      where: {
-        skillId_programId: {
-          skillId: skill.id,
-          programId: irProgram.id,
-        },
-      },
-      update: {},
-      create: {
-        skillId: skill.id,
-        programId: irProgram.id,
-        currentLevel: 5,
-        targetLevel: skillData.year4Target,
-        year1Target: skillData.year1Target,
-        year2Target: skillData.year2Target,
-        year3Target: skillData.year3Target,
-        year4Target: skillData.year4Target,
-        autoUpdate: true,
-        isAcademicSkill: true,
-        isTechnicalSkill: false,
-      },
-    });
-  }
-
-  // Update existing technical skills to show they'll be enhanced by combining with IR knowledge
-  const techSkills = [
-    {
-      name: "Full-Stack Development",
-      year1Target: 85,
-      year2Target: 90,
-      year3Target: 95,
-      year4Target: 98,
-    },
-    {
-      name: "Data Analysis",
-      year1Target: 70,
-      year2Target: 80,
-      year3Target: 90,
-      year4Target: 95,
-    },
-    {
-      name: "Project Management",
-      year1Target: 60,
-      year2Target: 75,
-      year3Target: 85,
-      year4Target: 90,
-    },
-  ];
-
-  for (const skillData of techSkills) {
-    const skill = await prisma.skill.findFirst({
-      where: { name: { contains: skillData.name } },
     });
 
     if (skill) {
-      await prisma.skillProgression.upsert({
-        where: {
-          skillId_programId: {
-            skillId: skill.id,
-            programId: irProgram.id,
-          },
+      // Update existing skill
+      skill = await prisma.skills.update({
+        where: { id: skill.id },
+        data: {
+          category: skillData.category as any,
+          icon: skillData.icon,
+          color: skillData.color,
+          level: skillData.level,
+          isActive: true,
+          updatedAt: new Date(),
         },
-        update: {},
-        create: {
+      });
+    } else {
+      // Create new skill
+      skill = await prisma.skills.create({
+        data: {
+          id: randomUUID(),
+          name: skillData.name,
+          category: skillData.category as any,
+          level: skillData.level,
+          icon: skillData.icon,
+          color: skillData.color,
+          isActive: true,
+          sortOrder: 0,
+          updatedAt: new Date(),
+        },
+      });
+    }
+
+    // Ensure skill progression exists for this skill
+    const existingProgression = await prisma.skill_progressions.findFirst({
+      where: {
+        skillId: skill.id,
+        programId: irProgram.id,
+      },
+    });
+
+    if (!existingProgression) {
+      await prisma.skill_progressions.create({
+        data: {
+          id: randomUUID(),
           skillId: skill.id,
           programId: irProgram.id,
-          currentLevel: skill.level,
-          targetLevel: skillData.year4Target,
-          year1Target: skillData.year1Target,
-          year2Target: skillData.year2Target,
-          year3Target: skillData.year3Target,
-          year4Target: skillData.year4Target,
+          currentLevel: skillData.currentLevel,
+          targetLevel: skillData.targetLevel,
           autoUpdate: true,
-          isAcademicSkill: false,
-          isTechnicalSkill: true,
+          isAcademicSkill: true,
+          isTechnicalSkill: false,
         },
       });
     }
   }
 
   console.log("✅ Academic progression seeding completed!");
-  console.log(`🎓 Created BSc International Relations program`);
+  console.log(`🎓 Updated BSc International Relations program`);
   console.log(
-    `📚 Set up skill progressions for ${irSkills.length} new IR skills`,
+    `📚 Ensured skill progressions for ${existingAcademicSkills.length} existing academic skills`,
   );
-  console.log(`💻 Enhanced ${techSkills.length} existing technical skills`);
 }
 
 main()

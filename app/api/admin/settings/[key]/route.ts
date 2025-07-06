@@ -1,24 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { key: string } },
+  context: { params: Promise<{ key: string }> },
 ) {
   try {
+    const params = await context.params;
     const data = await request.json();
 
-    const setting = await prisma.siteSetting.upsert({
+    const setting = await prisma.site_settings.upsert({
       where: { key: params.key },
       update: {
         value: data.value,
       },
       create: {
+        id: randomUUID(),
         key: params.key,
         value: data.value,
         type: "json",
         description: `Updated ${params.key}`,
         isPublic: true,
+        updatedAt: new Date(),
       },
     });
 

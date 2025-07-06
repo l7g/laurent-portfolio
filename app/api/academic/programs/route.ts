@@ -3,11 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const programs = await prisma.academicProgram.findMany({
+    const programs = await prisma.academic_programs.findMany({
       include: {
-        progressions: {
+        skill_progressions: {
           include: {
-            skill: true,
+            skills: true,
           },
         },
       },

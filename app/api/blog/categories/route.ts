@@ -3,12 +3,12 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const categories = await prisma.blogCategory.findMany({
+    const categories = await prisma.blog_categories.findMany({
       where: { isActive: true },
       include: {
         _count: {
           select: {
-            posts: {
+            blog_posts: {
               where: { status: "PUBLISHED" },
             },
           },

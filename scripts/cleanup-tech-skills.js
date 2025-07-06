@@ -7,7 +7,7 @@ async function cleanupDuplicateTechSkills() {
 
   try {
     // Get all skills and group by name to find duplicates
-    const allSkills = await prisma.skill.findMany({
+    const allSkills = await prisma.skills.findMany({
       orderBy: [{ name: "asc" }],
     });
 
@@ -31,7 +31,7 @@ async function cleanupDuplicateTechSkills() {
         const toDelete = skills.slice(1);
 
         for (const skill of toDelete) {
-          await prisma.skill.delete({
+          await prisma.skills.delete({
             where: { id: skill.id },
           });
           duplicatesRemoved++;
@@ -49,7 +49,7 @@ async function cleanupDuplicateTechSkills() {
     );
 
     // Show final count
-    const finalCount = await prisma.skill.count();
+    const finalCount = await prisma.skills.count();
     console.log(`📊 Total skills remaining: ${finalCount}`);
   } catch (error) {
     console.error("❌ Error during cleanup:", error);

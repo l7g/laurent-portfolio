@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { randomUUID } from "crypto";
 
 const prisma = new PrismaClient();
 
@@ -7,14 +8,14 @@ async function cleanupDuplicateAcademicSkills() {
 
   try {
     // Delete all existing academic skills and progressions
-    await prisma.skillProgression.deleteMany({
+    await prisma.skill_progressions.deleteMany({
       where: {
         isAcademicSkill: true,
       },
     });
 
     // Delete skills that were created for academic purposes (have progressions)
-    const academicSkills = await prisma.skill.findMany({
+    const academicSkills = await prisma.skills.findMany({
       where: {
         OR: [
           { name: "International Political Theory" },
@@ -25,7 +26,7 @@ async function cleanupDuplicateAcademicSkills() {
     });
 
     for (const skill of academicSkills) {
-      await prisma.skill.delete({
+      await prisma.skills.delete({
         where: { id: skill.id },
       });
     }
@@ -35,7 +36,7 @@ async function cleanupDuplicateAcademicSkills() {
     );
 
     // Now recreate the clean academic skills
-    const program = await prisma.academicProgram.findFirst();
+    const program = await prisma.academic_programs.findFirst();
 
     if (!program) {
       console.log("❌ No academic program found");
@@ -73,8 +74,9 @@ async function cleanupDuplicateAcademicSkills() {
     ];
 
     for (const skillData of academicSkillsData) {
-      const skill = await prisma.skill.create({
+      const skill = await prisma.skills.create({
         data: {
+          id: randomUUID(),
           name: skillData.name,
           category: skillData.category,
           level: skillData.level,
@@ -85,8 +87,9 @@ async function cleanupDuplicateAcademicSkills() {
         },
       });
 
-      await prisma.skillProgression.create({
+      await prisma.skill_progressions.create({
         data: {
+          id: randomUUID(),
           skillId: skill.id,
           programId: program.id,
           currentLevel: skillData.currentLevel,

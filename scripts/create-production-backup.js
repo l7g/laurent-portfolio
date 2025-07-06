@@ -33,9 +33,9 @@ async function createProductionBackup() {
     const backupData = await retryOperation(async () => {
       console.log("📊 Fetching data from database...");
 
-      const [users, portfolioSections, projects, skills, siteSettings] =
+      const [users, portfolio_sectionss, projects, skills, site_settingss] =
         await Promise.all([
-          prisma.user.findMany({
+          prisma.users.findMany({
             select: {
               email: true,
               name: true,
@@ -43,10 +43,10 @@ async function createProductionBackup() {
               // Exclude password for security
             },
           }),
-          prisma.portfolioSection.findMany(),
-          prisma.project.findMany(),
-          prisma.skill.findMany(),
-          prisma.siteSetting.findMany(),
+          prisma.portfolio_sections.findMany(),
+          prisma.projects.findMany(),
+          prisma.skills.findMany(),
+          prisma.site_settings.findMany(),
         ]);
 
       return {
@@ -58,17 +58,17 @@ async function createProductionBackup() {
         },
         data: {
           users,
-          portfolioSections,
+          portfolio_sectionss,
           projects,
           skills,
-          siteSettings,
+          site_settingss,
         },
         stats: {
           users: users.length,
-          portfolioSections: portfolioSections.length,
+          portfolio_sectionss: portfolio_sectionss.length,
           projects: projects.length,
           skills: skills.length,
-          siteSettings: siteSettings.length,
+          site_settingss: site_settingss.length,
         },
       };
     });
@@ -82,11 +82,11 @@ async function createProductionBackup() {
     console.log(`📊 Backup contains:`);
     console.log(`   - ${backupData.stats.users} users`);
     console.log(
-      `   - ${backupData.stats.portfolioSections} portfolio sections`,
+      `   - ${backupData.stats.portfolio_sectionss} portfolio sections`,
     );
     console.log(`   - ${backupData.stats.projects} projects`);
     console.log(`   - ${backupData.stats.skills} skills`);
-    console.log(`   - ${backupData.stats.siteSettings} site settings`);
+    console.log(`   - ${backupData.stats.site_settingss} site settings`);
     console.log(`\n🎯 All text content is now editable via admin dashboard!`);
 
     return backupData;

@@ -212,9 +212,23 @@ export default function CourseEditModal({
     if (course) {
       setFormData({
         ...course,
+        code: course.code || "",
+        title: course.title || "",
+        description: course.description || "",
+        programId: course.programId || "",
         startDate: course.startDate ? course.startDate.split("T")[0] : "",
         endDate: course.endDate ? course.endDate.split("T")[0] : "",
+        grade: course.grade || "",
+        instructor: course.instructor || "",
+        instructorBio: course.instructorBio || "",
+        officeHours: course.officeHours || "",
+        syllabus: course.syllabus || "",
         skillsDelivered: course.skillsDelivered || [],
+        objectives: course.objectives || [],
+        topics: course.topics || [],
+        prerequisites: course.prerequisites || [],
+        textbooks: course.textbooks || [],
+        resources: course.resources || [],
       });
     } else {
       setFormData({

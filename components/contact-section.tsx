@@ -146,10 +146,10 @@ const ContactSection = () => {
               "My Journey",
             ),
             journeyStats: getSettingValue(settings, "contact_journey_stats", [
-              { label: "Years Learning", value: "3" },
+              { label: "Years Learning", value: "3+" },
               { label: "Accenture Intern", value: "6mo" },
-              { label: "Commercial Projects", value: "3" },
-              { label: "Client Work", value: "Real" },
+              { label: "Team Projects", value: "Real" },
+              { label: "Ready for", value: "Impact" },
             ]),
             tabGeneral: getSettingValue(
               settings,
@@ -192,10 +192,10 @@ const ContactSection = () => {
             "I'm enthusiastic about starting my professional journey and eager to learn from experienced developers. Whether you have entry-level opportunities, mentorship, or just want to discuss code - I'd love to hear from you!",
           journeyTitle: "My Journey",
           journeyStats: [
-            { label: "Years Learning", value: "3" },
+            { label: "Years Learning", value: "3+" },
             { label: "Accenture Intern", value: "6mo" },
-            { label: "Commercial Projects", value: "3" },
-            { label: "Client Work", value: "Real" },
+            { label: "Team Projects", value: "Real" },
+            { label: "Ready for", value: "Impact" },
           ],
           tabGeneral: "General Contact",
           tabWork: "Work Inquiry",

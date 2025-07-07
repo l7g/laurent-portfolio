@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 // GET /api/sections - Get all sections
 export async function GET() {
   try {
-    const sections = await prisma.portfolioSection.findMany({
+    const sections = await prisma.portfolio_sections.findMany({
       orderBy: { sortOrder: "asc" },
     });
 
@@ -52,14 +53,15 @@ export async function POST(request: NextRequest) {
     // If no sortOrder is specified, put it at the end
     let sectionSortOrder = sortOrder;
     if (sectionSortOrder === undefined) {
-      const lastSection = await prisma.portfolioSection.findFirst({
+      const lastSection = await prisma.portfolio_sections.findFirst({
         orderBy: { sortOrder: "desc" },
       });
       sectionSortOrder = (lastSection?.sortOrder || 0) + 1;
     }
 
-    const section = await prisma.portfolioSection.create({
+    const section = await prisma.portfolio_sections.create({
       data: {
+        id: randomUUID(),
         name: displayName.toLowerCase().replace(/\s+/g, "-"), // Generate internal name
         displayName,
         sectionType,
@@ -70,6 +72,7 @@ export async function POST(request: NextRequest) {
         settings: settings || {},
         isActive: isActive !== undefined ? isActive : true,
         sortOrder: sectionSortOrder,
+        updatedAt: new Date(),
       },
     });
 

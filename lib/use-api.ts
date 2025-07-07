@@ -51,7 +51,7 @@ export function useApi() {
   // Project operations
   const projects = {
     getAll: () => request<any[]>("/api/projects"),
-    getById: (id: string) => request<any>(`/api/projects/${id}`),
+    getById: (id: string) => request<any>(`/api/admin/projects/${id}`),
     create: (data: any, options?: UseApiOptions) =>
       request<any>(
         "/api/projects",
@@ -60,13 +60,13 @@ export function useApi() {
       ),
     update: (id: string, data: any, options?: UseApiOptions) =>
       request<any>(
-        `/api/projects/${id}`,
+        `/api/admin/projects/${id}`,
         { method: "PUT", body: JSON.stringify(data) },
         options,
       ),
     delete: (id: string, options?: UseApiOptions) =>
       request<{ message: string }>(
-        `/api/projects/${id}`,
+        `/api/admin/projects/${id}`,
         { method: "DELETE" },
         options,
       ),
@@ -136,12 +136,17 @@ export function useApi() {
         { method: "PUT", body: JSON.stringify(data) },
         options,
       ),
-    delete: (key: string, options?: UseApiOptions) =>
-      request<{ message: string }>(
-        `/api/settings/${key}`,
+    delete: (keyOrId: string, options?: UseApiOptions) => {
+      // IDs are typically longer (20+ characters) and alphanumeric
+      // Keys are typically shorter and may contain underscores
+      const isId = keyOrId.length > 15 && /^[a-zA-Z0-9]+$/.test(keyOrId);
+      const paramName = isId ? "id" : "key";
+      return request<{ message: string }>(
+        `/api/settings?${paramName}=${keyOrId}`,
         { method: "DELETE" },
         options,
-      ),
+      );
+    },
   };
 
   return {

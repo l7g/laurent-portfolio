@@ -792,27 +792,13 @@ export default function SettingsManager() {
                 return (
                   <Card
                     key={setting.key}
-                    className={`cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] h-full border-2 ${
+                    className={`transition-all hover:shadow-lg h-full border-2 ${
                       setting.exists
                         ? hasValue
                           ? "border-success-300 bg-success-50/50 hover:border-success-400"
                           : "border-warning-300 bg-warning-50/50 hover:border-warning-400"
                         : "border-gray-200 hover:border-primary-400 bg-white"
                     }`}
-                    isPressable
-                    onPress={() => {
-                      if (setting.exists && setting.existingSetting) {
-                        openEditModal(setting.existingSetting);
-                      } else {
-                        // Create the setting first
-                        const predefinedSetting = PREDEFINED_SETTINGS.find(
-                          (p) => p.key === setting.key,
-                        );
-                        if (predefinedSetting) {
-                          handleQuickSetup(predefinedSetting);
-                        }
-                      }
-                    }}
                   >
                     <CardBody className="p-4 h-full flex flex-col">
                       <div className="flex items-start gap-3 h-full">
@@ -878,22 +864,76 @@ export default function SettingsManager() {
                               </div>
                             )}
 
-                          <div className="flex items-center gap-2 mt-auto flex-shrink-0">
-                            <Chip
-                              size="sm"
-                              variant="bordered"
-                              className="text-xs font-medium"
-                            >
-                              {setting.type}
-                            </Chip>
-                            <Chip
-                              size="sm"
-                              variant="bordered"
-                              className="text-xs font-medium"
-                              color="secondary"
-                            >
-                              {setting.category}
-                            </Chip>
+                          <div className="flex items-center justify-between mt-auto flex-shrink-0">
+                            <div className="flex items-center gap-2">
+                              <Chip
+                                size="sm"
+                                variant="bordered"
+                                className="text-xs font-medium"
+                              >
+                                {setting.type}
+                              </Chip>
+                              <Chip
+                                size="sm"
+                                variant="bordered"
+                                className="text-xs font-medium"
+                                color="secondary"
+                              >
+                                {setting.category}
+                              </Chip>
+                            </div>
+
+                            <div className="flex items-center gap-1">
+                              <Button
+                                size="sm"
+                                variant="light"
+                                color="primary"
+                                onPress={() => {
+                                  if (
+                                    setting.exists &&
+                                    setting.existingSetting
+                                  ) {
+                                    openEditModal(setting.existingSetting);
+                                  } else {
+                                    // Create the setting first
+                                    const predefinedSetting =
+                                      PREDEFINED_SETTINGS.find(
+                                        (p) => p.key === setting.key,
+                                      );
+                                    if (predefinedSetting) {
+                                      handleQuickSetup(predefinedSetting);
+                                    }
+                                  }
+                                }}
+                                startContent={
+                                  setting.exists ? (
+                                    <PencilIcon className="w-3 h-3" />
+                                  ) : (
+                                    <PlusIcon className="w-3 h-3" />
+                                  )
+                                }
+                              >
+                                {setting.exists ? "Edit" : "Setup"}
+                              </Button>
+
+                              {setting.exists && setting.existingSetting && (
+                                <Button
+                                  size="sm"
+                                  variant="light"
+                                  color="danger"
+                                  onPress={() => {
+                                    handleDeleteSetting(
+                                      setting.existingSetting!.id,
+                                    );
+                                  }}
+                                  startContent={
+                                    <TrashIcon className="w-3 h-3" />
+                                  }
+                                >
+                                  Delete
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>

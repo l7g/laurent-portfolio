@@ -10,8 +10,10 @@ import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 import dotenv from "dotenv";
 
-// Load environment variables
-dotenv.config({ path: ".env.local" });
+// Load environment variables (only in development)
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.local" });
+}
 
 const prisma = new PrismaClient();
 

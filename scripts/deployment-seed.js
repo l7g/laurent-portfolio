@@ -19,6 +19,11 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log("🌱 Starting smart deployment seeding...");
+  console.log("📊 Environment:", process.env.NODE_ENV || "development");
+  console.log(
+    "🔗 Database URL:",
+    process.env.DATABASE_URL ? "✅ Set" : "❌ Missing",
+  );
 
   // Get admin info from environment variables
   const adminEmail =
@@ -27,6 +32,15 @@ async function main() {
   const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
 
   console.log(`👤 Setting up admin user: ${adminEmail}`);
+
+  try {
+    // Test database connection first
+    await prisma.$connect();
+    console.log("✅ Database connection established");
+  } catch (error) {
+    console.error("❌ Database connection failed:", error.message);
+    throw error;
+  }
 
   // Helper function to add required fields
   const addRequiredFields = (data) => ({
@@ -260,14 +274,31 @@ async function main() {
 
   console.log("✅ Smart deployment seeding completed successfully!");
   console.log(`👤 Admin user: ${admin.email} (${admin.role})`);
+
+  // Final verification - count entities
+  const counts = await Promise.all([
+    prisma.users.count(),
+    prisma.site_settings.count(),
+    prisma.blog_categories.count(),
+    prisma.skills.count(),
+  ]);
+
+  console.log("📊 Final entity counts:");
+  console.log(`   Users: ${counts[0]}`);
+  console.log(`   Settings: ${counts[1]}`);
+  console.log(`   Categories: ${counts[2]}`);
+  console.log(`   Skills: ${counts[3]}`);
 }
 
 main()
   .then(async () => {
+    console.log("🎉 Deployment seeding completed successfully!");
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error("❌ Deployment seeding failed:", e);
+    console.error("❌ Deployment seeding failed:");
+    console.error("Error:", e.message);
+    console.error("Stack:", e.stack);
     await prisma.$disconnect();
     process.exit(1);
   });

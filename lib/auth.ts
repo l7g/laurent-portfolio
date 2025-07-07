@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.users.findUnique({
           where: {
             email: credentials.email,
           },
@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Update last login
-        await prisma.user.update({
+        await prisma.users.update({
           where: { id: user.id },
           data: { lastLogin: new Date() },
         });

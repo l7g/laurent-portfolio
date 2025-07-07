@@ -10,7 +10,7 @@ export async function GET(
 ) {
   try {
     const params = await context.params;
-    const skill = await prisma.skill.findUnique({
+    const skill = await prisma.skills.findUnique({
       where: { id: params.id },
     });
 
@@ -45,7 +45,7 @@ export async function PUT(
     const { name, category, level, icon, color, isActive, sortOrder } = body;
 
     // Check if skill exists
-    const existingSkill = await prisma.skill.findUnique({
+    const existingSkill = await prisma.skills.findUnique({
       where: { id: params.id },
     });
 
@@ -53,7 +53,7 @@ export async function PUT(
       return NextResponse.json({ error: "Skill not found" }, { status: 404 });
     }
 
-    const skill = await prisma.skill.update({
+    const skill = await prisma.skills.update({
       where: { id: params.id },
       data: {
         ...(name && { name }),
@@ -90,7 +90,7 @@ export async function DELETE(
     const params = await context.params;
 
     // Check if skill exists
-    const existingSkill = await prisma.skill.findUnique({
+    const existingSkill = await prisma.skills.findUnique({
       where: { id: params.id },
     });
 
@@ -98,7 +98,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Skill not found" }, { status: 404 });
     }
 
-    await prisma.skill.delete({
+    await prisma.skills.delete({
       where: { id: params.id },
     });
 

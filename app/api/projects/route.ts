@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
 // GET /api/projects - Get all projects
 export async function GET() {
   try {
-    const projects = await prisma.project.findMany({
+    const projects = await prisma.projects.findMany({
       orderBy: [
         { flagship: "desc" },
         { featured: "desc" },
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if slug already exists
-    const existingProject = await prisma.project.findUnique({
+    const existingProject = await prisma.projects.findUnique({
       where: { slug },
     });
 
@@ -80,8 +81,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const project = await prisma.project.create({
+    const project = await prisma.projects.create({
       data: {
+        id: randomUUID(),
         title,
         slug,
         description,
@@ -106,6 +108,7 @@ export async function POST(request: NextRequest) {
         projectDuration,
         teamSize,
         myRole,
+        updatedAt: new Date(),
       },
     });
 

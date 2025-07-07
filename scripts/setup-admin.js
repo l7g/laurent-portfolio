@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 const readline = require("readline");
+const { randomUUID } = require("crypto");
 
 const prisma = new PrismaClient();
 
@@ -60,7 +61,7 @@ async function interactiveAdminSetup() {
     }
 
     // Check if admin already exists
-    const existingAdmin = await prisma.user.findUnique({
+    const existingAdmin = await prisma.users.findUnique({
       where: { email },
     });
 
@@ -74,7 +75,7 @@ async function interactiveAdminSetup() {
       }
 
       // Delete existing user
-      await prisma.user.delete({
+      await prisma.users.delete({
         where: { email },
       });
     }
@@ -83,8 +84,9 @@ async function interactiveAdminSetup() {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Create admin user
-    const admin = await prisma.user.create({
+    const admin = await prisma.users.create({
       data: {
+        id: randomUUID(),
         email,
         name: name || "Admin",
         role: "ADMIN",

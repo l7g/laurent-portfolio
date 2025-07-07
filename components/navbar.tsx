@@ -15,6 +15,7 @@ import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -23,10 +24,21 @@ import { GithubIcon, Logo } from "@/components/icons";
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const currentPath = usePathname();
 
   useEffect(() => {
+    // Only track scroll sections on homepage
+    if (currentPath !== "/") return;
+
     const handleScroll = () => {
-      const sections = ["home", "about", "projects", "skills", "contact"];
+      const sections = [
+        "home",
+        "about",
+        "education-skills",
+        "projects",
+        "blog",
+        "contact",
+      ];
       const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
@@ -53,17 +65,26 @@ export const Navbar = () => {
     handleScroll(); // Call once to set initial state
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [currentPath]);
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
   };
 
   const isLinkActive = (href: string) => {
-    if (href === "/") return activeSection === "home";
-    const section = href.replace("#", "");
+    // Handle homepage section links
+    if (href.startsWith("#") || href === "/#contact") {
+      if (currentPath !== "/") return false;
+      const section = href.replace("#", "").replace("/#", "");
+      return activeSection === section;
+    }
 
-    return activeSection === section;
+    // Handle homepage exact match
+    if (href === "/") return currentPath === "/";
+
+    // Handle page routes (including sub-routes)
+    // This will highlight "Blog" for /blog, /blog/some-post, /blog/category/tech, etc.
+    return currentPath.startsWith(href) && href !== "/";
   };
 
   return (

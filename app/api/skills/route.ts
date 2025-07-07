@@ -2,11 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { randomUUID } from "crypto";
 
-// GET /api/skills - Get all skills
-export async function GET() {
+// GET /api/skills - Get all skills (with admin filtering)
+export async function GET(request: NextRequest) {
   try {
-    const skills = await prisma.skill.findMany({
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "ADMIN";
+
+    // Check if this is an admin request
+    const { searchParams } = new URL(request.url);
+    const adminOnly = searchParams.get("admin") === "true";
+
+    if (adminOnly && !isAdmin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Build where clause - public users only see active skills
+    const where: any = {};
+    if (!isAdmin) {
+      where.isActive = true;
+    }
+
+    const skills = await prisma.skills.findMany({
+      where,
       orderBy: [{ category: "asc" }, { name: "asc" }],
     });
 
@@ -39,8 +58,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const skill = await prisma.skill.create({
+    const skill = await prisma.skills.create({
       data: {
+        id: randomUUID(),
         name,
         category,
         level: level || 1,
@@ -48,6 +68,7 @@ export async function POST(request: NextRequest) {
         color,
         isActive: isActive !== undefined ? isActive : true,
         sortOrder: sortOrder || 0,
+        updatedAt: new Date(),
       },
     });
 

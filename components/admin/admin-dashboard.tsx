@@ -19,7 +19,11 @@ import { getProjectImageUrl } from "@/lib/blob-storage";
 import { useApi } from "@/lib/use-api";
 import ProjectEditModal from "./project-edit-modal";
 import SectionContentEditModal from "./section-content-edit-modal";
+import PageEditModal from "./page-edit-modal";
 import SettingsManager from "./settings-manager";
+import CourseManagement from "./course-management";
+import CourseProgressTracker from "./course-progress-tracker";
+import GraduationTracker from "./graduation-tracker";
 
 interface AdminDashboardProps {
   contacts: any[];
@@ -27,6 +31,7 @@ interface AdminDashboardProps {
   projects: any[];
   skills: any[];
   sections: any[];
+  blogPosts?: any[];
 }
 
 export default function AdminDashboard({
@@ -35,13 +40,16 @@ export default function AdminDashboard({
   projects: initialProjects,
   skills: initialSkills,
   sections: initialSections,
+  blogPosts: initialBlogPosts = [],
 }: AdminDashboardProps) {
   const [selectedTab, setSelectedTab] = useState("overview");
   const [projects, setProjects] = useState(initialProjects);
   const [skills, setSkills] = useState(initialSkills);
   const [sections, setSections] = useState(initialSections);
+  const [pages, setPages] = useState<any[]>([]);
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [selectedSection, setSelectedSection] = useState<any>(null);
+  const [selectedPage, setSelectedPage] = useState<any>(null);
 
   const {
     isOpen: isProjectModalOpen,
@@ -54,6 +62,13 @@ export default function AdminDashboard({
     onOpen: onSectionModalOpen,
     onClose: onSectionModalClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isPageModalOpen,
+    onOpen: onPageModalOpen,
+    onClose: onPageModalClose,
+  } = useDisclosure();
+
   const api = useApi();
 
   // Refresh data functions
@@ -78,6 +93,23 @@ export default function AdminDashboard({
     }
   };
 
+  const refreshPages = async () => {
+    try {
+      const response = await fetch("/api/admin/pages");
+      if (response.ok) {
+        const pagesData = await response.json();
+        setPages(pagesData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch pages:", error);
+    }
+  };
+
+  // Fetch pages on component mount
+  useEffect(() => {
+    refreshPages();
+  }, []);
+
   // Project operations
   const handleEditProject = (project: any) => {
     setSelectedProject(project);
@@ -93,6 +125,57 @@ export default function AdminDashboard({
   const handleEditSection = (section: any) => {
     setSelectedSection(section);
     onSectionModalOpen();
+  };
+
+  // Page operations
+  const handleDeletePage = async (pageId: string) => {
+    if (confirm("Are you sure you want to delete this page?")) {
+      try {
+        const response = await fetch(`/api/admin/pages/${pageId}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          await refreshPages();
+        } else {
+          alert("Failed to delete page");
+        }
+      } catch (error) {
+        console.error("Error deleting page:", error);
+        alert("Failed to delete page");
+      }
+    }
+  };
+
+  const handleSavePage = async (pageData: any) => {
+    try {
+      const url = selectedPage
+        ? `/api/admin/pages/${selectedPage.id}`
+        : "/api/admin/pages";
+      const method = selectedPage ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(pageData),
+      });
+
+      if (response.ok) {
+        await refreshPages();
+        alert(
+          selectedPage
+            ? "Page updated successfully!"
+            : "Page created successfully!",
+        );
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to save page: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error("Error saving page:", error);
+      alert("Failed to save page");
+    }
   };
 
   const handleSaveProject = async (projectData: any) => {
@@ -149,6 +232,13 @@ export default function AdminDashboard({
       icon: ChartBarIcon,
     },
     {
+      title: "Blog Posts",
+      value: initialBlogPosts.length,
+      published: initialBlogPosts.filter((p) => p.status === "PUBLISHED")
+        .length,
+      icon: DocumentTextIcon,
+    },
+    {
       title: "Skills Listed",
       value: skills.filter((s) => s.isActive).length,
       total: skills.length,
@@ -158,8 +248,13 @@ export default function AdminDashboard({
 
   const tabs = [
     { key: "overview", title: "Overview" },
-    { key: "content", title: "Content" },
+    { key: "content", title: "Portfolio Sections" },
+    { key: "pages", title: "Pages" },
     { key: "projects", title: "Projects" },
+    { key: "blog", title: "Blog" },
+    { key: "courses", title: "Courses" },
+    { key: "progress", title: "Academic Progress" },
+    { key: "graduation", title: "Graduation" },
     { key: "messages", title: "Messages" },
     { key: "settings", title: "Settings" },
   ];
@@ -240,6 +335,11 @@ export default function AdminDashboard({
                             {(stat as any).pending} pending
                           </Chip>
                         )}
+                        {(stat as any).published > 0 && (
+                          <Chip color="success" size="sm">
+                            {(stat as any).published} published
+                          </Chip>
+                        )}
                       </div>
                       <div className="p-3 bg-primary-100 rounded-lg">
                         <stat.icon className="w-6 h-6 text-primary-600" />
@@ -251,7 +351,7 @@ export default function AdminDashboard({
             </div>
 
             {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
                   <h3 className="text-lg font-semibold">Recent Messages</h3>
@@ -275,6 +375,45 @@ export default function AdminDashboard({
                       )}
                     </div>
                   ))}
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Recent Blog Posts</h3>
+                </CardHeader>
+                <CardBody>
+                  {initialBlogPosts.slice(0, 3).map((post) => (
+                    <div
+                      key={post.id}
+                      className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium">{post.title}</p>
+                        <p className="text-sm text-gray-600">
+                          {post.views || 0} views • {post.likes || 0} likes
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Chip
+                          color={
+                            post.status === "PUBLISHED" ? "success" : "warning"
+                          }
+                          size="sm"
+                        >
+                          {post.status}
+                        </Chip>
+                        <span className="text-xs text-gray-500">
+                          {new Date(post.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {initialBlogPosts.length === 0 && (
+                    <p className="text-gray-500 text-center py-4">
+                      No blog posts yet
+                    </p>
+                  )}
                 </CardBody>
               </Card>
 
@@ -356,6 +495,102 @@ export default function AdminDashboard({
                       </div>
                     </div>
                   ))}
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        )}
+
+        {selectedTab === "pages" && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Manage Pages</h2>
+              <Button
+                color="primary"
+                startContent={<PlusIcon className="w-4 h-4" />}
+                onPress={() => {
+                  setSelectedPage(null);
+                  onPageModalOpen();
+                }}
+              >
+                Add Page
+              </Button>
+            </div>
+
+            <Card>
+              <CardBody>
+                <div className="space-y-3">
+                  {pages.map((page) => (
+                    <div
+                      key={page.id}
+                      className="flex items-center justify-between p-4 border rounded-lg hover:shadow-sm transition-shadow"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="font-medium">{page.title}</h4>
+                          {page.isHomepage && (
+                            <Chip color="primary" size="sm" variant="flat">
+                              Homepage
+                            </Chip>
+                          )}
+                          <Chip
+                            color={page.isPublished ? "success" : "warning"}
+                            size="sm"
+                            variant="flat"
+                          >
+                            {page.isPublished ? "Published" : "Draft"}
+                          </Chip>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-1">
+                          /{page.slug}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {page.description}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<EyeIcon className="w-4 h-4" />}
+                          onPress={() => window.open(`/${page.slug}`, "_blank")}
+                          isDisabled={!page.isPublished}
+                        >
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<PencilIcon className="w-4 h-4" />}
+                          onPress={() => {
+                            setSelectedPage(page);
+                            onPageModalOpen();
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          color="danger"
+                          variant="flat"
+                          startContent={<TrashIcon className="w-4 h-4" />}
+                          onPress={() => handleDeletePage(page.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  {pages.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                      <p>No pages created yet</p>
+                      <p className="text-sm">
+                        Create your first page to get started
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardBody>
             </Card>
@@ -498,7 +733,171 @@ export default function AdminDashboard({
           </div>
         )}
 
+        {selectedTab === "courses" && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Course Management
+                </h2>
+                <p className="text-gray-600">
+                  Manage your academic courses and track progress
+                </p>
+              </div>
+            </div>
+            <CourseManagement />
+          </div>
+        )}
+
+        {selectedTab === "progress" && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Academic Progress
+                </h2>
+                <p className="text-gray-600">
+                  Track your degree progress and course completion
+                </p>
+              </div>
+            </div>
+            <CourseProgressTracker />
+          </div>
+        )}
+
+        {selectedTab === "graduation" && (
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Graduation Tracking
+                </h2>
+                <p className="text-gray-600">
+                  Manage dissertation progress and graduation timeline
+                </p>
+              </div>
+            </div>
+            <GraduationTracker />
+          </div>
+        )}
+
         {selectedTab === "settings" && <SettingsManager />}
+
+        {selectedTab === "blog" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Blog Management
+                </h2>
+                <p className="text-gray-600">
+                  Manage your blog posts, categories, and comments
+                </p>
+              </div>
+              <Button
+                color="primary"
+                startContent={<PlusIcon className="w-4 h-4" />}
+                onPress={() => window.open("/admin/blog", "_blank")}
+              >
+                Manage Blog
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader className="pb-0">
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="text-lg font-semibold">Recent Blog Posts</h3>
+                  <Button
+                    variant="flat"
+                    size="sm"
+                    onPress={() => window.open("/admin/blog/new", "_blank")}
+                  >
+                    New Post
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-4">
+                  {initialBlogPosts.map((post) => (
+                    <div
+                      key={post.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="font-medium text-gray-900">
+                            {post.title}
+                          </h4>
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            color={
+                              post.status === "PUBLISHED"
+                                ? "success"
+                                : "warning"
+                            }
+                          >
+                            {post.status}
+                          </Chip>
+                          {post.blog_categories && (
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              style={{
+                                backgroundColor: `${post.blog_categories.color}20`,
+                                color: post.blog_categories.color,
+                              }}
+                            >
+                              {post.blog_categories.name}
+                            </Chip>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <span>
+                            {new Date(post.createdAt).toLocaleDateString()}
+                          </span>
+                          <span>{post.views || 0} views</span>
+                          <span>{post.likes || 0} likes</span>
+                          <span>
+                            {post._count?.blog_comments || 0} comments
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<EyeIcon className="w-4 h-4" />}
+                          onPress={() =>
+                            window.open(`/blog/${post.slug}`, "_blank")
+                          }
+                        >
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<PencilIcon className="w-4 h-4" />}
+                          onPress={() =>
+                            window.open(`/admin/blog?edit=${post.id}`, "_blank")
+                          }
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {initialBlogPosts.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No blog posts found. Create your first post to get
+                      started!
+                    </div>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        )}
       </div>
 
       {/* Project Edit Modal */}
@@ -515,6 +914,14 @@ export default function AdminDashboard({
         isOpen={isSectionModalOpen}
         onClose={onSectionModalClose}
         onUpdate={refreshSections}
+      />
+
+      {/* Page Edit Modal */}
+      <PageEditModal
+        page={selectedPage}
+        isOpen={isPageModalOpen}
+        onClose={onPageModalClose}
+        onSave={handleSavePage}
       />
     </div>
   );

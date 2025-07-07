@@ -1,5 +1,5 @@
-const { execSync } = require("child_process");
-const { PrismaClient } = require("@prisma/client");
+import { execSync } from "child_process";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -47,9 +47,9 @@ async function postinstallDatabase() {
     console.log("🌱 Checking if seeding is needed...");
     try {
       const existingData =
-        (await prisma.user.count()) +
-        (await prisma.project.count()) +
-        (await prisma.portfolioSection.count());
+        (await prisma.users.count()) +
+        (await prisma.projects.count()) +
+        (await prisma.portfolio_sections.count());
 
       if (existingData === 0) {
         console.log("📦 Database is empty, running deployment seed...");

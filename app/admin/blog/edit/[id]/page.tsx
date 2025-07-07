@@ -16,7 +16,6 @@ import {
 import Link from "next/link";
 import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 
 interface BlogCategory {
@@ -156,7 +155,8 @@ export default async function EditBlogPostPage({
   // Handle authentication after all hooks
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
-    redirect("/admin/login");
+    router.push("/admin/login");
+    return null;
   }
 
   const handleInputChange = (field: keyof PostData, value: string) => {

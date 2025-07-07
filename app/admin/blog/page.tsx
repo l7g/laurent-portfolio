@@ -23,7 +23,7 @@ import {
 import Link from "next/link";
 import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface BlogPost {
   id: string;
@@ -75,6 +75,7 @@ const statusColors = {
 
 export default function BlogAdminPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,7 +115,8 @@ export default function BlogAdminPage() {
   // Handle authentication after all hooks
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
-    redirect("/admin/login");
+    router.push("/admin/login");
+    return null;
   }
 
   const handleDelete = async (id: string) => {

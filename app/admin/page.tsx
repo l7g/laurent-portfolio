@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
@@ -44,6 +44,7 @@ interface AdminStats {
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<AdminStats>({
@@ -69,10 +70,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (status === "loading") return;
     if (!session || session.user?.role !== "ADMIN") {
-      redirect("/admin/login");
+      router.push("/admin/login");
+      return;
     }
     fetchDashboardData();
-  }, [session, status]);
+  }, [session, status, router]);
 
   const fetchDashboardData = async () => {
     try {

@@ -30,7 +30,7 @@ import {
 import Link from "next/link";
 import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface BlogSeries {
   id: string;
@@ -97,6 +97,7 @@ const colorOptions = [
 
 export default function SeriesManagementPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [series, setSeries] = useState<BlogSeries[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -172,7 +173,8 @@ export default function SeriesManagementPage() {
   // Handle authentication after all hooks
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
-    redirect("/admin/login");
+    router.push("/admin/login");
+    return null;
   }
 
   const handleInputChange = (field: keyof SeriesFormData, value: string) => {

@@ -15,6 +15,7 @@ import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -23,11 +24,7 @@ import { GithubIcon, Logo } from "@/components/icons";
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
-  const [currentPath, setCurrentPath] = useState("");
-
-  useEffect(() => {
-    setCurrentPath(window.location.pathname);
-  }, []);
+  const currentPath = usePathname();
 
   useEffect(() => {
     // Only track scroll sections on homepage
@@ -82,9 +79,12 @@ export const Navbar = () => {
       return activeSection === section;
     }
 
-    // Handle page links
+    // Handle homepage exact match
     if (href === "/") return currentPath === "/";
-    return currentPath === href;
+
+    // Handle page routes (including sub-routes)
+    // This will highlight "Blog" for /blog, /blog/some-post, /blog/category/tech, etc.
+    return currentPath.startsWith(href) && href !== "/";
   };
 
   return (

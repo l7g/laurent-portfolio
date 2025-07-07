@@ -3,12 +3,14 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
+    const { slug } = await params;
+
     // First get the post by slug
     const post = await prisma.blog_posts.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       select: { id: true },
     });
 
@@ -37,10 +39,11 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { slug: string } },
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     const { content, author, email, website } = await request.json();
+    const { slug } = await params;
 
     if (!content?.trim() || !author?.trim() || !email?.trim()) {
       return NextResponse.json(
@@ -51,7 +54,7 @@ export async function POST(
 
     // First get the post by slug
     const post = await prisma.blog_posts.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       select: { id: true },
     });
 

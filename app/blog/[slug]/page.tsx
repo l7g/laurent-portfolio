@@ -4,13 +4,14 @@ import { prisma } from "@/lib/prisma";
 import BlogPostContent from "@/components/blog/blog-post-content";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
+    const { slug } = await params;
     const post = await prisma.blog_posts.findUnique({
-      where: { slug: params.slug },
+      where: { slug },
       include: {
         users: {
           select: {
@@ -82,5 +83,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  return <BlogPostContent slug={params.slug} />;
+  const { slug } = await params;
+  return <BlogPostContent slug={slug} />;
 }

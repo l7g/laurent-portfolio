@@ -232,6 +232,13 @@ export default function AdminDashboard({
       icon: ChartBarIcon,
     },
     {
+      title: "Blog Posts",
+      value: initialBlogPosts.length,
+      published: initialBlogPosts.filter((p) => p.status === "PUBLISHED")
+        .length,
+      icon: DocumentTextIcon,
+    },
+    {
       title: "Skills Listed",
       value: skills.filter((s) => s.isActive).length,
       total: skills.length,
@@ -244,6 +251,7 @@ export default function AdminDashboard({
     { key: "content", title: "Portfolio Sections" },
     { key: "pages", title: "Pages" },
     { key: "projects", title: "Projects" },
+    { key: "blog", title: "Blog" },
     { key: "courses", title: "Courses" },
     { key: "progress", title: "Academic Progress" },
     { key: "graduation", title: "Graduation" },
@@ -327,6 +335,11 @@ export default function AdminDashboard({
                             {(stat as any).pending} pending
                           </Chip>
                         )}
+                        {(stat as any).published > 0 && (
+                          <Chip color="success" size="sm">
+                            {(stat as any).published} published
+                          </Chip>
+                        )}
                       </div>
                       <div className="p-3 bg-primary-100 rounded-lg">
                         <stat.icon className="w-6 h-6 text-primary-600" />
@@ -338,7 +351,7 @@ export default function AdminDashboard({
             </div>
 
             {/* Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
                   <h3 className="text-lg font-semibold">Recent Messages</h3>
@@ -362,6 +375,45 @@ export default function AdminDashboard({
                       )}
                     </div>
                   ))}
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Recent Blog Posts</h3>
+                </CardHeader>
+                <CardBody>
+                  {initialBlogPosts.slice(0, 3).map((post) => (
+                    <div
+                      key={post.id}
+                      className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium">{post.title}</p>
+                        <p className="text-sm text-gray-600">
+                          {post.views || 0} views • {post.likes || 0} likes
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Chip
+                          color={
+                            post.status === "PUBLISHED" ? "success" : "warning"
+                          }
+                          size="sm"
+                        >
+                          {post.status}
+                        </Chip>
+                        <span className="text-xs text-gray-500">
+                          {new Date(post.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  {initialBlogPosts.length === 0 && (
+                    <p className="text-gray-500 text-center py-4">
+                      No blog posts yet
+                    </p>
+                  )}
                 </CardBody>
               </Card>
 
@@ -730,6 +782,122 @@ export default function AdminDashboard({
         )}
 
         {selectedTab === "settings" && <SettingsManager />}
+
+        {selectedTab === "blog" && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Blog Management
+                </h2>
+                <p className="text-gray-600">
+                  Manage your blog posts, categories, and comments
+                </p>
+              </div>
+              <Button
+                color="primary"
+                startContent={<PlusIcon className="w-4 h-4" />}
+                onPress={() => window.open("/admin/blog", "_blank")}
+              >
+                Manage Blog
+              </Button>
+            </div>
+
+            <Card>
+              <CardHeader className="pb-0">
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="text-lg font-semibold">Recent Blog Posts</h3>
+                  <Button
+                    variant="flat"
+                    size="sm"
+                    onPress={() => window.open("/admin/blog/new", "_blank")}
+                  >
+                    New Post
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardBody>
+                <div className="space-y-4">
+                  {initialBlogPosts.map((post) => (
+                    <div
+                      key={post.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h4 className="font-medium text-gray-900">
+                            {post.title}
+                          </h4>
+                          <Chip
+                            size="sm"
+                            variant="flat"
+                            color={
+                              post.status === "PUBLISHED"
+                                ? "success"
+                                : "warning"
+                            }
+                          >
+                            {post.status}
+                          </Chip>
+                          {post.blog_categories && (
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              style={{
+                                backgroundColor: `${post.blog_categories.color}20`,
+                                color: post.blog_categories.color,
+                              }}
+                            >
+                              {post.blog_categories.name}
+                            </Chip>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
+                          <span>
+                            {new Date(post.createdAt).toLocaleDateString()}
+                          </span>
+                          <span>{post.views || 0} views</span>
+                          <span>{post.likes || 0} likes</span>
+                          <span>
+                            {post._count?.blog_comments || 0} comments
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<EyeIcon className="w-4 h-4" />}
+                          onPress={() =>
+                            window.open(`/blog/${post.slug}`, "_blank")
+                          }
+                        >
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          startContent={<PencilIcon className="w-4 h-4" />}
+                          onPress={() =>
+                            window.open(`/admin/blog?edit=${post.id}`, "_blank")
+                          }
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {initialBlogPosts.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No blog posts found. Create your first post to get
+                      started!
+                    </div>
+                  )}
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+        )}
       </div>
 
       {/* Project Edit Modal */}

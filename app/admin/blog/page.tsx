@@ -73,16 +73,7 @@ export default function BlogAdminPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
-  // Redirect if not admin
-  if (status === "loading") return <div>Loading...</div>;
-  if (!session || session.user?.role !== "ADMIN") {
-    redirect("/admin/login");
-  }
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+  // Define functions before hooks that use them
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -105,6 +96,17 @@ export default function BlogAdminPage() {
       setLoading(false);
     }
   };
+
+  // All hooks must be at the top level
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Handle authentication after all hooks
+  if (status === "loading") return <div>Loading...</div>;
+  if (!session || session.user?.role !== "ADMIN") {
+    redirect("/admin/login");
+  }
 
   const handleDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this post?")) {

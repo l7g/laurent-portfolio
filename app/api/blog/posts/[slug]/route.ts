@@ -45,7 +45,32 @@ export async function GET(
       data: { views: { increment: 1 } },
     });
 
-    return NextResponse.json(post);
+    // Transform the response to match expected interface
+    const transformedPost = {
+      ...post,
+      category: post.blog_categories
+        ? {
+            id: post.blog_categories.id,
+            name: post.blog_categories.name,
+            slug: post.blog_categories.slug,
+            color: post.blog_categories.color,
+            icon: post.blog_categories.icon,
+          }
+        : null,
+      author: {
+        id: post.users.id,
+        name: post.users.name,
+        email: post.users.email,
+      },
+      publishedAt: post.publishedAt?.toISOString(),
+      updatedAt: post.updatedAt.toISOString(),
+      createdAt: post.createdAt.toISOString(),
+      // Remove the raw database fields
+      blog_categories: undefined,
+      users: undefined,
+    };
+
+    return NextResponse.json(transformedPost);
   } catch (error) {
     console.error("Error fetching blog post:", error);
     return NextResponse.json(

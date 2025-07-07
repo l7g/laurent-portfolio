@@ -178,17 +178,19 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <Chip
-                size="sm"
-                variant="flat"
-                style={{
-                  backgroundColor: `${post.category.color}20`,
-                  color: post.category.color,
-                }}
-              >
-                <span className="mr-1">{post.category.icon}</span>
-                {post.category.name}
-              </Chip>
+              {post.category && (
+                <Chip
+                  size="sm"
+                  variant="flat"
+                  style={{
+                    backgroundColor: `${post.category.color}20`,
+                    color: post.category.color,
+                  }}
+                >
+                  <span className="mr-1">{post.category.icon}</span>
+                  {post.category.name}
+                </Chip>
+              )}
             </div>
 
             <h1 className={title({ size: "lg" })}>{post.title}</h1>

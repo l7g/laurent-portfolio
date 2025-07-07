@@ -57,12 +57,20 @@ export default function NewBlogPostPage() {
     metaDescription: "",
   });
 
-  // Redirect if not admin
-  if (status === "loading") return <div>Loading...</div>;
-  if (!session || session.user?.role !== "ADMIN") {
-    redirect("/admin/login");
-  }
+  // Define functions before hooks that use them
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/admin/blog/categories");
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
+  };
 
+  // All hooks must be at the top level
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -78,17 +86,11 @@ export default function NewBlogPostPage() {
     }
   }, [postData.title]);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/admin/blog/categories");
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
-    }
-  };
+  // Handle authentication after all hooks
+  if (status === "loading") return <div>Loading...</div>;
+  if (!session || session.user?.role !== "ADMIN") {
+    redirect("/admin/login");
+  }
 
   const handleInputChange = (field: keyof PostData, value: string) => {
     setPostData((prev) => ({ ...prev, [field]: value }));

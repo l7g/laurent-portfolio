@@ -17,6 +17,28 @@ async function testBlogSeries() {
     console.log("✅ blog_series table exists and is accessible!");
     console.log(`Found ${series.length} series`);
 
+    // Check for existing users first
+    const users = await prisma.users.findMany();
+    let authorId;
+
+    if (users.length === 0) {
+      console.log("No users found. Creating a test user...");
+      const testUser = await prisma.users.create({
+        data: {
+          id: "test-user-" + Date.now(),
+          email: "test@example.com",
+          name: "Test User",
+          password: "hashed-password",
+        },
+      });
+      authorId = testUser.id;
+      console.log("✅ Created test user:", authorId);
+    } else {
+      // Use the first existing user
+      authorId = users[0].id;
+      console.log("Using existing user:", users[0].name);
+    }
+
     // Test creating a sample series (we'll delete it after)
     console.log("Testing create operation...");
     const testSeries = await prisma.blog_series.create({
@@ -24,7 +46,7 @@ async function testBlogSeries() {
         title: "Test Series",
         slug: "test-series-" + Date.now(),
         description: "This is a test series",
-        authorId: "test-user-" + Date.now(), // We'll need to create a user first
+        authorId: authorId,
         color: "#FF6B6B",
         tags: ["test", "demo"],
       },
@@ -38,6 +60,14 @@ async function testBlogSeries() {
     });
 
     console.log("✅ Test series cleaned up");
+
+    // If we created a test user, clean that up too
+    if (users.length === 0) {
+      await prisma.users.delete({
+        where: { id: authorId },
+      });
+      console.log("✅ Test user cleaned up");
+    }
   } catch (error) {
     console.error("❌ Error with blog_series table:", error);
   } finally {

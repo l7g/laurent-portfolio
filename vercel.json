@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build && npx prisma generate && npm run seed:deployment-seed",
-  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install && npx prisma generate && npm run seed:deployment-seed",
   "env": {
     "NEXTAUTH_URL": "https://www.laurentgagne.com",
     "NODE_ENV": "production"

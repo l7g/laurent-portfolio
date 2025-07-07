@@ -88,9 +88,9 @@ export default function AdminDashboard() {
         fetch("/api/blog/posts"),
         fetch("/api/projects"),
         fetch("/api/contacts"),
-        fetch("/api/skills"),
-        fetch("/api/academic/courses"),
-        fetch("/api/academic/programs"),
+        fetch("/api/skills?admin=true"),
+        fetch("/api/academic/courses?admin=true"),
+        fetch("/api/academic/programs?admin=true"),
       ]);
 
       const rawBlogData = blogResponse.ok ? await blogResponse.json() : {};

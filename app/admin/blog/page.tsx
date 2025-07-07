@@ -202,16 +202,16 @@ export default function BlogAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="mb-6 lg:mb-8"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 text-sm text-default-500 mb-2">
                 <span>Admin Dashboard</span>
@@ -225,12 +225,13 @@ export default function BlogAdminPage() {
                 Manage your blog posts, categories, and series
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 as={Link}
                 href="/admin/blog/series"
                 variant="bordered"
                 startContent={<BookOpenIcon className="w-4 h-4" />}
+                className="w-full sm:w-auto"
               >
                 Series
               </Button>
@@ -239,6 +240,7 @@ export default function BlogAdminPage() {
                 href="/admin/blog/categories"
                 variant="bordered"
                 startContent={<FunnelIcon className="w-4 h-4" />}
+                className="w-full sm:w-auto"
               >
                 Categories
               </Button>
@@ -247,6 +249,7 @@ export default function BlogAdminPage() {
                 href="/admin/blog/new"
                 color="primary"
                 startContent={<PlusIcon className="w-4 h-4" />}
+                className="w-full sm:w-auto"
               >
                 New Post
               </Button>
@@ -263,36 +266,38 @@ export default function BlogAdminPage() {
         >
           <Card>
             <CardBody className="p-4">
-              <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                 <Input
                   placeholder="Search posts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
-                  className="max-w-sm"
+                  className="w-full sm:max-w-sm"
                 />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
-                >
-                  <option value="all">All Status</option>
-                  <option value="DRAFT">Draft</option>
-                  <option value="PUBLISHED">Published</option>
-                  <option value="ARCHIVED">Archived</option>
-                </select>
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
-                >
-                  <option value="all">All Categories</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.icon} {category.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg w-full sm:w-auto"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="PUBLISHED">Published</option>
+                    <option value="ARCHIVED">Archived</option>
+                  </select>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg w-full sm:w-auto"
+                  >
+                    <option value="all">All Categories</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.icon} {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </CardBody>
           </Card>
@@ -384,15 +389,27 @@ export default function BlogAdminPage() {
             </CardHeader>
             <CardBody className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[800px]">
                   <thead className="bg-default-50">
                     <tr>
-                      <th className="text-left p-4 font-medium">Title</th>
-                      <th className="text-left p-4 font-medium">Category</th>
-                      <th className="text-left p-4 font-medium">Status</th>
-                      <th className="text-left p-4 font-medium">Stats</th>
-                      <th className="text-left p-4 font-medium">Updated</th>
-                      <th className="text-left p-4 font-medium">Actions</th>
+                      <th className="text-left p-3 sm:p-4 font-medium">
+                        Title
+                      </th>
+                      <th className="text-left p-3 sm:p-4 font-medium hidden sm:table-cell">
+                        Category
+                      </th>
+                      <th className="text-left p-3 sm:p-4 font-medium">
+                        Status
+                      </th>
+                      <th className="text-left p-3 sm:p-4 font-medium hidden lg:table-cell">
+                        Stats
+                      </th>
+                      <th className="text-left p-3 sm:p-4 font-medium hidden md:table-cell">
+                        Updated
+                      </th>
+                      <th className="text-left p-3 sm:p-4 font-medium">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -401,22 +418,27 @@ export default function BlogAdminPage() {
                         key={post.id}
                         className="border-b border-default-200 hover:bg-default-50/50"
                       >
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4">
                           <div className="flex items-center gap-3">
                             <Avatar
                               size="sm"
                               name={post.author.name}
-                              className="w-8 h-8"
+                              className="w-8 h-8 flex-shrink-0"
                             />
-                            <div>
-                              <p className="font-medium">{post.title}</p>
-                              <p className="text-sm text-default-600 truncate max-w-xs">
+                            <div className="min-w-0">
+                              <p className="font-medium truncate">
+                                {post.title}
+                              </p>
+                              <p className="text-sm text-default-600 truncate sm:hidden">
+                                {post.category.name}
+                              </p>
+                              <p className="text-sm text-default-600 truncate max-w-xs hidden sm:block">
                                 {post.excerpt}
                               </p>
                             </div>
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4 hidden sm:table-cell">
                           <div className="space-y-1">
                             <Chip
                               size="sm"
@@ -426,8 +448,12 @@ export default function BlogAdminPage() {
                                 color: post.category.color,
                               }}
                             >
-                              <span className="mr-1">{post.category.icon}</span>
-                              {post.category.name}
+                              {post.category.icon && (
+                                <span className="mr-1">
+                                  {post.category.icon}
+                                </span>
+                              )}
+                              {post.category.name || "Uncategorized"}
                             </Chip>
                             {post.series && (
                               <Chip
@@ -438,13 +464,18 @@ export default function BlogAdminPage() {
                                   color: post.series.color,
                                 }}
                               >
-                                <span className="mr-1">{post.series.icon}</span>
-                                {post.series.title} #{post.seriesOrder}
+                                {post.series.icon && (
+                                  <span className="mr-1">
+                                    {post.series.icon}
+                                  </span>
+                                )}
+                                {post.series.title || "Series"} #
+                                {post.seriesOrder}
                               </Chip>
                             )}
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4">
                           <Chip
                             size="sm"
                             color={statusColors[post.status]}
@@ -453,14 +484,14 @@ export default function BlogAdminPage() {
                             {post.status.toLowerCase()}
                           </Chip>
                         </td>
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4 hidden lg:table-cell">
                           <div className="flex gap-4 text-sm text-default-600">
                             <span>{post.views} views</span>
                             <span>{post.likes} likes</span>
                             <span>{post._count.comments} comments</span>
                           </div>
                         </td>
-                        <td className="p-4">
+                        <td className="p-3 sm:p-4 hidden md:table-cell">
                           <div className="text-sm">
                             <p>{formatDate(post.updatedAt)}</p>
                             {post.publishedAt && (
@@ -470,14 +501,15 @@ export default function BlogAdminPage() {
                             )}
                           </div>
                         </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
+                        <td className="p-3 sm:p-4">
+                          <div className="flex items-center gap-1">
                             <Button
                               as={Link}
                               href={`/blog/${post.slug}`}
                               size="sm"
                               variant="light"
                               isIconOnly
+                              title="View"
                             >
                               <EyeIcon className="w-4 h-4" />
                             </Button>
@@ -487,10 +519,11 @@ export default function BlogAdminPage() {
                               size="sm"
                               variant="light"
                               isIconOnly
+                              title="Edit"
                             >
                               <PencilIcon className="w-4 h-4" />
                             </Button>
-                            <div className="flex items-center gap-1">
+                            <div className="hidden sm:flex items-center gap-1">
                               <Button
                                 size="sm"
                                 variant="light"

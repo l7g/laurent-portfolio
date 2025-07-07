@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
       ...post,
       category: post.blog_categories, // Rename for component compatibility
       series: post.blog_series, // Include series info
-      readingTime: Math.ceil(post.content.length / 1000), // Rough reading time calculation
+      readingTime: Math.ceil(post.content.split(/\s+/).length / 200), // More accurate reading time calculation (200 words per minute)
     }));
 
     return NextResponse.json({

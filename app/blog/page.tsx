@@ -46,7 +46,7 @@ interface BlogPost {
   seriesOrder?: number;
   tags: string[];
   views: number;
-  readTime: number;
+  readingTime: number;
   publishedAt: string;
   _count: {
     comments: number;
@@ -281,7 +281,13 @@ export default function BlogPage() {
                               : "default"
                           }
                           onClick={() => setSelectedCategory(category.slug)}
-                          startContent={<span>{category.icon}</span>}
+                          startContent={
+                            category.icon ? (
+                              <span>{category.icon}</span>
+                            ) : (
+                              <TagIcon className="w-4 h-4" />
+                            )
+                          }
                           size="sm"
                           className={
                             selectedCategory === category.slug
@@ -295,10 +301,8 @@ export default function BlogPage() {
                                 : undefined,
                           }}
                         >
-                          {category.name}
-                          <Chip size="sm" className="ml-2" variant="flat">
-                            {category._count.posts}
-                          </Chip>
+                          {category.name || "Uncategorized"} (
+                          {category._count?.posts || 0})
                         </Button>
                       ))}
                     </div>
@@ -350,10 +354,8 @@ export default function BlogPage() {
                                 selectedSeries === s.slug ? s.color : undefined,
                             }}
                           >
-                            {s.title}
-                            <Chip size="sm" className="ml-2" variant="flat">
-                              {s._count.posts}
-                            </Chip>
+                            {s.title || "Untitled Series"} (
+                            {s._count?.posts || 0})
                           </Button>
                         ))}
                       </div>
@@ -403,59 +405,55 @@ export default function BlogPage() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}
                         >
-                          <Card className="h-full hover:shadow-2xl transition-all duration-300 group cursor-pointer">
-                            <CardBody className="p-6">
-                              <div className="flex items-start gap-4 mb-4">
-                                {s.icon && (
-                                  <div className="text-3xl">{s.icon}</div>
-                                )}
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Chip
-                                      size="sm"
-                                      style={{
-                                        backgroundColor: s.color,
-                                        color: "white",
-                                      }}
-                                    >
-                                      Series
-                                    </Chip>
-                                    {s.difficulty && (
-                                      <Chip size="sm" variant="flat">
-                                        {s.difficulty}
+                          <Link
+                            href={`/blog/series/${s.slug}`}
+                            className="block h-full"
+                          >
+                            <Card className="h-full hover:shadow-2xl transition-all duration-300 group cursor-pointer">
+                              <CardBody className="p-6">
+                                <div className="flex items-start gap-4 mb-4">
+                                  {s.icon && (
+                                    <div className="text-3xl">{s.icon}</div>
+                                  )}
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Chip
+                                        size="sm"
+                                        style={{
+                                          backgroundColor: s.color,
+                                          color: "white",
+                                        }}
+                                      >
+                                        Series
                                       </Chip>
-                                    )}
+                                      {s.difficulty && (
+                                        <Chip size="sm" variant="flat">
+                                          {s.difficulty}
+                                        </Chip>
+                                      )}
+                                    </div>
+                                    <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
+                                      {s.title}
+                                    </h3>
                                   </div>
-                                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                                    {s.title}
-                                  </h3>
                                 </div>
-                              </div>
 
-                              <p className="text-default-600 mb-4 line-clamp-3">
-                                {s.description}
-                              </p>
+                                <p className="text-default-600 mb-4 line-clamp-3">
+                                  {s.description}
+                                </p>
 
-                              <div className="flex items-center justify-between pt-4 border-t border-default-200">
-                                <div className="flex items-center gap-2 text-sm text-default-500">
-                                  <BookOpenIcon className="w-4 h-4" />
-                                  <span>{s._count.posts} articles</span>
+                                <div className="flex items-center justify-between pt-4 border-t border-default-200">
+                                  <div className="flex items-center gap-2 text-sm text-default-500">
+                                    <BookOpenIcon className="w-4 h-4" />
+                                    <span>{s._count.posts} articles</span>
+                                  </div>
+                                  <div className="text-xs text-default-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    View series →
+                                  </div>
                                 </div>
-                                <Button
-                                  as={Link}
-                                  href={`/blog/series/${s.slug}`}
-                                  variant="flat"
-                                  color="primary"
-                                  size="sm"
-                                  endContent={
-                                    <ArrowRightIcon className="w-4 h-4" />
-                                  }
-                                >
-                                  View Series
-                                </Button>
-                              </div>
-                            </CardBody>
-                          </Card>
+                              </CardBody>
+                            </Card>
+                          </Link>
                         </motion.div>
                       ))}
                     </div>
@@ -501,114 +499,112 @@ export default function BlogPage() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}
                         >
-                          <Card className="h-full hover:shadow-2xl transition-all duration-300 group cursor-pointer">
-                            <CardHeader className="pb-2">
-                              <div className="flex items-center justify-between w-full">
-                                <Chip
-                                  size="sm"
-                                  style={{
-                                    backgroundColor: `${post.category.color}20`,
-                                    color: post.category.color,
-                                  }}
-                                >
-                                  <span className="mr-1">
-                                    {post.category.icon}
-                                  </span>
-                                  {post.category.name}
-                                </Chip>
-                                <div className="flex items-center gap-1 text-xs text-default-500">
-                                  <CalendarDaysIcon className="w-3 h-3" />
-                                  {formatDate(post.publishedAt)}
+                          <Link
+                            href={`/blog/${post.slug}`}
+                            className="block h-full"
+                          >
+                            <Card className="h-full hover:shadow-2xl transition-all duration-300 group cursor-pointer">
+                              <CardHeader className="pb-2">
+                                <div className="flex items-center justify-between w-full">
+                                  <Chip
+                                    size="sm"
+                                    style={{
+                                      backgroundColor: `${post.category.color}20`,
+                                      color: post.category.color,
+                                    }}
+                                  >
+                                    {post.category.icon && (
+                                      <span className="mr-1">
+                                        {post.category.icon}
+                                      </span>
+                                    )}
+                                    {post.category.name || "Uncategorized"}
+                                  </Chip>
+                                  <div className="flex items-center gap-1 text-xs text-default-500">
+                                    <CalendarDaysIcon className="w-3 h-3" />
+                                    {formatDate(post.publishedAt)}
+                                  </div>
                                 </div>
-                              </div>
-                            </CardHeader>
-                            <CardBody className="pt-0">
-                              {post.series && (
-                                <div className="mb-3">
-                                  <div className="flex items-center gap-2">
-                                    <Chip
-                                      size="sm"
-                                      variant="bordered"
-                                      style={{
-                                        borderColor: post.series.color,
-                                        color: post.series.color,
-                                      }}
-                                    >
-                                      {post.series.icon && (
-                                        <span className="mr-1">
-                                          {post.series.icon}
-                                        </span>
-                                      )}
-                                      {post.series.title}
-                                    </Chip>
-                                    {post.seriesOrder && (
-                                      <span
-                                        className="w-5 h-5 text-xs text-white rounded-full flex items-center justify-center font-bold"
+                              </CardHeader>
+                              <CardBody className="pt-0">
+                                {post.series && (
+                                  <div className="mb-3">
+                                    <div className="flex items-center gap-2">
+                                      <Chip
+                                        size="sm"
+                                        variant="bordered"
                                         style={{
-                                          backgroundColor: post.series.color,
+                                          borderColor: post.series.color,
+                                          color: post.series.color,
                                         }}
                                       >
-                                        {post.seriesOrder}
+                                        {post.series.icon && (
+                                          <span className="mr-1">
+                                            {post.series.icon}
+                                          </span>
+                                        )}
+                                        {post.series.title || "Series"}
+                                      </Chip>
+                                      {post.seriesOrder && (
+                                        <span
+                                          className="w-5 h-5 text-xs text-white rounded-full flex items-center justify-center font-bold"
+                                          style={{
+                                            backgroundColor: post.series.color,
+                                          }}
+                                        >
+                                          {post.seriesOrder}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
+                                  {post.title}
+                                </h3>
+
+                                <p className="text-default-600 line-clamp-3 mb-4">
+                                  {post.excerpt}
+                                </p>
+
+                                {post.tags && post.tags.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mb-4">
+                                    {post.tags
+                                      .slice(0, 3)
+                                      .map((tag, tagIndex) => (
+                                        <span
+                                          key={tagIndex}
+                                          className="text-xs bg-default-100 text-default-600 px-2 py-1 rounded-full"
+                                        >
+                                          {tag}
+                                        </span>
+                                      ))}
+                                    {post.tags.length > 3 && (
+                                      <span className="text-xs text-default-500 px-2 py-1">
+                                        +{post.tags.length - 3} more
                                       </span>
                                     )}
                                   </div>
-                                </div>
-                              )}
+                                )}
 
-                              <h3 className="text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary transition-colors">
-                                {post.title}
-                              </h3>
-
-                              <p className="text-default-600 line-clamp-3 mb-4">
-                                {post.excerpt}
-                              </p>
-
-                              {post.tags && post.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mb-4">
-                                  {post.tags
-                                    .slice(0, 3)
-                                    .map((tag, tagIndex) => (
-                                      <span
-                                        key={tagIndex}
-                                        className="text-xs bg-default-100 text-default-600 px-2 py-1 rounded-full"
-                                      >
-                                        {tag}
-                                      </span>
-                                    ))}
-                                  {post.tags.length > 3 && (
-                                    <span className="text-xs text-default-500 px-2 py-1">
-                                      +{post.tags.length - 3} more
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-
-                              <div className="flex items-center justify-between pt-4 border-t border-default-200 mt-auto">
-                                <div className="flex items-center gap-4 text-sm text-default-500">
-                                  <div className="flex items-center gap-1">
-                                    <EyeIcon className="w-4 h-4" />
-                                    {post.views}
+                                <div className="flex items-center justify-between pt-4 border-t border-default-200 mt-auto">
+                                  <div className="flex items-center gap-4 text-sm text-default-500">
+                                    <div className="flex items-center gap-1">
+                                      <EyeIcon className="w-4 h-4" />
+                                      {post.views}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <ClockIcon className="w-4 h-4" />
+                                      {post.readingTime} min
+                                    </div>
                                   </div>
-                                  <div className="flex items-center gap-1">
-                                    <ClockIcon className="w-4 h-4" />
-                                    {post.readTime} min
+                                  <div className="text-xs text-default-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Click to read →
                                   </div>
                                 </div>
-                                <Button
-                                  as={Link}
-                                  href={`/blog/${post.slug}`}
-                                  variant="flat"
-                                  color="primary"
-                                  size="sm"
-                                  endContent={
-                                    <ArrowRightIcon className="w-4 h-4" />
-                                  }
-                                >
-                                  Read
-                                </Button>
-                              </div>
-                            </CardBody>
-                          </Card>
+                              </CardBody>
+                            </Card>
+                          </Link>
                         </motion.div>
                       ))}
                     </div>

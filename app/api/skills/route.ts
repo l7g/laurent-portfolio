@@ -4,10 +4,28 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
 
-// GET /api/skills - Get all skills (public endpoint)
-export async function GET() {
+// GET /api/skills - Get all skills (with admin filtering)
+export async function GET(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "ADMIN";
+
+    // Check if this is an admin request
+    const { searchParams } = new URL(request.url);
+    const adminOnly = searchParams.get("admin") === "true";
+
+    if (adminOnly && !isAdmin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Build where clause - public users only see active skills
+    const where: any = {};
+    if (!isAdmin) {
+      where.isActive = true;
+    }
+
     const skills = await prisma.skills.findMany({
+      where,
       orderBy: [{ category: "asc" }, { name: "asc" }],
     });
 

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -39,11 +41,17 @@ export async function GET(
       );
     }
 
-    // Increment view count
-    await prisma.blog_posts.update({
-      where: { slug },
-      data: { views: { increment: 1 } },
-    });
+    // Only increment view count in production and for non-admin users
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "ADMIN";
+    const isDevelopment = process.env.NODE_ENV === "development";
+
+    if (!isDevelopment && !isAdmin) {
+      await prisma.blog_posts.update({
+        where: { slug },
+        data: { views: { increment: 1 } },
+      });
+    }
 
     // Transform the response to match expected interface
     const transformedPost = {

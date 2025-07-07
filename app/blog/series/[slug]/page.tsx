@@ -297,8 +297,10 @@ export default function SeriesPage() {
                               color: post.category.color,
                             }}
                           >
-                            <span className="mr-1">{post.category.icon}</span>
-                            {post.category.name}
+                            {post.category.icon && (
+                              <span className="mr-1">{post.category.icon}</span>
+                            )}
+                            {post.category.name || "Uncategorized"}
                           </Chip>
                         </div>
 

@@ -90,11 +90,18 @@ export async function GET(request: NextRequest) {
       ...s,
       totalPosts: s.blog_posts.length,
       estimatedTime: s.blog_posts.reduce((total, post) => {
-        // Estimate reading time based on content length (rough estimate)
+        // Estimate reading time based on excerpt or use default
         const wordsPerMinute = 200;
-        const words = post.excerpt ? post.excerpt.split(" ").length * 10 : 500; // Rough estimate
-        return total + Math.ceil(words / wordsPerMinute);
+        const excerptWords = post.excerpt
+          ? post.excerpt.split(/\s+/).length
+          : 50;
+        const estimatedWords = excerptWords * 8; // Estimate full content is 8x the excerpt length
+        return total + Math.ceil(estimatedWords / wordsPerMinute);
       }, 0),
+      // Transform _count to use cleaner property names
+      _count: {
+        posts: s._count.blog_posts,
+      },
     }));
 
     return NextResponse.json({

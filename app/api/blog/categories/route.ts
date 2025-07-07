@@ -17,7 +17,15 @@ export async function GET() {
       orderBy: { sortOrder: "asc" },
     });
 
-    return NextResponse.json(categories);
+    // Transform the response to use cleaner property names
+    const transformedCategories = categories.map((category) => ({
+      ...category,
+      _count: {
+        posts: category._count.blog_posts,
+      },
+    }));
+
+    return NextResponse.json(transformedCategories);
   } catch (error) {
     console.error("Error fetching blog categories:", error);
     return NextResponse.json(

@@ -54,7 +54,7 @@ export async function GET(
     const transformedPosts = series.blog_posts.map((post) => ({
       ...post,
       category: post.blog_categories, // Rename for component compatibility
-      readingTime: Math.ceil(post.content.length / 1000), // Rough reading time calculation
+      readingTime: Math.ceil(post.content.split(/\s+/).length / 200), // More accurate reading time calculation (200 words per minute)
     }));
 
     // Calculate total reading time

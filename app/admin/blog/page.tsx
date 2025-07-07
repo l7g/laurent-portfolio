@@ -213,9 +213,16 @@ export default function BlogAdminPage() {
         >
           <div className="flex items-center justify-between">
             <div>
+              <div className="flex items-center gap-2 text-sm text-default-500 mb-2">
+                <span>Admin Dashboard</span>
+                <span>/</span>
+                <span className="text-primary font-medium">
+                  Blog Management
+                </span>
+              </div>
               <h1 className={title({ size: "lg" })}>Blog Management</h1>
               <p className="text-default-600 mt-2">
-                Manage your blog posts, categories, and content
+                Manage your blog posts, categories, and series
               </p>
             </div>
             <div className="flex gap-2">

@@ -72,11 +72,12 @@ interface BlogPost {
   series?: BlogSeries;
 }
 
-export default function EditBlogPostPage({
+export default async function EditBlogPostPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const router = useRouter();
   const { data: session, status } = useSession();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -105,7 +106,7 @@ export default function EditBlogPostPage({
       setLoading(true);
       const [postResponse, categoriesResponse, seriesResponse] =
         await Promise.all([
-          fetch(`/api/admin/blog/posts/${params.id}`),
+          fetch(`/api/admin/blog/posts/${id}`),
           fetch("/api/admin/blog/categories"),
           fetch("/api/admin/blog/series"),
         ]);
@@ -150,7 +151,7 @@ export default function EditBlogPostPage({
   // All hooks must be at the top level
   useEffect(() => {
     fetchData();
-  }, [params.id]);
+  }, [id]);
 
   // Handle authentication after all hooks
   if (status === "loading") return <div>Loading...</div>;
@@ -198,7 +199,7 @@ export default function EditBlogPostPage({
 
     setSaving(true);
     try {
-      const response = await fetch(`/api/admin/blog/posts/${params.id}`, {
+      const response = await fetch(`/api/admin/blog/posts/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

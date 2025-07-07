@@ -11,23 +11,27 @@ export const siteConfig = {
     },
     {
       label: "About",
-      href: "#about",
+      href: "/about",
     },
     {
-      label: "Education & Skills",
-      href: "#education-skills",
+      label: "Education",
+      href: "/education",
     },
     {
       label: "Projects",
-      href: "#projects",
+      href: "/projects",
     },
     {
       label: "Blog",
-      href: "#blog",
+      href: "/blog",
+    },
+    {
+      label: "Skills",
+      href: "/skills",
     },
     {
       label: "Contact",
-      href: "#contact",
+      href: "/#contact",
     },
   ],
   navMenuItems: [
@@ -37,23 +41,27 @@ export const siteConfig = {
     },
     {
       label: "About",
-      href: "#about",
+      href: "/about",
     },
     {
-      label: "Education & Skills",
-      href: "#education-skills",
+      label: "Education",
+      href: "/education",
     },
     {
       label: "Projects",
-      href: "#projects",
+      href: "/projects",
     },
     {
       label: "Blog",
-      href: "#blog",
+      href: "/blog",
+    },
+    {
+      label: "Skills",
+      href: "/skills",
     },
     {
       label: "Contact",
-      href: "#contact",
+      href: "/#contact",
     },
     {
       label: "Curriculum",

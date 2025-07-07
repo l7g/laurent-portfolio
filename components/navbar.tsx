@@ -23,8 +23,16 @@ import { GithubIcon, Logo } from "@/components/icons";
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [currentPath, setCurrentPath] = useState("");
 
   useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
+
+  useEffect(() => {
+    // Only track scroll sections on homepage
+    if (currentPath !== "/") return;
+
     const handleScroll = () => {
       const sections = [
         "home",
@@ -60,17 +68,23 @@ export const Navbar = () => {
     handleScroll(); // Call once to set initial state
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [currentPath]);
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
   };
 
   const isLinkActive = (href: string) => {
-    if (href === "/") return activeSection === "home";
-    const section = href.replace("#", "");
+    // Handle homepage section links
+    if (href.startsWith("#") || href === "/#contact") {
+      if (currentPath !== "/") return false;
+      const section = href.replace("#", "").replace("/#", "");
+      return activeSection === section;
+    }
 
-    return activeSection === section;
+    // Handle page links
+    if (href === "/") return currentPath === "/";
+    return currentPath === href;
   };
 
   return (

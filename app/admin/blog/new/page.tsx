@@ -26,12 +26,27 @@ interface BlogCategory {
   icon: string;
 }
 
+interface BlogSeries {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  color: string;
+  icon?: string;
+  difficulty?: string;
+  _count: {
+    blog_posts: number;
+  };
+}
+
 interface PostData {
   title: string;
   slug: string;
   excerpt: string;
   content: string;
   categoryId: string;
+  seriesId: string;
+  seriesOrder: number;
   tags: string[];
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   metaTitle: string;
@@ -42,6 +57,7 @@ export default function NewBlogPostPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
+  const [series, setSeries] = useState<BlogSeries[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [tagInput, setTagInput] = useState("");
@@ -51,6 +67,8 @@ export default function NewBlogPostPage() {
     excerpt: "",
     content: "",
     categoryId: "",
+    seriesId: "",
+    seriesOrder: 1,
     tags: [],
     status: "DRAFT",
     metaTitle: "",
@@ -60,13 +78,22 @@ export default function NewBlogPostPage() {
   // Define functions before hooks that use them
   const fetchCategories = async () => {
     try {
-      const response = await fetch("/api/admin/blog/categories");
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
+      const [categoriesResponse, seriesResponse] = await Promise.all([
+        fetch("/api/admin/blog/categories"),
+        fetch("/api/admin/blog/series"),
+      ]);
+
+      if (categoriesResponse.ok) {
+        const categoriesData = await categoriesResponse.json();
+        setCategories(categoriesData);
+      }
+
+      if (seriesResponse.ok) {
+        const seriesData = await seriesResponse.json();
+        setSeries(seriesData);
       }
     } catch (error) {
-      console.error("Failed to fetch categories:", error);
+      console.error("Failed to fetch categories and series:", error);
     }
   };
 
@@ -86,6 +113,20 @@ export default function NewBlogPostPage() {
     }
   }, [postData.title]);
 
+  // Auto-calculate series order when series is selected
+  useEffect(() => {
+    if (postData.seriesId) {
+      const selectedSeries = series.find((s) => s.id === postData.seriesId);
+      if (selectedSeries && postData.seriesOrder === 1) {
+        // Set the next order number in the series
+        setPostData((prev) => ({
+          ...prev,
+          seriesOrder: selectedSeries._count.blog_posts + 1,
+        }));
+      }
+    }
+  }, [postData.seriesId, series]);
+
   // Handle authentication after all hooks
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
@@ -93,7 +134,11 @@ export default function NewBlogPostPage() {
   }
 
   const handleInputChange = (field: keyof PostData, value: string) => {
-    setPostData((prev) => ({ ...prev, [field]: value }));
+    if (field === "seriesOrder") {
+      setPostData((prev) => ({ ...prev, [field]: parseInt(value) || 1 }));
+    } else {
+      setPostData((prev) => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleAddTag = () => {
@@ -315,6 +360,57 @@ export default function NewBlogPostPage() {
                       </option>
                     ))}
                   </select>
+                </CardBody>
+              </Card>
+            </motion.div>
+
+            {/* Series */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.55 }}
+            >
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Series (Optional)</h3>
+                  <p className="text-sm text-default-600">
+                    Add this post to a series for organized content
+                  </p>
+                </CardHeader>
+                <CardBody className="space-y-4">
+                  <select
+                    value={postData.seriesId}
+                    onChange={(e) =>
+                      handleInputChange("seriesId", e.target.value)
+                    }
+                    className="w-full p-3 border border-default-200 rounded-lg"
+                  >
+                    <option value="">No series</option>
+                    {series.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.icon} {s.title} ({s._count.blog_posts} posts)
+                        {s.difficulty && ` - ${s.difficulty}`}
+                      </option>
+                    ))}
+                  </select>
+
+                  {postData.seriesId && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Series Order
+                      </label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={postData.seriesOrder.toString()}
+                        onChange={(e) =>
+                          handleInputChange("seriesOrder", e.target.value)
+                        }
+                        placeholder="Order in series"
+                        description="Position of this post within the series"
+                      />
+                    </div>
+                  )}
                 </CardBody>
               </Card>
             </motion.div>

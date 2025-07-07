@@ -28,6 +28,15 @@ export async function GET() {
             icon: true,
           },
         },
+        blog_series: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            color: true,
+            icon: true,
+          },
+        },
         _count: {
           select: {
             blog_comments: true,
@@ -51,6 +60,16 @@ export async function GET() {
         color: post.blog_categories.color,
         icon: post.blog_categories.icon,
       },
+      series: post.blog_series
+        ? {
+            id: post.blog_series.id,
+            title: post.blog_series.title,
+            slug: post.blog_series.slug,
+            color: post.blog_series.color,
+            icon: post.blog_series.icon,
+          }
+        : null,
+      seriesOrder: post.seriesOrder,
       tags: post.tags,
       views: post.views,
       likes: post.likes,
@@ -91,6 +110,8 @@ export async function POST(request: NextRequest) {
       excerpt,
       content,
       categoryId,
+      seriesId,
+      seriesOrder,
       tags,
       status,
       metaTitle,
@@ -125,6 +146,8 @@ export async function POST(request: NextRequest) {
         excerpt,
         content,
         categoryId,
+        seriesId: seriesId || null,
+        seriesOrder: seriesId ? seriesOrder || 1 : null,
         tags,
         status,
         metaTitle,
@@ -145,6 +168,15 @@ export async function POST(request: NextRequest) {
           select: {
             id: true,
             name: true,
+            color: true,
+            icon: true,
+          },
+        },
+        blog_series: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
             color: true,
             icon: true,
           },

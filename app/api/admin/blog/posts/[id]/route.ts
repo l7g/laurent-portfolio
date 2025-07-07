@@ -32,6 +32,21 @@ export async function GET(
             icon: true,
           },
         },
+        blog_series: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            color: true,
+            icon: true,
+            difficulty: true,
+            _count: {
+              select: {
+                blog_posts: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             blog_comments: true,
@@ -99,6 +114,21 @@ export async function PATCH(
             icon: true,
           },
         },
+        blog_series: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            color: true,
+            icon: true,
+            difficulty: true,
+            _count: {
+              select: {
+                blog_posts: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             blog_comments: true,
@@ -112,6 +142,138 @@ export async function PATCH(
     console.error("Error updating post:", error);
     return NextResponse.json(
       { error: "Failed to update post" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user?.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const data = await request.json();
+    const {
+      title,
+      slug,
+      excerpt,
+      content,
+      categoryId,
+      seriesId,
+      seriesOrder,
+      tags,
+      status,
+      metaTitle,
+      metaDescription,
+    } = data;
+
+    // Check if post exists
+    const existingPost = await prisma.blog_posts.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!existingPost) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    // Check if slug already exists (excluding current post)
+    if (slug !== existingPost.slug) {
+      const slugExists = await prisma.blog_posts.findFirst({
+        where: {
+          slug,
+          id: { not: params.id },
+        },
+      });
+
+      if (slugExists) {
+        return NextResponse.json(
+          { error: "Post with this slug already exists" },
+          { status: 400 },
+        );
+      }
+    }
+
+    // Prepare update data
+    const updateData: any = {
+      title,
+      slug,
+      excerpt,
+      content,
+      categoryId,
+      tags: tags || [],
+      status,
+      metaTitle,
+      metaDescription,
+      updatedAt: new Date(),
+    };
+
+    // Handle series assignment
+    if (seriesId && seriesId !== "") {
+      updateData.seriesId = seriesId;
+      updateData.seriesOrder = seriesOrder || 1;
+    } else {
+      updateData.seriesId = null;
+      updateData.seriesOrder = null;
+    }
+
+    // Set publishedAt if status is PUBLISHED and it wasn't published before
+    if (status === "PUBLISHED" && existingPost.status !== "PUBLISHED") {
+      updateData.publishedAt = new Date();
+    }
+
+    const post = await prisma.blog_posts.update({
+      where: { id: params.id },
+      data: updateData,
+      include: {
+        users: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        blog_categories: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+            icon: true,
+          },
+        },
+        blog_series: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            color: true,
+            icon: true,
+            difficulty: true,
+            _count: {
+              select: {
+                blog_posts: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            blog_comments: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(post);
+  } catch (error) {
+    console.error("Error updating blog post:", error);
+    return NextResponse.json(
+      { error: "Failed to update blog post" },
       { status: 500 },
     );
   }

@@ -18,6 +18,7 @@ import {
   DocumentDuplicateIcon,
   ArchiveBoxIcon,
   ChartBarIcon,
+  BookOpenIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { title } from "@/components/primitives";
@@ -36,6 +37,14 @@ interface BlogPost {
     color: string;
     icon: string;
   };
+  series?: {
+    id: string;
+    title: string;
+    slug: string;
+    color: string;
+    icon: string;
+  } | null;
+  seriesOrder?: number | null;
   tags: string[];
   views: number;
   likes: number;
@@ -210,6 +219,14 @@ export default function BlogAdminPage() {
               </p>
             </div>
             <div className="flex gap-2">
+              <Button
+                as={Link}
+                href="/admin/blog/series"
+                variant="bordered"
+                startContent={<BookOpenIcon className="w-4 h-4" />}
+              >
+                Series
+              </Button>
               <Button
                 as={Link}
                 href="/admin/blog/categories"
@@ -393,17 +410,32 @@ export default function BlogAdminPage() {
                           </div>
                         </td>
                         <td className="p-4">
-                          <Chip
-                            size="sm"
-                            variant="flat"
-                            style={{
-                              backgroundColor: `${post.category.color}20`,
-                              color: post.category.color,
-                            }}
-                          >
-                            <span className="mr-1">{post.category.icon}</span>
-                            {post.category.name}
-                          </Chip>
+                          <div className="space-y-1">
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              style={{
+                                backgroundColor: `${post.category.color}20`,
+                                color: post.category.color,
+                              }}
+                            >
+                              <span className="mr-1">{post.category.icon}</span>
+                              {post.category.name}
+                            </Chip>
+                            {post.series && (
+                              <Chip
+                                size="sm"
+                                variant="bordered"
+                                style={{
+                                  borderColor: post.series.color,
+                                  color: post.series.color,
+                                }}
+                              >
+                                <span className="mr-1">{post.series.icon}</span>
+                                {post.series.title} #{post.seriesOrder}
+                              </Chip>
+                            )}
+                          </div>
                         </td>
                         <td className="p-4">
                           <Chip

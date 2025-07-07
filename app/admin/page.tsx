@@ -85,7 +85,7 @@ export default function AdminDashboard() {
         coursesResponse,
         programsResponse,
       ] = await Promise.all([
-        fetch("/api/admin/blog/posts"),
+        fetch("/api/blog/posts"),
         fetch("/api/projects"),
         fetch("/api/contacts"),
         fetch("/api/skills"),
@@ -93,7 +93,8 @@ export default function AdminDashboard() {
         fetch("/api/academic/programs"),
       ]);
 
-      const blogData = blogResponse.ok ? await blogResponse.json() : [];
+      const rawBlogData = blogResponse.ok ? await blogResponse.json() : {};
+      const blogData = rawBlogData.posts || []; // Extract posts from paginated response
       const projectsData = projectsResponse.ok
         ? await projectsResponse.json()
         : [];
@@ -108,37 +109,45 @@ export default function AdminDashboard() {
         ? await programsResponse.json()
         : [];
 
+      // Ensure all data is arrays
+      const safeBlogData = Array.isArray(blogData) ? blogData : [];
+      const safeProjectsData = Array.isArray(projectsData) ? projectsData : [];
+      const safeContactsData = Array.isArray(contactsData) ? contactsData : [];
+      const safeSkillsData = Array.isArray(skillsData) ? skillsData : [];
+      const safeCoursesData = Array.isArray(coursesData) ? coursesData : [];
+      const safeProgramsData = Array.isArray(programsData) ? programsData : [];
+
       // Set data states
-      setBlogPosts(blogData);
-      setProjects(projectsData);
-      setContacts(contactsData);
-      setSkills(skillsData);
-      setCourses(coursesData);
-      setPrograms(programsData);
+      setBlogPosts(safeBlogData);
+      setProjects(safeProjectsData);
+      setContacts(safeContactsData);
+      setSkills(safeSkillsData);
+      setCourses(safeCoursesData);
+      setPrograms(safeProgramsData);
 
       // Calculate stats
-      const publishedPosts = blogData.filter(
+      const publishedPosts = safeBlogData.filter(
         (p: any) => p.status === "PUBLISHED",
       );
-      const totalViews = blogData.reduce(
+      const totalViews = safeBlogData.reduce(
         (sum: number, p: any) => sum + (p.views || 0),
         0,
       );
-      const totalLikes = blogData.reduce(
+      const totalLikes = safeBlogData.reduce(
         (sum: number, p: any) => sum + (p.likes || 0),
         0,
       );
 
       setStats({
-        totalProjects: projectsData.length,
-        totalBlogPosts: blogData.length,
+        totalProjects: safeProjectsData.length,
+        totalBlogPosts: safeBlogData.length,
         publishedPosts: publishedPosts.length,
-        totalCourses: coursesData.length,
-        totalSkills: skillsData.length,
-        totalContacts: contactsData.length,
+        totalCourses: safeCoursesData.length,
+        totalSkills: safeSkillsData.length,
+        totalContacts: safeContactsData.length,
         totalViews,
         totalLikes,
-        totalPrograms: programsData.length,
+        totalPrograms: safeProgramsData.length,
       });
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -149,24 +158,70 @@ export default function AdminDashboard() {
 
   const handleContactStatusUpdate = async (
     contactId: string,
-    status: string,
+    read: boolean,
   ) => {
     try {
       const response = await fetch(`/api/contacts/${contactId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ read }),
       });
 
       if (response.ok) {
         setContacts(
-          contacts.map((c) =>
-            c.id === contactId ? { ...c, status: status as any } : c,
-          ),
+          contacts.map((c) => (c.id === contactId ? { ...c, read } : c)),
         );
       }
     } catch (error) {
-      console.error("Error updating contact status:", error);
+      console.error("Error updating contact:", error);
+    }
+  };
+
+  const handleProjectUpdate = async (projectId: string, updates: any) => {
+    try {
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        const updatedProject = await response.json();
+        setProjects(
+          projects.map((p) => (p.id === projectId ? updatedProject : p)),
+        );
+      }
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
+  };
+
+  const handleEducationUpdate = async (
+    type: "program" | "course",
+    id: string,
+    updates: any,
+  ) => {
+    try {
+      const endpoint =
+        type === "program"
+          ? `/api/academic/programs/${id}`
+          : `/api/academic/courses/${id}`;
+      const response = await fetch(endpoint, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        const updated = await response.json();
+        if (type === "program") {
+          setPrograms(programs.map((p) => (p.id === id ? updated : p)));
+        } else {
+          setCourses(courses.map((c) => (c.id === id ? updated : c)));
+        }
+      }
+    } catch (error) {
+      console.error("Error updating education item:", error);
     }
   };
 
@@ -761,79 +816,584 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === "education" && (
-            <div className="text-center py-12">
-              <AcademicCapIcon className="w-16 h-16 text-warning-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">
-                Education Management
-              </h3>
-              <p className="text-default-600 mb-6">
-                Manage your academic programs, courses, and educational journey
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Link href="/education">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">
+                  Education Management
+                </h2>
+                <div className="flex gap-2">
                   <Button
-                    size="lg"
-                    variant="flat"
-                    startContent={<EyeIcon className="w-5 h-5" />}
+                    color="secondary"
+                    startContent={<BuildingOfficeIcon className="w-4 h-4" />}
                   >
-                    View Education Page
+                    Add Program
                   </Button>
-                </Link>
-                <Button
-                  size="lg"
-                  color="primary"
-                  startContent={<PlusIcon className="w-5 h-5" />}
-                >
-                  Add Course
-                </Button>
+                  <Button
+                    color="primary"
+                    startContent={<PlusIcon className="w-4 h-4" />}
+                  >
+                    Add Course
+                  </Button>
+                </div>
               </div>
+
+              {/* Programs Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <BuildingOfficeIcon className="w-5 h-5" />
+                  Academic Programs ({programs.length})
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {programs.map((program) => (
+                    <Card
+                      key={program.id}
+                      className="hover:shadow-lg transition-shadow"
+                    >
+                      <CardBody>
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-semibold text-foreground">
+                                {program.name}
+                              </h4>
+                              <p className="text-sm text-default-600">
+                                {program.degree} • {program.institution}
+                              </p>
+                              <p className="text-xs text-default-500 mt-1">
+                                {new Date(program.startDate).getFullYear()} -{" "}
+                                {program.endDate
+                                  ? new Date(program.endDate).getFullYear()
+                                  : "Present"}
+                              </p>
+                            </div>
+                            <Chip
+                              size="sm"
+                              color={
+                                program.status === "COMPLETED"
+                                  ? "success"
+                                  : program.status === "ACTIVE"
+                                    ? "primary"
+                                    : "warning"
+                              }
+                              variant="flat"
+                            >
+                              {program.status}
+                            </Chip>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-sm text-default-600">
+                              {program.gpa && <span>GPA: {program.gpa}</span>}
+                              {program.skill_progressions && (
+                                <span>
+                                  {program.skill_progressions.length} skills
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="warning"
+                                isIconOnly
+                              >
+                                <PencilIcon className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="danger"
+                                isIconOnly
+                                onPress={() =>
+                                  handleDeleteItem(
+                                    "/api/academic/programs",
+                                    program.id,
+                                    setPrograms,
+                                    programs,
+                                  )
+                                }
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Courses Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <BookOpenIcon className="w-5 h-5" />
+                  Courses ({courses.length})
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {courses.map((course) => (
+                    <Card
+                      key={course.id}
+                      className="hover:shadow-lg transition-shadow"
+                    >
+                      <CardBody>
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-medium text-foreground">
+                                {course.code}
+                              </h4>
+                              <p className="text-sm text-default-600 line-clamp-2">
+                                {course.title}
+                              </p>
+                              <p className="text-xs text-default-500 mt-1">
+                                {course.academic_programs?.name}
+                              </p>
+                            </div>
+                            <Chip
+                              size="sm"
+                              color={
+                                course.status === "COMPLETED"
+                                  ? "success"
+                                  : course.status === "IN_PROGRESS"
+                                    ? "primary"
+                                    : "warning"
+                              }
+                              variant="flat"
+                            >
+                              {course.status}
+                            </Chip>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="text-xs text-default-600">
+                              {course.year} • {course.semester}
+                              {course.grade && (
+                                <span className="ml-2 font-medium">
+                                  Grade: {course.grade}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="warning"
+                                isIconOnly
+                              >
+                                <PencilIcon className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="flat"
+                                color="danger"
+                                isIconOnly
+                                onPress={() =>
+                                  handleDeleteItem(
+                                    "/api/academic/courses",
+                                    course.id,
+                                    setCourses,
+                                    courses,
+                                  )
+                                }
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              {/* Empty States */}
+              {programs.length === 0 && courses.length === 0 && (
+                <Card>
+                  <CardBody className="text-center py-12">
+                    <AcademicCapIcon className="w-12 h-12 text-default-400 mx-auto mb-4" />
+                    <p className="text-default-600 mb-4">
+                      No education data yet
+                    </p>
+                    <div className="flex gap-4 justify-center">
+                      <Button
+                        color="secondary"
+                        startContent={
+                          <BuildingOfficeIcon className="w-4 h-4" />
+                        }
+                      >
+                        Add Your First Program
+                      </Button>
+                      <Button
+                        color="primary"
+                        startContent={<PlusIcon className="w-4 h-4" />}
+                      >
+                        Add Your First Course
+                      </Button>
+                    </div>
+                  </CardBody>
+                </Card>
+              )}
             </div>
           )}
 
           {activeTab === "projects" && (
-            <div className="text-center py-12">
-              <BriefcaseIcon className="w-16 h-16 text-secondary-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">
-                Projects Management
-              </h3>
-              <p className="text-default-600 mb-6">
-                Showcase your work and manage project portfolios
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Link href="/projects">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">
+                  Projects Management
+                </h2>
+                <div className="flex gap-2">
+                  <Link href="/projects">
+                    <Button
+                      variant="flat"
+                      startContent={<EyeIcon className="w-4 h-4" />}
+                    >
+                      View Portfolio
+                    </Button>
+                  </Link>
                   <Button
-                    size="lg"
-                    variant="flat"
-                    startContent={<EyeIcon className="w-5 h-5" />}
+                    color="primary"
+                    startContent={<PlusIcon className="w-4 h-4" />}
                   >
-                    View Projects Page
+                    Add Project
                   </Button>
-                </Link>
-                <Button
-                  size="lg"
-                  color="primary"
-                  startContent={<PlusIcon className="w-5 h-5" />}
-                >
-                  Add Project
-                </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {projects.map((project) => (
+                  <Card
+                    key={project.id}
+                    className="hover:shadow-lg transition-shadow"
+                  >
+                    <CardBody>
+                      <div className="space-y-4">
+                        {/* Project Header */}
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-foreground mb-1">
+                              {project.title}
+                            </h3>
+                            <p className="text-sm text-default-600 line-clamp-2">
+                              {project.shortDesc || project.description}
+                            </p>
+                          </div>
+                          <div className="flex flex-col gap-1 ml-2">
+                            {project.flagship && (
+                              <Chip size="sm" color="warning" variant="flat">
+                                Flagship
+                              </Chip>
+                            )}
+                            {project.featured && (
+                              <Chip size="sm" color="secondary" variant="flat">
+                                Featured
+                              </Chip>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Project Image */}
+                        {project.image && (
+                          <div className="relative w-full h-32 rounded-lg overflow-hidden bg-default-100">
+                            <img
+                              src={project.image}
+                              alt={project.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+
+                        {/* Project Status & Tech */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Chip
+                              size="sm"
+                              color={
+                                project.status === "READY"
+                                  ? "success"
+                                  : project.status === "WIP"
+                                    ? "warning"
+                                    : "default"
+                              }
+                              variant="flat"
+                            >
+                              {project.status}
+                            </Chip>
+                            <Chip
+                              size="sm"
+                              color={project.isActive ? "success" : "default"}
+                              variant="flat"
+                            >
+                              {project.isActive ? "Active" : "Hidden"}
+                            </Chip>
+                          </div>
+
+                          {/* Technologies */}
+                          {project.technologies &&
+                            project.technologies.length > 0 && (
+                              <div className="flex flex-wrap gap-1">
+                                {project.technologies
+                                  .slice(0, 3)
+                                  .map((tech: string, index: number) => (
+                                    <Chip
+                                      key={index}
+                                      size="sm"
+                                      variant="flat"
+                                      className="text-xs"
+                                    >
+                                      {tech}
+                                    </Chip>
+                                  ))}
+                                {project.technologies.length > 3 && (
+                                  <Chip
+                                    size="sm"
+                                    variant="flat"
+                                    className="text-xs"
+                                  >
+                                    +{project.technologies.length - 3} more
+                                  </Chip>
+                                )}
+                              </div>
+                            )}
+                        </div>
+
+                        {/* Project Links */}
+                        <div className="flex items-center gap-2">
+                          {project.liveUrl && (
+                            <Link href={project.liveUrl} target="_blank">
+                              <Button size="sm" variant="flat" isIconOnly>
+                                <EyeIcon className="w-4 h-4" />
+                              </Button>
+                            </Link>
+                          )}
+                          {project.githubUrl && (
+                            <Link href={project.githubUrl} target="_blank">
+                              <Button size="sm" variant="flat" isIconOnly>
+                                <Cog6ToothIcon className="w-4 h-4" />
+                              </Button>
+                            </Link>
+                          )}
+                          <Link href={`/projects/${project.slug}`}>
+                            <Button size="sm" variant="flat" isIconOnly>
+                              <DocumentTextIcon className="w-4 h-4" />
+                            </Button>
+                          </Link>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-2 pt-2 border-t border-default-200">
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            color="warning"
+                            className="flex-1"
+                            startContent={<PencilIcon className="w-4 h-4" />}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            onPress={() =>
+                              handleDeleteItem(
+                                "/api/projects",
+                                project.id,
+                                setProjects,
+                                projects,
+                              )
+                            }
+                          >
+                            <TrashIcon className="w-4 h-4 text-danger" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            onPress={() =>
+                              fetch(`/api/projects/${project.id}`, {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  isActive: !project.isActive,
+                                }),
+                              }).then(() => fetchDashboardData())
+                            }
+                          >
+                            {project.isActive ? "Hide" : "Show"}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                ))}
+                {projects.length === 0 && (
+                  <Card className="md:col-span-3">
+                    <CardBody className="text-center py-12">
+                      <BriefcaseIcon className="w-12 h-12 text-default-400 mx-auto mb-4" />
+                      <p className="text-default-600 mb-4">No projects yet</p>
+                      <Button
+                        color="primary"
+                        startContent={<PlusIcon className="w-4 h-4" />}
+                      >
+                        Create Your First Project
+                      </Button>
+                    </CardBody>
+                  </Card>
+                )}
               </div>
             </div>
           )}
 
           {activeTab === "contacts" && (
-            <div className="text-center py-12">
-              <ChatBubbleLeftRightIcon className="w-16 h-16 text-danger-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Contact Messages</h3>
-              <p className="text-default-600 mb-6">
-                Manage inquiries and communications from visitors
-              </p>
-              <Button
-                size="lg"
-                color="primary"
-                startContent={<EyeIcon className="w-5 h-5" />}
-              >
-                View Messages ({stats.totalContacts})
-              </Button>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">
+                  Contact Messages
+                </h2>
+                <div className="flex gap-2">
+                  <Button
+                    variant="flat"
+                    onPress={() => {
+                      const unreadCount = contacts.filter(
+                        (c) => !c.read,
+                      ).length;
+                      if (unreadCount > 0) {
+                        // Mark all as read
+                        Promise.all(
+                          contacts
+                            .filter((c) => !c.read)
+                            .map((c) =>
+                              fetch(`/api/contacts/${c.id}`, {
+                                method: "PATCH",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ read: true }),
+                              }),
+                            ),
+                        ).then(() => fetchDashboardData());
+                      }
+                    }}
+                  >
+                    Mark All Read
+                  </Button>
+                  <Chip size="lg" color="primary" variant="flat">
+                    {contacts.filter((c) => !c.read).length} unread
+                  </Chip>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {contacts.map((contact) => (
+                  <Card
+                    key={contact.id}
+                    className={`hover:shadow-lg transition-shadow ${
+                      !contact.read
+                        ? "border-l-4 border-l-primary bg-primary-50/50"
+                        : ""
+                    }`}
+                  >
+                    <CardBody>
+                      <div className="space-y-4">
+                        {/* Message Header */}
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <div>
+                                <h3 className="font-semibold text-foreground">
+                                  {contact.name}
+                                </h3>
+                                <p className="text-sm text-default-600">
+                                  {contact.email}
+                                </p>
+                              </div>
+                              {!contact.read && (
+                                <Chip size="sm" color="primary" variant="flat">
+                                  New
+                                </Chip>
+                              )}
+                            </div>
+                            <h4 className="font-medium text-foreground mb-2">
+                              {contact.subject || "No Subject"}
+                            </h4>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-default-500">
+                              {new Date(contact.createdAt).toLocaleDateString()}
+                            </p>
+                            <p className="text-xs text-default-500">
+                              {new Date(contact.createdAt).toLocaleTimeString()}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Message Content */}
+                        <div className="bg-default-50 rounded-lg p-4">
+                          <p className="text-sm text-default-700 whitespace-pre-wrap">
+                            {contact.message}
+                          </p>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center justify-between pt-2 border-t border-default-200">
+                          <div className="flex gap-2">
+                            <Link href={`mailto:${contact.email}`}>
+                              <Button
+                                size="sm"
+                                color="primary"
+                                startContent={
+                                  <ChatBubbleLeftRightIcon className="w-4 h-4" />
+                                }
+                              >
+                                Reply
+                              </Button>
+                            </Link>
+                            <Button
+                              size="sm"
+                              variant="flat"
+                              color={contact.read ? "default" : "primary"}
+                              onPress={() =>
+                                handleContactStatusUpdate(
+                                  contact.id,
+                                  !contact.read,
+                                )
+                              }
+                            >
+                              {contact.read ? "Mark Unread" : "Mark Read"}
+                            </Button>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="flat"
+                            color="danger"
+                            isIconOnly
+                            onPress={() =>
+                              handleDeleteItem(
+                                "/api/contacts",
+                                contact.id,
+                                setContacts,
+                                contacts,
+                              )
+                            }
+                          >
+                            <TrashIcon className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                ))}
+                {contacts.length === 0 && (
+                  <Card>
+                    <CardBody className="text-center py-12">
+                      <ChatBubbleLeftRightIcon className="w-12 h-12 text-default-400 mx-auto mb-4" />
+                      <p className="text-default-600 mb-4">
+                        No messages received yet
+                      </p>
+                      <p className="text-sm text-default-500">
+                        Messages from your contact form will appear here
+                      </p>
+                    </CardBody>
+                  </Card>
+                )}
+              </div>
             </div>
           )}
         </motion.div>

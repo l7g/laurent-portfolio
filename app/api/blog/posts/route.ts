@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { BlogStatus } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "ADMIN";
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -19,12 +24,17 @@ export async function GET(request: NextRequest) {
     // Build where clause - handle both 'published=true' and 'status=PUBLISHED'
     const where: any = {};
 
-    if (published === "true" || status === "PUBLISHED") {
-      where.status = "PUBLISHED";
-    } else if (status) {
-      where.status = status as BlogStatus;
+    // Admin can see all posts, public users only see published
+    if (isAdmin) {
+      if (published === "true" || status === "PUBLISHED") {
+        where.status = "PUBLISHED";
+      } else if (status) {
+        where.status = status as BlogStatus;
+      }
+      // If admin and no status specified, show all posts
     } else {
-      where.status = "PUBLISHED"; // Default to published only
+      // Public users only see published posts
+      where.status = "PUBLISHED";
     }
 
     if (category) {

@@ -26,6 +26,16 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
+
+# Database backups and exports (contains sensitive data)
+database-export-*.json
+dev-to-prod-export-*.json
+*-backup-*.json
+backups/*.json
+
+# Neon CLI context (contains project info)
+.neon
 
 # vercel
 .vercel

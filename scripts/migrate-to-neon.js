@@ -10,12 +10,31 @@
 import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import { execSync } from "child_process";
+import dotenv from "dotenv";
+
+// Load environment variables
+dotenv.config({ path: ".env.local" });
+
+console.log("🔧 Environment check:");
+console.log(
+  "OLD_DATABASE_URL:",
+  process.env.OLD_DATABASE_URL ? "✅ Set" : "❌ Missing",
+);
+console.log(
+  "NEW_DATABASE_URL:",
+  process.env.NEW_DATABASE_URL ? "✅ Set" : "❌ Missing",
+);
+
+if (!process.env.OLD_DATABASE_URL || !process.env.NEW_DATABASE_URL) {
+  console.error("❌ Missing required environment variables");
+  process.exit(1);
+}
 
 // Old database connection (Supabase)
 const oldPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.OLD_DATABASE_URL || process.env.DATABASE_URL,
+      url: process.env.OLD_DATABASE_URL,
     },
   },
 });

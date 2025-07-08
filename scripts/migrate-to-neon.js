@@ -48,25 +48,42 @@ const newPrisma = new PrismaClient({
   },
 });
 
+// Map table names to Prisma model references
+const createTableToModel = (prismaClient) => ({
+  users: prismaClient.users,
+  site_settings: prismaClient.site_settings,
+  blog_categories: prismaClient.blog_categories,
+  blog_series: prismaClient.blog_series,
+  blog_posts: prismaClient.blog_posts,
+  blog_comments: prismaClient.blog_comments,
+  projects: prismaClient.projects,
+  skills: prismaClient.skills,
+  academic_programs: prismaClient.academic_programs,
+  courses: prismaClient.courses,
+  course_skills: prismaClient.course_skills,
+  portfolio_sections: prismaClient.portfolio_sections,
+  contacts: prismaClient.contacts,
+});
+
 async function exportData() {
   console.log("📥 Exporting data from Supabase...");
 
   try {
-    const data = {
-      users: await oldPrisma.users.findMany(),
-      site_settings: await oldPrisma.site_settings.findMany(),
-      blog_categories: await oldPrisma.blog_categories.findMany(),
-      blog_series: await oldPrisma.blog_series.findMany(),
-      blog_posts: await oldPrisma.blog_posts.findMany(),
-      blog_comments: await oldPrisma.blog_comments.findMany(),
-      projects: await oldPrisma.projects.findMany(),
-      skills: await oldPrisma.skills.findMany(),
-      academic_programs: await oldPrisma.academic_programs.findMany(),
-      courses: await oldPrisma.courses.findMany(),
-      course_skills: await oldPrisma.course_skills.findMany(),
-      portfolio_sections: await oldPrisma.portfolio_sections.findMany(),
-      contacts: await oldPrisma.contacts.findMany(),
-    };
+    const oldTableToModel = createTableToModel(oldPrisma);
+    const data = {};
+
+    // Export data from each table
+    for (const [tableName, model] of Object.entries(oldTableToModel)) {
+      try {
+        console.log(`  Exporting ${tableName}...`);
+        const records = await model.findMany();
+        data[tableName] = records;
+        console.log(`  ✅ ${tableName}: ${records.length} records`);
+      } catch (error) {
+        console.log(`  ⚠️ ${tableName}: Table not found or empty`);
+        data[tableName] = [];
+      }
+    }
 
     // Save to file
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -105,6 +122,8 @@ async function importData(data) {
   console.log("📤 Importing data to Neon database...");
 
   try {
+    const newTableToModel = createTableToModel(newPrisma);
+
     // Import in correct order (respecting foreign keys)
     const importOrder = [
       "users",
@@ -124,12 +143,14 @@ async function importData(data) {
 
     for (const tableName of importOrder) {
       const records = data[tableName];
-      if (records && records.length > 0) {
+      const model = newTableToModel[tableName];
+
+      if (records && records.length > 0 && model) {
         console.log(`  Importing ${tableName}: ${records.length} records...`);
 
         for (const record of records) {
           try {
-            await newPrisma[tableName].create({ data: record });
+            await model.create({ data: record });
           } catch (error) {
             // Skip duplicates or constraint errors
             if (!error.message.includes("Unique constraint")) {

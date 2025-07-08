@@ -34,6 +34,23 @@ if (!PROD_DATABASE_URL) {
   process.exit(1);
 }
 
+// Map table names to Prisma model references
+const createTableToModel = (prismaClient) => ({
+  users: prismaClient.users,
+  site_settings: prismaClient.site_settings,
+  blog_categories: prismaClient.blog_categories,
+  blog_series: prismaClient.blog_series,
+  blog_posts: prismaClient.blog_posts,
+  blog_comments: prismaClient.blog_comments,
+  projects: prismaClient.projects,
+  skills: prismaClient.skills,
+  academic_programs: prismaClient.academic_programs,
+  courses: prismaClient.courses,
+  course_skills: prismaClient.course_skills,
+  portfolio_sections: prismaClient.portfolio_sections,
+  contacts: prismaClient.contacts,
+});
+
 async function exportFromDev() {
   console.log("📥 Exporting data from development branch...");
 
@@ -46,6 +63,7 @@ async function exportFromDev() {
     console.log("✅ Connected to development database");
 
     const data = {};
+    const devTableToModel = createTableToModel(devPrisma);
 
     // List of tables to export
     const tables = [
@@ -69,7 +87,13 @@ async function exportFromDev() {
     for (const table of tables) {
       try {
         console.log(`  Exporting ${table}...`);
-        const records = await devPrisma[table].findMany();
+        const model = devTableToModel[table];
+        if (!model) {
+          console.log(`  ⚠️ ${table}: Model not found in mapping`);
+          data[table] = [];
+          continue;
+        }
+        const records = await model.findMany();
         data[table] = records;
         console.log(`  ✅ ${table}: ${records.length} records`);
         totalRecords += records.length;
@@ -114,6 +138,7 @@ async function importToProd(filename) {
 
     const exportData = JSON.parse(fs.readFileSync(filename, "utf8"));
     const data = exportData.data;
+    const prodTableToModel = createTableToModel(prodPrisma);
 
     console.log(`📅 Export created: ${exportData.timestamp}`);
     console.log(
@@ -140,10 +165,13 @@ async function importToProd(filename) {
     console.log("🧹 Clearing existing production data...");
     for (const tableName of clearOrder) {
       try {
-        const count = await prodPrisma[tableName].count();
-        if (count > 0) {
-          await prodPrisma[tableName].deleteMany();
-          console.log(`  🗑️ Cleared ${tableName}: ${count} records`);
+        const model = prodTableToModel[tableName];
+        if (model) {
+          const count = await model.count();
+          if (count > 0) {
+            await model.deleteMany();
+            console.log(`  🗑️ Cleared ${tableName}: ${count} records`);
+          }
         }
       } catch (error) {
         console.log(`  ⚠️ Could not clear ${tableName}: ${error.message}`);
@@ -171,21 +199,23 @@ async function importToProd(filename) {
 
     for (const tableName of importOrder) {
       const records = data[tableName];
-      if (records && records.length > 0) {
+      const model = prodTableToModel[tableName];
+
+      if (records && records.length > 0 && model) {
         console.log(`🔄 Importing ${tableName}: ${records.length} records`);
 
         for (const record of records) {
           try {
             if (tableName === "users") {
               // For users, use upsert to avoid conflicts with existing admin
-              await prodPrisma[tableName].upsert({
+              await model.upsert({
                 where: { id: record.id },
                 update: record,
                 create: record,
               });
             } else {
               // For other tables, create new records
-              await prodPrisma[tableName].create({
+              await model.create({
                 data: record,
               });
             }

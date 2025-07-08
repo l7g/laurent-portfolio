@@ -22,6 +22,23 @@ if (dbUrl) {
 
 const prisma = new PrismaClient();
 
+// Map table names to Prisma model references
+const tableToModel = {
+  users: prisma.users,
+  site_settings: prisma.site_settings,
+  blog_categories: prisma.blog_categories,
+  blog_series: prisma.blog_series,
+  blog_posts: prisma.blog_posts,
+  blog_comments: prisma.blog_comments,
+  projects: prisma.projects,
+  skills: prisma.skills,
+  academic_programs: prisma.academic_programs,
+  courses: prisma.courses,
+  course_skills: prisma.course_skills,
+  portfolio_sections: prisma.portfolio_sections,
+  contacts: prisma.contacts,
+};
+
 async function exportData() {
   console.log("📥 Exporting data from current database...");
 
@@ -53,7 +70,13 @@ async function exportData() {
     for (const table of tables) {
       try {
         console.log(`  Exporting ${table}...`);
-        const records = await prisma[table].findMany();
+        const model = tableToModel[table];
+        if (!model) {
+          console.log(`  ⚠️ ${table}: Model not found in mapping`);
+          data[table] = [];
+          continue;
+        }
+        const records = await model.findMany();
         data[table] = records;
         console.log(`  ✅ ${table}: ${records.length} records`);
         totalRecords += records.length;

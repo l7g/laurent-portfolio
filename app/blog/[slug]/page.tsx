@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import BlogPostContent from "@/components/blog/blog-post-content";
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ slug: string }>;
 }

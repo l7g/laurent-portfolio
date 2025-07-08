@@ -11,6 +11,9 @@ import { GithubIcon } from "@/components/icons";
 import { motion } from "framer-motion";
 import { prisma } from "@/lib/prisma";
 
+// Force dynamic rendering - don't pre-render at build time
+export const dynamic = "force-dynamic";
+
 interface ProjectPageProps {
   params: Promise<{
     slug: string;
@@ -250,23 +253,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </section>
     </main>
   );
-}
-
-// Generate static params for all projects
-export async function generateStaticParams() {
-  try {
-    const projects = await prisma.projects.findMany({
-      where: { isActive: true },
-      select: { slug: true },
-    });
-
-    return projects.map((project) => ({
-      slug: project.slug,
-    }));
-  } catch (error) {
-    console.error("Error generating static params:", error);
-    return [];
-  }
 }
 
 // Generate metadata for each project

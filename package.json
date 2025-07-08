@@ -19,7 +19,9 @@
     "db:reset": "npx prisma migrate reset --force",
     "db:deploy": "npx prisma migrate deploy",
     "db:push": "npx prisma db push",
-    "generate:secret": "node scripts/generate-secret.js"
+    "generate:secret": "node scripts/generate-secret.js",
+    "migrate:to-neon": "node scripts/migrate-to-neon.js",
+    "deploy:push-to-prod": "node scripts/push-dev-to-prod.js"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

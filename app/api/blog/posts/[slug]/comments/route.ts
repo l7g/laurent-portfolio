@@ -8,11 +8,26 @@ export async function GET(
   try {
     const { slug } = await params;
 
-    // First get the post by slug
-    const post = await prisma.blog_posts.findUnique({
-      where: { slug },
-      select: { id: true },
-    });
+    // Check if slug is a UUID (post ID) or actual slug
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        slug,
+      );
+
+    let post;
+    if (isUUID) {
+      // Find by ID
+      post = await prisma.blog_posts.findUnique({
+        where: { id: slug },
+        select: { id: true },
+      });
+    } else {
+      // Find by slug
+      post = await prisma.blog_posts.findUnique({
+        where: { slug },
+        select: { id: true },
+      });
+    }
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
@@ -52,11 +67,26 @@ export async function POST(
       );
     }
 
-    // First get the post by slug
-    const post = await prisma.blog_posts.findUnique({
-      where: { slug },
-      select: { id: true },
-    });
+    // Check if slug is a UUID (post ID) or actual slug
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        slug,
+      );
+
+    let post;
+    if (isUUID) {
+      // Find by ID
+      post = await prisma.blog_posts.findUnique({
+        where: { id: slug },
+        select: { id: true },
+      });
+    } else {
+      // Find by slug
+      post = await prisma.blog_posts.findUnique({
+        where: { slug },
+        select: { id: true },
+      });
+    }
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });

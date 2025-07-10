@@ -102,10 +102,37 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
     return minutes;
   };
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
-    // TODO: Implement actual like functionality with API
+  const handleLike = async () => {
+    if (!post) return;
+
+    try {
+      // Optimistically update UI
+      setLiked(!liked);
+      setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+
+      // Call API to save like
+      const response = await fetch(`/api/blog/posts/${post.slug}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setLikeCount(data.likes);
+      } else {
+        // Revert optimistic update on error
+        setLiked(liked);
+        setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
+        console.error("Failed to save like");
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setLiked(liked);
+      setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
+      console.error("Error saving like:", error);
+    }
   };
 
   if (loading) {

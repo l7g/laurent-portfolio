@@ -66,31 +66,52 @@ model blog_comments {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model blog_posts {
-  id              String          @id
-  title           String
-  slug            String          @unique
-  excerpt         String?
-  content         String
-  coverImage      String?
-  categoryId      String
-  tags            String[]
-  status          BlogStatus      @default(DRAFT)
-  metaTitle       String?
-  metaDescription String?
-  authorId        String
-  views           Int             @default(0)
-  likes           Int             @default(0)
-  publishedAt     DateTime?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime
-  courseId        String?
-  seriesId        String?
-  seriesOrder     Int?
-  blog_comments   blog_comments[]
-  users           users           @relation(fields: [authorId], references: [id])
-  blog_categories blog_categories @relation(fields: [categoryId], references: [id])
-  courses         courses?        @relation(fields: [courseId], references: [id])
-  blog_series     blog_series?    @relation(fields: [seriesId], references: [id])
+  id                       String                 @id
+  title                    String
+  slug                     String                 @unique
+  excerpt                  String?
+  content                  String
+  coverImage               String?
+  categoryId               String
+  tags                     String[]
+  status                   BlogStatus             @default(DRAFT)
+  metaTitle                String?
+  metaDescription          String?
+  authorId                 String
+  views                    Int                    @default(0)
+  likes                    Int                    @default(0)
+  publishedAt              DateTime?
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime
+  courseId                 String?
+  seriesId                 String?
+  seriesOrder              Int?
+  blog_comments            blog_comments[]
+  users                    users                  @relation(fields: [authorId], references: [id])
+  blog_categories          blog_categories        @relation(fields: [categoryId], references: [id])
+  courses                  courses?               @relation(fields: [courseId], references: [id])
+  blog_series              blog_series?           @relation(fields: [seriesId], references: [id])
+  
+  // Related articles relationships
+  relatedFrom              blog_post_relations[]  @relation("SourcePost")
+  relatedTo                blog_post_relations[]  @relation("TargetPost")
+}
+
+model blog_post_relations {
+  id           String     @id @default(cuid())
+  sourcePostId String
+  targetPostId String
+  relationType String     @default("related")
+  createdAt    DateTime   @default(now())
+  createdBy    String
+  
+  sourcePost   blog_posts @relation("SourcePost", fields: [sourcePostId], references: [id], onDelete: Cascade)
+  targetPost   blog_posts @relation("TargetPost", fields: [targetPostId], references: [id], onDelete: Cascade)
+  user         users      @relation(fields: [createdBy], references: [id])
+  
+  @@unique([sourcePostId, targetPostId])
+  @@index([sourcePostId])
+  @@index([targetPostId])
 }
 
 model blog_series {
@@ -306,17 +327,18 @@ model skills {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model users {
-  id          String        @id
-  email       String        @unique
-  name        String
-  password    String
-  role        UserRole      @default(ADMIN)
-  isActive    Boolean       @default(true)
-  lastLogin   DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime
-  blog_posts  blog_posts[]
-  blog_series blog_series[]
+  id                    String                @id
+  email                 String                @unique
+  name                  String
+  password              String
+  role                  UserRole              @default(ADMIN)
+  isActive              Boolean               @default(true)
+  lastLogin             DateTime?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime
+  blog_posts            blog_posts[]
+  blog_series           blog_series[]
+  blog_post_relations   blog_post_relations[]
 }
 
 enum AcademicStatus {

@@ -19,6 +19,7 @@ import { useSession } from "next-auth/react";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import CategorySelector from "@/components/admin/category-selector";
 import SeriesSelector from "@/components/admin/series-selector";
+import RelatedArticlesManager from "@/components/admin/related-articles-manager";
 
 interface BlogCategory {
   id: string;
@@ -607,6 +608,18 @@ function EditBlogPostClient({ id }: { id: string }) {
                   </div>
                 </CardBody>
               </Card>
+            </motion.div>
+
+            {/* Related Articles */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <RelatedArticlesManager
+                postSlug={postData.slug}
+                postTitle={postData.title}
+              />
             </motion.div>
           </div>
         </div>

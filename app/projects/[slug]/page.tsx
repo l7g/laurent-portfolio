@@ -245,7 +245,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               Need custom development work or have a project in mind? Let's
               discuss how I can help bring your ideas to life.
             </p>
-            <Button as={Link} href="/#contact" color="primary" size="lg">
+            <Button as={Link} href="/contact" color="primary" size="lg">
               Get In Touch
             </Button>
           </div>

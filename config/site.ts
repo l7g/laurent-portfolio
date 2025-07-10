@@ -27,7 +27,7 @@ export const siteConfig = {
     },
     {
       label: "Contact",
-      href: "/#contact",
+      href: "/contact",
     },
   ],
   navMenuItems: [
@@ -53,7 +53,7 @@ export const siteConfig = {
     },
     {
       label: "Contact",
-      href: "/#contact",
+      href: "/contact",
     },
     {
       label: "Curriculum",

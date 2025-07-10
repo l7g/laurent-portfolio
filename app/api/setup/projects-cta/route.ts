@@ -83,7 +83,7 @@ export async function POST() {
               text: "Start Your Project",
               type: "primary",
               action: "scroll",
-              target: "#contact",
+              target: "/contact",
               icon: "arrow-right",
             },
             {

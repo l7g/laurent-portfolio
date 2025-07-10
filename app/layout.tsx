@@ -115,7 +115,7 @@ export default function RootLayout({
                       </Link>
                       <Link
                         className="text-sm text-default-600 hover:text-primary block"
-                        href="#contact"
+                        href="/contact"
                       >
                         Contact
                       </Link>

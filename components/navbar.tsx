@@ -73,9 +73,9 @@ export const Navbar = () => {
 
   const isLinkActive = (href: string) => {
     // Handle homepage section links
-    if (href.startsWith("#") || href === "/#contact") {
+    if (href.startsWith("#")) {
       if (currentPath !== "/") return false;
-      const section = href.replace("#", "").replace("/#", "");
+      const section = href.replace("#", "");
       return activeSection === section;
     }
 
@@ -124,22 +124,11 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        {" "}
         <NavbarItem className="hidden sm:flex gap-2">
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500 w-5 h-5" />
           </Link>
           <ThemeSwitch />
-        </NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href="#contact"
-            variant="flat"
-          >
-            Contact
-          </Button>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">

@@ -47,6 +47,14 @@ export default function TermsPage() {
             We reserve the right to remove any content that violates these terms
           </li>
           <li>Spam, harassment, or inappropriate content will be removed</li>
+          <li>
+            By submitting comments, you consent to email notifications being
+            sent to the site administrator
+          </li>
+          <li>
+            Comments are moderated and may require approval before appearing
+            publicly
+          </li>
         </ul>
 
         <h3>Website Content</h3>
@@ -114,6 +122,25 @@ export default function TermsPage() {
           with the laws of Canada and you irrevocably submit to the exclusive
           jurisdiction of the courts in that state or location.
         </p>
+
+        <h2>Email Communications</h2>
+        <ul>
+          <li>
+            We may send you emails related to your interactions with the website
+            (such as comment confirmations)
+          </li>
+          <li>
+            By using our contact form or commenting system, you consent to
+            receive relevant email communications
+          </li>
+          <li>
+            We use Resend as our email service provider to deliver these
+            communications
+          </li>
+          <li>
+            Email communications are sent for legitimate business purposes only
+          </li>
+        </ul>
 
         <h2>Contact Information</h2>
         <p>

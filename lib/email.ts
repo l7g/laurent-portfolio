@@ -253,3 +253,104 @@ export async function sendWorkInquiryEmail(data: EmailData) {
     };
   }
 }
+
+export async function sendCommentNotification(data: {
+  postTitle: string;
+  postSlug: string;
+  commentAuthor: string;
+  commentEmail: string;
+  commentContent: string;
+  commentWebsite?: string;
+  isApproved: boolean;
+}) {
+  const {
+    postTitle,
+    postSlug,
+    commentAuthor,
+    commentEmail,
+    commentContent,
+    commentWebsite,
+    isApproved,
+  } = data;
+
+  try {
+    console.log("📧 Sending comment notification for post:", postTitle);
+
+    const notificationResult = await resend.emails.send({
+      from: `Blog Comments <${process.env.RESEND_FROM_EMAIL || "comments@mail.laurentgagne.com"}>`,
+      to: [
+        process.env.NEXT_PUBLIC_CONTACT_EMAIL ||
+          "laurentgagne.portfolio@gmail.com",
+      ],
+      subject: `${isApproved ? "New Comment" : "Comment Pending Approval"}: ${postTitle}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">
+            ${isApproved ? "✅ New Comment Posted" : "⏳ Comment Pending Approval"}
+          </h2>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Post:</strong> ${postTitle}</p>
+            <p><strong>Author:</strong> ${commentAuthor}</p>
+            <p><strong>Email:</strong> ${commentEmail}</p>
+            ${commentWebsite ? `<p><strong>Website:</strong> ${commentWebsite}</p>` : ""}
+            <p><strong>Status:</strong> ${isApproved ? "✅ Auto-approved" : "⏳ Pending review"}</p>
+          </div>
+          
+          <div style="margin: 20px 0;">
+            <h3>Comment:</h3>
+            <div style="line-height: 1.6; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid ${isApproved ? "#10b981" : "#f59e0b"};">
+              ${commentContent.replace(/\n/g, "<br>")}
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/blog/${postSlug}" 
+               style="background-color: #f59e0b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
+              View Post & Comments
+            </a>
+            ${
+              !isApproved
+                ? `
+            <br><br>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/admin/blog/comments" 
+               style="background-color: #6b7280; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
+              Review in Admin Panel
+            </a>
+            `
+                : ""
+            }
+          </div>
+          
+          <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
+            <p style="color: #666; font-size: 14px;">
+              ${
+                isApproved
+                  ? "This comment was automatically approved and is now live on your blog."
+                  : "This comment requires your approval before appearing on the blog."
+              }
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    console.log("✅ Comment notification sent:", {
+      success: !!notificationResult.data?.id,
+      id: notificationResult.data?.id,
+      error: notificationResult.error,
+    });
+
+    return {
+      success: !!notificationResult.data?.id,
+      id: notificationResult.data?.id,
+      error: notificationResult.error,
+    };
+  } catch (error) {
+    console.error("❌ Comment notification failed:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}

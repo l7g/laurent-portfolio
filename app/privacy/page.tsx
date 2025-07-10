@@ -39,6 +39,12 @@ export default function PrivacyPage() {
         <ul>
           <li>To respond to your contact inquiries</li>
           <li>To display and manage blog comments</li>
+          <li>
+            To send you email notifications (such as comment confirmations)
+          </li>
+          <li>
+            To notify the site administrator of new comments and interactions
+          </li>
           <li>To improve our website and content</li>
           <li>To ensure website security and prevent spam</li>
         </ul>
@@ -84,15 +90,28 @@ export default function PrivacyPage() {
         </ul>
 
         <h2>Third-Party Services</h2>
-        <p>This website may use:</p>
+        <p>This website uses the following third-party services:</p>
         <ul>
           <li>
             <strong>Vercel:</strong> For hosting and performance analytics
           </li>
           <li>
-            <strong>Resend:</strong> For sending contact form emails
+            <strong>Resend:</strong> For sending emails including:
+            <ul>
+              <li>Contact form responses and confirmations</li>
+              <li>Comment notifications to site administrators</li>
+              <li>System notifications and updates</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Neon (PostgreSQL):</strong> For secure data storage
           </li>
         </ul>
+        <p>
+          These services may process your data according to their own privacy
+          policies. We only share the minimum necessary information required for
+          these services to function.
+        </p>
 
         <h2>Children's Privacy</h2>
         <p>
@@ -122,8 +141,9 @@ export default function PrivacyPage() {
             (Article 6(1)(a) GDPR)
           </li>
           <li>
-            <strong>Legitimate Interest:</strong> For contact form responses and
-            website security (Article 6(1)(f) GDPR)
+            <strong>Legitimate Interest:</strong> For contact form responses,
+            comment moderation, email notifications, and website security
+            (Article 6(1)(f) GDPR)
           </li>
         </ul>
 
@@ -135,6 +155,10 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Comments:</strong> Retained while the blog post exists
+          </li>
+          <li>
+            <strong>Email notifications:</strong> Processing logs retained for
+            30 days for debugging purposes
           </li>
           <li>
             <strong>Browser preferences:</strong> Stored locally until you clear

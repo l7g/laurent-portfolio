@@ -77,13 +77,13 @@ export async function POST(
 
     let post;
     if (isUUID) {
-      // Find by ID
+      // Find by ID - INCLUDE title and slug for email notifications
       post = await prisma.blog_posts.findUnique({
         where: { id: slug },
         select: { id: true, title: true, slug: true },
       });
     } else {
-      // Find by slug
+      // Find by slug - INCLUDE title and slug for email notifications
       post = await prisma.blog_posts.findUnique({
         where: { slug },
         select: { id: true, title: true, slug: true },

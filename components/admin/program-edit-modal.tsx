@@ -48,6 +48,9 @@ export default function ProgramEditModal({
     setLoading(true);
 
     try {
+      if (!program?.id) {
+        throw new Error("Program ID is required");
+      }
       await onSave(program.id, formData);
       onClose();
     } catch (error) {

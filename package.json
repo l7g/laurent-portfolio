@@ -15,7 +15,7 @@
     "seed:deployment": "node scripts/deployment-restore.js",
     "seed:deployment-seed": "node scripts/deployment-seed.js",
     "backup:create": "node scripts/create-production-backup.js",
-    "setup:admin": "node scripts/setup-admin.js",
+    "setup:admin": "node scripts/setup-admin.cjs",
     "db:reset": "npx prisma migrate reset --force",
     "db:deploy": "npx prisma migrate deploy",
     "db:push": "npx prisma db push",

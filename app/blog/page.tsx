@@ -29,6 +29,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   coverImage?: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   category: {
     id: string;
     name: string;
@@ -506,20 +507,40 @@ export default function BlogPage() {
                             <Card className="h-full hover:shadow-2xl transition-all duration-300 group cursor-pointer">
                               <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between w-full">
-                                  <Chip
-                                    size="sm"
-                                    style={{
-                                      backgroundColor: `${post.category.color}20`,
-                                      color: post.category.color,
-                                    }}
-                                  >
-                                    {post.category.icon && (
-                                      <span className="mr-1">
-                                        {post.category.icon}
-                                      </span>
+                                  <div className="flex items-center gap-2">
+                                    <Chip
+                                      size="sm"
+                                      style={{
+                                        backgroundColor: `${post.category.color}20`,
+                                        color: post.category.color,
+                                      }}
+                                    >
+                                      {post.category.icon && (
+                                        <span className="mr-1">
+                                          {post.category.icon}
+                                        </span>
+                                      )}
+                                      {post.category.name || "Uncategorized"}
+                                    </Chip>
+                                    {post.status === "DRAFT" && (
+                                      <Chip
+                                        size="sm"
+                                        color="warning"
+                                        variant="bordered"
+                                      >
+                                        📝 Draft
+                                      </Chip>
                                     )}
-                                    {post.category.name || "Uncategorized"}
-                                  </Chip>
+                                    {post.status === "ARCHIVED" && (
+                                      <Chip
+                                        size="sm"
+                                        color="default"
+                                        variant="bordered"
+                                      >
+                                        📦 Archived
+                                      </Chip>
+                                    )}
+                                  </div>
                                   <div className="flex items-center gap-1 text-xs text-default-500">
                                     <CalendarDaysIcon className="w-3 h-3" />
                                     {formatDate(post.publishedAt)}

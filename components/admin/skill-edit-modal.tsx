@@ -41,6 +41,9 @@ export default function SkillEditModal({
     setLoading(true);
 
     try {
+      if (!skill?.id) {
+        throw new Error("Skill ID is required");
+      }
       await onSave(skill.id, formData);
       onClose();
     } catch (error) {

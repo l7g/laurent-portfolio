@@ -53,7 +53,28 @@ export async function POST(request: NextRequest) {
         { error: "A post with this slug already exists" },
         { status: 409 },
       );
+    } // Find existing user by email first, since database might have changed
+    let authorUser = await prisma.users.findUnique({
+      where: { email: session.user.email! },
+    });
+
+    if (!authorUser) {
+      // Create admin user if it doesn't exist
+      authorUser = await prisma.users.create({
+        data: {
+          id: session.user.id,
+          name: session.user.name || "Admin",
+          email: session.user.email || "admin@example.com",
+          password: "temp-password", // This should be properly hashed in production
+          role: "ADMIN",
+          isActive: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      });
     }
+
+    const authorId = authorUser.id;
 
     // Create the post
     const post = await prisma.blog_posts.create({
@@ -71,7 +92,7 @@ export async function POST(request: NextRequest) {
         metaTitle: metaTitle || title,
         metaDescription: metaDescription || excerpt,
         coverImage,
-        authorId: session.user.id,
+        authorId: authorId,
         publishedAt: status === "PUBLISHED" ? new Date() : null,
         createdAt: new Date(),
         updatedAt: new Date(),

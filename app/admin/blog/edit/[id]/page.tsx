@@ -17,12 +17,16 @@ import Link from "next/link";
 import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import CategorySelector from "@/components/admin/category-selector";
+import SeriesSelector from "@/components/admin/series-selector";
 
 interface BlogCategory {
   id: string;
   name: string;
+  slug: string;
   color: string;
   icon: string;
+  description?: string;
 }
 
 interface BlogSeries {
@@ -31,7 +35,7 @@ interface BlogSeries {
   slug: string;
   description?: string;
   color: string;
-  icon?: string;
+  icon: string;
   difficulty?: string;
   _count: {
     blog_posts: number;
@@ -71,15 +75,24 @@ interface BlogPost {
   series?: BlogSeries;
 }
 
-export default async function EditBlogPostPage({
+export default function EditBlogPostPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const resolvedParams = await params;
-  const id = resolvedParams.id;
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(
+    null,
+  );
 
-  return <EditBlogPostClient id={id} />;
+  useEffect(() => {
+    params.then(setResolvedParams);
+  }, [params]);
+
+  if (!resolvedParams) {
+    return <div>Loading...</div>;
+  }
+
+  return <EditBlogPostClient id={resolvedParams.id} />;
 }
 
 function EditBlogPostClient({ id }: { id: string }) {
@@ -106,6 +119,64 @@ function EditBlogPostClient({ id }: { id: string }) {
   });
 
   // Define functions before hooks that use them
+  const createNewCategory = async (categoryData: Omit<BlogCategory, "id">) => {
+    try {
+      const response = await fetch("/api/admin/blog/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...categoryData,
+          isActive: true,
+          sortOrder: categories.length,
+        }),
+      });
+
+      if (response.ok) {
+        const newCategory = await response.json();
+        setCategories((prev) => [...prev, newCategory]);
+        return newCategory;
+      } else {
+        throw new Error("Failed to create category");
+      }
+    } catch (error) {
+      console.error("Error creating category:", error);
+      throw error;
+    }
+  };
+
+  const createNewSeries = async (
+    seriesData: Omit<BlogSeries, "id" | "_count">,
+  ) => {
+    try {
+      const response = await fetch("/api/admin/blog/series", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...seriesData,
+          isActive: true,
+          sortOrder: series.length,
+          tags: [],
+        }),
+      });
+
+      if (response.ok) {
+        const newSeries = await response.json();
+        const seriesWithCount = { ...newSeries, _count: { blog_posts: 0 } };
+        setSeries((prev) => [...prev, seriesWithCount]);
+        return seriesWithCount;
+      } else {
+        throw new Error("Failed to create series");
+      }
+    } catch (error) {
+      console.error("Error creating series:", error);
+      throw error;
+    }
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -396,7 +467,7 @@ function EditBlogPostClient({ id }: { id: string }) {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Settings */}
+            {/* Status Settings */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -426,45 +497,55 @@ function EditBlogPostClient({ id }: { id: string }) {
                       <option value="ARCHIVED">Archived</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Category
-                    </label>
-                    <select
-                      value={postData.categoryId}
-                      onChange={(e) =>
-                        handleInputChange("categoryId", e.target.value)
-                      }
-                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
-                      required
-                    >
-                      <option value="">Select a category</option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.icon} {category.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Series (Optional)
-                    </label>
-                    <select
-                      value={postData.seriesId}
-                      onChange={(e) =>
-                        handleInputChange("seriesId", e.target.value)
-                      }
-                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
-                    >
-                      <option value="">No series</option>
-                      {series.map((seriesItem) => (
-                        <option key={seriesItem.id} value={seriesItem.id}>
-                          {seriesItem.icon} {seriesItem.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+
+            {/* Category */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Category</h3>
+                </CardHeader>
+                <CardBody>
+                  <CategorySelector
+                    value={postData.categoryId}
+                    onChange={(value: string) =>
+                      handleInputChange("categoryId", value)
+                    }
+                    categories={categories}
+                    onCreateCategory={createNewCategory}
+                  />
+                </CardBody>
+              </Card>
+            </motion.div>
+
+            {/* Series */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Series (Optional)</h3>
+                  <p className="text-sm text-default-600">
+                    Add this post to a series for organized content
+                  </p>
+                </CardHeader>
+                <CardBody className="space-y-4">
+                  <SeriesSelector
+                    value={postData.seriesId}
+                    onChange={(value: string) =>
+                      handleInputChange("seriesId", value)
+                    }
+                    series={series}
+                    onCreateSeries={createNewSeries}
+                  />
                   {postData.seriesId && (
                     <div>
                       <label className="block text-sm font-medium mb-2">

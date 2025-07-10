@@ -29,6 +29,7 @@ interface BlogPost {
   excerpt: string;
   content: string;
   coverImage?: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   category: {
     id: string;
     name: string;
@@ -189,6 +190,16 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
                 >
                   <span className="mr-1">{post.category.icon}</span>
                   {post.category.name}
+                </Chip>
+              )}
+              {post.status === "DRAFT" && (
+                <Chip size="sm" color="warning" variant="bordered">
+                  📝 Draft - Only visible to admin
+                </Chip>
+              )}
+              {post.status === "ARCHIVED" && (
+                <Chip size="sm" color="default" variant="bordered">
+                  📦 Archived - Only visible to admin
                 </Chip>
               )}
             </div>

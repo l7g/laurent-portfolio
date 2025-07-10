@@ -267,12 +267,13 @@ export default function BlobStorageManager({
                   <Card
                     key={image.url}
                     isHoverable
+                    isPressable
                     className={`relative transition-all duration-200 group cursor-pointer ${
                       selectedImage === image.url
                         ? "ring-2 ring-primary bg-primary/5"
                         : ""
                     }`}
-                    onClick={() => setSelectedImage(image.url)}
+                    onPress={() => setSelectedImage(image.url)}
                   >
                     <CardBody className="p-0">
                       {/* Image Preview */}

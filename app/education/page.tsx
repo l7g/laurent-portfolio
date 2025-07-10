@@ -88,6 +88,42 @@ export default function EducationPage() {
     });
   };
 
+  const getCurrentAcademicYear = () => {
+    const now = new Date();
+    const startDate = new Date(2025, 7, 1); // August 1st, 2025 (month is 0-indexed)
+
+    // If we haven't started yet, return 0
+    if (now < startDate) {
+      return 0;
+    }
+
+    const currentYear = now.getFullYear();
+    const month = now.getMonth();
+
+    let academicYear = currentYear - 2025;
+
+    // If we're before August, we're still in the previous academic year
+    if (month < 7) {
+      // July is month 6
+      academicYear -= 1;
+    }
+
+    return Math.max(0, academicYear);
+  };
+
+  const getActualProgress = (program: AcademicProgram) => {
+    const actualYear = getCurrentAcademicYear();
+    return Math.min((actualYear / program.totalYears) * 100, 100);
+  };
+
+  const getDaysUntilStart = () => {
+    const now = new Date();
+    const startDate = new Date(2025, 7, 1); // August 1st, 2025
+    const timeDiff = startDate.getTime() - now.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysDiff > 0 ? daysDiff : 0;
+  };
+
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case "active":
@@ -167,37 +203,56 @@ export default function EducationPage() {
               <AcademicCapIcon className="w-6 h-6 text-primary" />
               Current Studies
             </h2>
-            <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20">
-              <CardHeader>
+            <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg">
+              <CardHeader className="pb-3">
                 <div className="flex items-start justify-between w-full">
-                  <div>
-                    <h3 className="text-xl font-semibold">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-1">
                       {currentProgram.degree}
                     </h3>
-                    <p className="text-lg text-primary font-medium">
+                    <p className="text-lg text-primary font-medium mb-2">
                       {currentProgram.name}
                     </p>
-                    <div className="flex items-center gap-2 mt-2">
+                    <div className="flex items-center gap-2">
                       <BuildingOfficeIcon className="w-4 h-4 text-default-500" />
                       <span className="text-default-600">
                         {currentProgram.institution}
                       </span>
                     </div>
+                    {currentProgram.accreditation && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <TrophyIcon className="w-4 h-4 text-default-500" />
+                        <span className="text-sm text-default-600">
+                          {currentProgram.accreditation}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <Chip
-                    size="sm"
-                    color="success"
-                    variant="flat"
-                    startContent={<BookmarkIcon className="w-3 h-3" />}
-                  >
-                    Year {currentProgram.currentYear} of{" "}
-                    {currentProgram.totalYears}
-                  </Chip>
+                  <div className="flex flex-col items-end gap-2">
+                    <Chip
+                      size="sm"
+                      color={
+                        getCurrentAcademicYear() === 0 ? "warning" : "success"
+                      }
+                      variant="flat"
+                      startContent={<BookmarkIcon className="w-3 h-3" />}
+                      className="font-medium"
+                    >
+                      {getCurrentAcademicYear() === 0
+                        ? "Starting Soon"
+                        : `Year ${getCurrentAcademicYear()} of ${currentProgram.totalYears}`}
+                    </Chip>
+                    <div className="text-xs text-default-500">
+                      {getCurrentAcademicYear() === 0
+                        ? "Upcoming"
+                        : currentProgram.status}
+                    </div>
+                  </div>
                 </div>
               </CardHeader>
               <CardBody>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="md:col-span-2">
                     <p className="text-default-700 mb-4">
                       {currentProgram.description}
                     </p>
@@ -224,37 +279,100 @@ export default function EducationPage() {
                     </div>
                   </div>
                   <div>
-                    <div className="mb-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm font-medium">Progress</span>
-                        <span className="text-sm text-default-600">
-                          {Math.round(
-                            (currentProgram.currentYear /
-                              currentProgram.totalYears) *
-                              100,
-                          )}
-                          %
+                    <div className="mb-6">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-sm font-semibold">
+                          Academic Progress
+                        </span>
+                        <span className="text-sm text-default-600 font-medium">
+                          {Math.round(getActualProgress(currentProgram))}%
                         </span>
                       </div>
                       <Progress
-                        value={
-                          (currentProgram.currentYear /
-                            currentProgram.totalYears) *
-                          100
-                        }
+                        value={getActualProgress(currentProgram)}
                         color="primary"
                         className="max-w-md"
+                        size="lg"
+                        showValueLabel={false}
                       />
+                      <div className="flex justify-between text-xs text-default-500 mt-1">
+                        <span>Started</span>
+                        <span>Expected Completion</span>
+                      </div>
+                      {getActualProgress(currentProgram) === 0 && (
+                        <div className="mt-3 p-3 bg-warning-50 border border-warning-200 rounded-lg">
+                          <div className="flex items-center gap-2 text-warning-700">
+                            <ClockIcon className="w-4 h-4" />
+                            <div>
+                              <div className="font-medium">
+                                Course begins August 2025
+                              </div>
+                              <div className="text-xs">
+                                {getDaysUntilStart() > 0
+                                  ? `${getDaysUntilStart()} days to go`
+                                  : "Starting soon!"}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <Button
-                      as={Link}
-                      href="/degree"
-                      color="primary"
-                      variant="flat"
-                      endContent={<ChevronRightIcon className="w-4 h-4" />}
-                    >
-                      View Detailed Progress
-                    </Button>
+
+                    {/* Quick Stats */}
+                    <div className="bg-default-50 p-4 rounded-lg mb-4">
+                      <h4 className="text-sm font-semibold mb-3">
+                        Quick Stats
+                      </h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-default-600">Duration</span>
+                          <span className="font-medium">
+                            {currentProgram.totalYears} years
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-default-600">
+                            Current Courses
+                          </span>
+                          <span className="font-medium">
+                            {currentCourses.length}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-default-600">
+                            Total Credits
+                          </span>
+                          <span className="font-medium">
+                            {courses.reduce(
+                              (total, course) => total + course.credits,
+                              0,
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <Button
+                        as={Link}
+                        href="/degree"
+                        color="primary"
+                        variant="flat"
+                        endContent={<ChevronRightIcon className="w-4 h-4" />}
+                        className="font-medium"
+                      >
+                        View Detailed Progress
+                      </Button>
+                      <Button
+                        as={Link}
+                        href="/skills"
+                        variant="bordered"
+                        endContent={<ChevronRightIcon className="w-4 h-4" />}
+                        className="font-medium"
+                      >
+                        Academic Skills
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardBody>
@@ -263,8 +381,8 @@ export default function EducationPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Current Courses */}
-          {currentCourses.length > 0 && (
+          {/* Current Courses or Upcoming Courses */}
+          {currentCourses.length > 0 ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -274,38 +392,107 @@ export default function EducationPage() {
                 <BookOpenIcon className="w-5 h-5 text-success" />
                 Current Courses
               </h2>
-              <div className="space-y-3">
-                {currentCourses.map((course) => (
-                  <Card
+              <div className="space-y-4">
+                {currentCourses.map((course, index) => (
+                  <motion.div
                     key={course.id}
-                    className="hover:shadow-md transition-shadow"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    <CardBody className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold">{course.title}</h3>
-                          <p className="text-sm text-default-600">
-                            {course.code}
-                          </p>
-                          <div className="flex items-center gap-4 mt-2 text-xs text-default-500">
-                            <span>{course.credits} credits</span>
-                            <span>
-                              {course.semester} {course.year}
-                            </span>
+                    <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-default-200 hover:border-primary/30">
+                      <CardBody className="p-5">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg mb-1">
+                              {course.title}
+                            </h3>
+                            <p className="text-sm text-primary font-medium mb-1">
+                              {course.code}
+                            </p>
+                            {course.description && (
+                              <p className="text-sm text-default-600 mb-3 line-clamp-2">
+                                {course.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-4 text-xs text-default-500">
+                              <div className="flex items-center gap-1">
+                                <TrophyIcon className="w-3 h-3" />
+                                <span>{course.credits} credits</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <CalendarIcon className="w-3 h-3" />
+                                <span>
+                                  {course.semester} {course.year}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <Chip
+                              size="sm"
+                              color={getStatusColor(course.status)}
+                              variant="flat"
+                              className="font-medium"
+                            >
+                              {course.status}
+                            </Chip>
+                            {course.grade && (
+                              <div className="text-xs text-default-500">
+                                Grade: {course.grade}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <Chip
-                          size="sm"
-                          color={getStatusColor(course.status)}
-                          variant="flat"
-                        >
-                          {course.status}
-                        </Chip>
-                      </div>
-                    </CardBody>
-                  </Card>
+                      </CardBody>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <BookOpenIcon className="w-5 h-5 text-warning" />
+                Upcoming Academic Journey
+              </h2>
+              <Card className="border border-warning-200 bg-warning-50/50">
+                <CardBody className="p-6">
+                  <div className="text-center">
+                    <AcademicCapIcon className="w-16 h-16 text-warning-600 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold mb-2">
+                      Ready to Begin
+                    </h3>
+                    <p className="text-default-600 mb-4">
+                      My academic journey in International Relations begins in
+                      August 2025. I'm preparing for an exciting exploration of
+                      global politics, economics, and diplomatic relations.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <GlobeAltIcon className="w-4 h-4 text-warning-600" />
+                        <span>Global Politics Focus</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <DocumentTextIcon className="w-4 h-4 text-warning-600" />
+                        <span>Research Methods</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <UserIcon className="w-4 h-4 text-warning-600" />
+                        <span>Diplomatic Studies</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <TrophyIcon className="w-4 h-4 text-warning-600" />
+                        <span>Honours Program</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
             </motion.div>
           )}
 
@@ -321,37 +508,133 @@ export default function EducationPage() {
                 Completed Programs
               </h2>
               <div className="space-y-4">
-                {completedPrograms.map((program) => (
-                  <Card
+                {completedPrograms.map((program, index) => (
+                  <motion.div
                     key={program.id}
-                    className="hover:shadow-md transition-shadow"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    <CardBody className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h3 className="font-semibold">{program.degree}</h3>
-                          <p className="text-primary font-medium">
-                            {program.name}
-                          </p>
-                          <p className="text-sm text-default-600 mt-1">
-                            {program.institution}
-                          </p>
-                          <div className="text-xs text-default-500 mt-2">
-                            {formatDate(program.startDate)} -{" "}
-                            {formatDate(program.expectedEnd)}
+                    <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-default-200 hover:border-primary/30">
+                      <CardBody className="p-5">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg mb-1">
+                              {program.degree}
+                            </h3>
+                            <p className="text-primary font-medium mb-1">
+                              {program.name}
+                            </p>
+                            <div className="flex items-center gap-2 mb-2">
+                              <BuildingOfficeIcon className="w-4 h-4 text-default-500" />
+                              <span className="text-sm text-default-600">
+                                {program.institution}
+                              </span>
+                            </div>
+                            {program.description && (
+                              <p className="text-sm text-default-600 mb-3 line-clamp-2">
+                                {program.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-4 text-xs text-default-500">
+                              <div className="flex items-center gap-1">
+                                <CalendarIcon className="w-3 h-3" />
+                                <span>
+                                  {formatDate(program.startDate)} -{" "}
+                                  {formatDate(program.expectedEnd)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <Chip
+                              size="sm"
+                              color="primary"
+                              variant="flat"
+                              startContent={<StarIcon className="w-3 h-3" />}
+                              className="font-medium"
+                            >
+                              Completed
+                            </Chip>
+                            {program.accreditation && (
+                              <div className="text-xs text-default-500">
+                                {program.accreditation}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <Chip
-                          size="sm"
-                          color="primary"
-                          variant="flat"
-                          startContent={<StarIcon className="w-3 h-3" />}
-                        >
-                          Completed
-                        </Chip>
-                      </div>
-                    </CardBody>
-                  </Card>
+                      </CardBody>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Planned Programs */}
+          {plannedPrograms.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+            >
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <ClockIcon className="w-5 h-5 text-warning" />
+                Future Studies
+              </h2>
+              <div className="space-y-4">
+                {plannedPrograms.map((program, index) => (
+                  <motion.div
+                    key={program.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-default-200 hover:border-warning/30">
+                      <CardBody className="p-5">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg mb-1">
+                              {program.degree}
+                            </h3>
+                            <p className="text-primary font-medium mb-1">
+                              {program.name}
+                            </p>
+                            <div className="flex items-center gap-2 mb-2">
+                              <BuildingOfficeIcon className="w-4 h-4 text-default-500" />
+                              <span className="text-sm text-default-600">
+                                {program.institution}
+                              </span>
+                            </div>
+                            {program.description && (
+                              <p className="text-sm text-default-600 mb-3 line-clamp-2">
+                                {program.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-4 text-xs text-default-500">
+                              <div className="flex items-center gap-1">
+                                <CalendarIcon className="w-3 h-3" />
+                                <span>
+                                  Expected: {formatDate(program.startDate)}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <Chip
+                              size="sm"
+                              color="warning"
+                              variant="flat"
+                              startContent={<ClockIcon className="w-3 h-3" />}
+                              className="font-medium"
+                            >
+                              Planned
+                            </Chip>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -367,40 +650,69 @@ export default function EducationPage() {
         >
           <h2 className="text-xl font-semibold mb-6">Academic Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/10">
-              <CardBody className="p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600">
-                  {programs.length}
-                </div>
-                <div className="text-sm text-default-600">Total Programs</div>
-              </CardBody>
-            </Card>
-            <Card className="bg-gradient-to-r from-green-500/10 to-green-600/10">
-              <CardBody className="p-4 text-center">
-                <div className="text-2xl font-bold text-green-600">
-                  {completedCourses.length}
-                </div>
-                <div className="text-sm text-default-600">
-                  Courses Completed
-                </div>
-              </CardBody>
-            </Card>
-            <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10">
-              <CardBody className="p-4 text-center">
-                <div className="text-2xl font-bold text-purple-600">
-                  {currentCourses.length}
-                </div>
-                <div className="text-sm text-default-600">Current Courses</div>
-              </CardBody>
-            </Card>
-            <Card className="bg-gradient-to-r from-orange-500/10 to-orange-600/10">
-              <CardBody className="p-4 text-center">
-                <div className="text-2xl font-bold text-orange-600">
-                  {courses.reduce((total, course) => total + course.credits, 0)}
-                </div>
-                <div className="text-sm text-default-600">Total Credits</div>
-              </CardBody>
-            </Card>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300">
+                <CardBody className="p-6 text-center">
+                  <div className="text-3xl font-bold text-blue-600 mb-1">
+                    {programs.length}
+                  </div>
+                  <div className="text-sm text-default-600 font-medium">
+                    Total Programs
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
+                <CardBody className="p-6 text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-1">
+                    {completedCourses.length}
+                  </div>
+                  <div className="text-sm text-default-600 font-medium">
+                    Courses Completed
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300">
+                <CardBody className="p-6 text-center">
+                  <div className="text-3xl font-bold text-purple-600 mb-1">
+                    {currentCourses.length}
+                  </div>
+                  <div className="text-sm text-default-600 font-medium">
+                    Current Courses
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Card className="bg-gradient-to-r from-orange-500/10 to-orange-600/10 border border-orange-500/20 hover:border-orange-500/40 transition-all duration-300">
+                <CardBody className="p-6 text-center">
+                  <div className="text-3xl font-bold text-orange-600 mb-1">
+                    {courses.reduce(
+                      (total, course) => total + course.credits,
+                      0,
+                    )}
+                  </div>
+                  <div className="text-sm text-default-600 font-medium">
+                    Total Credits
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -411,32 +723,49 @@ export default function EducationPage() {
           transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-12 text-center"
         >
-          <Card className="bg-gradient-to-r from-primary/5 to-secondary/5">
-            <CardBody className="p-8">
-              <h3 className="text-xl font-semibold mb-2">
-                Want to know more about my academic journey?
-              </h3>
-              <p className="text-default-600 mb-4">
-                Explore my detailed degree progress, course assessments, and
-                academic skills.
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button
-                  as={Link}
-                  href="/degree"
-                  color="primary"
-                  endContent={<ChevronRightIcon className="w-4 h-4" />}
+          <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/10 hover:border-primary/20 transition-all duration-300">
+            <CardBody className="p-10">
+              <div className="mb-4">
+                <AcademicCapIcon className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="text-2xl font-semibold mb-3">
+                  Want to know more about my academic journey?
+                </h3>
+                <p className="text-default-600 text-lg mb-6 max-w-2xl mx-auto">
+                  Explore my detailed degree progress, course assessments, and
+                  academic skills development throughout my educational journey.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  View Degree Details
-                </Button>
-                <Button
-                  as={Link}
-                  href="/skills"
-                  variant="bordered"
-                  endContent={<ChevronRightIcon className="w-4 h-4" />}
+                  <Button
+                    as={Link}
+                    href="/degree"
+                    color="primary"
+                    size="lg"
+                    endContent={<ChevronRightIcon className="w-5 h-5" />}
+                    className="font-semibold px-8"
+                  >
+                    View Degree Details
+                  </Button>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Technical Skills
-                </Button>
+                  <Button
+                    as={Link}
+                    href="/skills"
+                    variant="bordered"
+                    size="lg"
+                    endContent={<ChevronRightIcon className="w-5 h-5" />}
+                    className="font-semibold px-8"
+                  >
+                    Technical Skills
+                  </Button>
+                </motion.div>
               </div>
             </CardBody>
           </Card>

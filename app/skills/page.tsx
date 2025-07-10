@@ -141,9 +141,10 @@ export default function SkillsPage() {
 
   const groupSkillsByCategory = (skills: SkillItem[]): SkillCategory[] => {
     // Filter out academic skills if education is not visible
-    const filteredSkills = isEducationVisible
-      ? skills
-      : skills.filter((skill) => skill.category !== "ACADEMIC");
+    const filteredSkills =
+      isEducationVisible === true
+        ? skills
+        : skills.filter((skill) => skill.category !== "ACADEMIC");
 
     const grouped = filteredSkills.reduce(
       (acc: Record<string, SkillItem[]>, skill) => {

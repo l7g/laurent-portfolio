@@ -1523,7 +1523,7 @@ export default function AdminDashboard() {
           onClose={() => setEditingCourse(null)}
           course={editingCourse}
           onSave={handleCourseSave}
-          academic_programss={programs}
+          academic_programs={programs}
         />
       )}
     </div>

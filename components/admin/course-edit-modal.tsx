@@ -64,7 +64,7 @@ interface CourseEditModalProps {
   onClose: () => void;
   course?: Course;
   onSave: (courseData: Course) => void;
-  academic_programss: any[];
+  academic_programs: any[];
 }
 
 const courseStatuses = [
@@ -168,7 +168,7 @@ export default function CourseEditModal({
   onClose,
   course,
   onSave,
-  academic_programss,
+  academic_programs,
 }: CourseEditModalProps) {
   const [formData, setFormData] = useState<Course>({
     code: "",
@@ -236,7 +236,7 @@ export default function CourseEditModal({
         title: "",
         description: "",
         credits: 15,
-        programId: academic_programss[0]?.id || "",
+        programId: academic_programs[0]?.id || "",
         year: 1,
         semester: "Fall",
         objectives: [],
@@ -258,7 +258,7 @@ export default function CourseEditModal({
         skillsDelivered: [],
       });
     }
-  }, [course, academic_programss]);
+  }, [course, academic_programs]);
 
   const handleSubmit = async () => {
     if (!formData.title || !formData.code) {
@@ -416,7 +416,7 @@ export default function CourseEditModal({
                       }
                     >
                       <option value="">Select Program</option>
-                      {academic_programss.map((program) => (
+                      {academic_programs.map((program: any) => (
                         <option key={program.id} value={program.id}>
                           {program.name}
                         </option>

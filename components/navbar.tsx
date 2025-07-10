@@ -30,16 +30,16 @@ export const Navbar = () => {
 
   // Filter navigation items based on education visibility
   const filteredNavItems = siteConfig.navItems.filter((item) => {
-    // Only hide Education, keep Skills always visible
-    if (!isEducationVisible && item.href === "/education") {
+    // Only hide Education when explicitly false, keep Skills always visible
+    if (isEducationVisible === false && item.href === "/education") {
       return false;
     }
     return true;
   });
 
   const filteredNavMenuItems = siteConfig.navMenuItems.filter((item) => {
-    // Only hide Education, keep Skills always visible
-    if (!isEducationVisible && item.href === "/education") {
+    // Only hide Education when explicitly false, keep Skills always visible
+    if (isEducationVisible === false && item.href === "/education") {
       return false;
     }
     return true;

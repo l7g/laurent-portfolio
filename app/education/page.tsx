@@ -61,7 +61,7 @@ export default function EducationPage() {
 
   // Redirect if education is not visible
   useEffect(() => {
-    if (!visibilityLoading && !isEducationVisible) {
+    if (!visibilityLoading && isEducationVisible === false) {
       router.push("/");
     }
   }, [isEducationVisible, visibilityLoading, router]);
@@ -185,7 +185,7 @@ export default function EducationPage() {
   }
 
   // Don't render anything if education is not visible
-  if (visibilityLoading || !isEducationVisible) {
+  if (visibilityLoading || isEducationVisible === false) {
     return null;
   }
 

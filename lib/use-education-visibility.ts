@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 
 export function useEducationVisibility() {
-  const [isEducationVisible, setIsEducationVisible] = useState<boolean>(true);
+  const [isEducationVisible, setIsEducationVisible] = useState<
+    boolean | undefined
+  >(undefined);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,10 +15,13 @@ export function useEducationVisibility() {
           const settingsData = result.data || {};
           const educationValue = settingsData.show_education;
 
-          // Handle boolean values properly
-          setIsEducationVisible(
-            educationValue === true || educationValue === "true",
-          );
+          // Handle boolean values properly - default to true if not set
+          const isVisible =
+            educationValue === undefined
+              ? true
+              : educationValue === true || educationValue === "true";
+
+          setIsEducationVisible(isVisible);
         } else {
           // Default to true if setting doesn't exist
           setIsEducationVisible(true);

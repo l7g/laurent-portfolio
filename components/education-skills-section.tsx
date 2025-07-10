@@ -6,6 +6,7 @@ import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import LoadingSkeleton from "./loading-skeleton";
 import {
   CodeBracketIcon,
   CircleStackIcon,
@@ -367,13 +368,7 @@ const EducationSkillsSection = ({
   }, []);
 
   if (loading) {
-    return (
-      <section className="py-20 bg-default-50/50" id="education-skills">
-        <div className="container mx-auto px-6 text-center">
-          <div className="animate-pulse">Loading education & skills...</div>
-        </div>
-      </section>
-    );
+    return <LoadingSkeleton type="education" className="bg-default-50/50" />;
   }
 
   return (

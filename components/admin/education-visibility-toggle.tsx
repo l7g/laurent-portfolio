@@ -48,8 +48,8 @@ export default function EducationVisibilityToggle() {
     setStatus("idle");
 
     try {
-      // First try to update the existing setting
-      let response = await fetch("/api/settings/show_education", {
+      // Use PUT which now handles upsert automatically
+      const response = await fetch("/api/settings/show_education", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -57,27 +57,11 @@ export default function EducationVisibilityToggle() {
         body: JSON.stringify({
           value: value.toString(),
           type: "boolean",
+          description:
+            "Controls whether education-related content is visible on the site",
           isPublic: true,
         }),
       });
-
-      // If the setting doesn't exist (404), create it
-      if (response.status === 404) {
-        response = await fetch("/api/settings", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            key: "show_education",
-            value: value.toString(),
-            type: "boolean",
-            description:
-              "Controls whether education-related content is visible on the site",
-            isPublic: true,
-          }),
-        });
-      }
 
       if (response.ok) {
         setIsEducationVisible(value);

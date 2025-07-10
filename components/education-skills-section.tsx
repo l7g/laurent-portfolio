@@ -158,7 +158,9 @@ const EducationSkillsSection = ({
   const isAcademicSkill = (categoryTitle: string) => {
     return (
       categoryTitle === "International Relations" ||
-      categoryTitle === "Academic Skills"
+      categoryTitle === "Academic Skills" ||
+      categoryTitle === "Analytical Skills" ||
+      categoryTitle === "Communication Skills"
     );
   };
 
@@ -284,8 +286,13 @@ const EducationSkillsSection = ({
             const displayCategory =
               categoryMapping[skill.category] || skill.category;
 
-            // Skip academic skills since we show them separately
-            if (isAcademicSkill(displayCategory)) {
+            // Skip academic skills if education is not visible
+            if (skill.category === "ACADEMIC" && !isEducationVisible) {
+              return;
+            }
+
+            // Skip academic skills since we show them separately (only when education is visible)
+            if (isAcademicSkill(displayCategory) && isEducationVisible) {
               return;
             }
 
@@ -322,8 +329,13 @@ const EducationSkillsSection = ({
               const skillData = skill_progressionsData[skillName];
               const categoryName = skillData.category;
 
-              // Skip academic skills since we show them separately
-              if (isAcademicSkill(categoryName)) {
+              // Skip academic skills if education is not visible
+              if (isAcademicSkill(categoryName) && !isEducationVisible) {
+                return;
+              }
+
+              // Skip academic skills since we show them separately (only when education is visible)
+              if (isAcademicSkill(categoryName) && isEducationVisible) {
                 return;
               }
 

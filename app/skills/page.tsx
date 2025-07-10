@@ -97,6 +97,11 @@ const categoryConfig: Record<
     icon: PaintBrushIcon,
     color: "danger",
   },
+  ACADEMIC: {
+    title: "Academic Skills",
+    icon: GlobeAltIcon,
+    color: "default",
+  },
   OTHER: {
     title: "Other Technologies",
     icon: CogIcon,
@@ -135,14 +140,22 @@ export default function SkillsPage() {
   }, []);
 
   const groupSkillsByCategory = (skills: SkillItem[]): SkillCategory[] => {
-    const grouped = skills.reduce((acc: Record<string, SkillItem[]>, skill) => {
-      const category = skill.category;
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(skill);
-      return acc;
-    }, {});
+    // Filter out academic skills if education is not visible
+    const filteredSkills = isEducationVisible
+      ? skills
+      : skills.filter((skill) => skill.category !== "ACADEMIC");
+
+    const grouped = filteredSkills.reduce(
+      (acc: Record<string, SkillItem[]>, skill) => {
+        const category = skill.category;
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(skill);
+        return acc;
+      },
+      {},
+    );
 
     return Object.entries(grouped).map(([category, skills]) => ({
       title: categoryConfig[category]?.title || category,

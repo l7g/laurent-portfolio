@@ -12,6 +12,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Validate that user ID exists in session
+    if (!session.user?.id) {
+      return NextResponse.json(
+        { error: "Invalid session. Please log in again." },
+        { status: 401 },
+      );
+    }
+
     const {
       title,
       slug,
@@ -53,25 +61,26 @@ export async function POST(request: NextRequest) {
         { error: "A post with this slug already exists" },
         { status: 409 },
       );
-    } // Find existing user by email first, since database might have changed
+    } // Validate that user email exists in session
+    if (!session.user?.email) {
+      return NextResponse.json(
+        { error: "Invalid session. Please log in again." },
+        { status: 401 },
+      );
+    }
+
+    // Find existing user by email first, since database might have changed
     let authorUser = await prisma.users.findUnique({
-      where: { email: session.user.email! },
+      where: { email: session.user.email },
     });
 
     if (!authorUser) {
-      // Create admin user if it doesn't exist
-      authorUser = await prisma.users.create({
-        data: {
-          id: session.user.id,
-          name: session.user.name || "Admin",
-          email: session.user.email || "admin@example.com",
-          password: "temp-password", // This should be properly hashed in production
-          role: "ADMIN",
-          isActive: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      });
+      // If user doesn't exist in database, this is a security issue
+      // Admin users should be properly created through the auth system
+      return NextResponse.json(
+        { error: "User account not found. Please contact an administrator." },
+        { status: 403 },
+      );
     }
 
     const authorId = authorUser.id;
@@ -141,6 +150,14 @@ export async function GET(request: NextRequest) {
 
     if (!session || session.user?.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Validate that user ID exists in session
+    if (!session.user?.id) {
+      return NextResponse.json(
+        { error: "Invalid session. Please log in again." },
+        { status: 401 },
+      );
     }
 
     const { searchParams } = new URL(request.url);

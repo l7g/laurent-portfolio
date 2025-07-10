@@ -182,8 +182,7 @@ export default function RootLayout({
                 </div>
                 <div className="border-t border-default-200 mt-8 pt-8 text-center">
                   <p className="text-sm text-default-600">
-                    Â© 2025 Laurent&apos;s Portfolio. Built with{" "}
-                    <span className="text-primary">HeroUI</span> and Next.js
+                    © 2025 Laurent&apos;s Portfolio. Built with Next.js
                   </p>
                 </div>
               </div>

@@ -10,6 +10,7 @@ export async function POST(
 ) {
   try {
     const { slug } = await params;
+    const { action } = await request.json(); // 'like' or 'unlike'
     const session = await getServerSession(authOptions);
 
     // Find the post
@@ -28,17 +29,28 @@ export async function POST(
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    // For now, we'll increment the like count
-    // In a more sophisticated system, you'd track individual user likes
+    // Calculate new like count based on action
+    let newLikeCount;
+    if (action === "unlike") {
+      // Prevent negative likes
+      newLikeCount = Math.max(0, post.likes - 1);
+    } else {
+      // Default to like action
+      newLikeCount = post.likes + 1;
+    }
+
     const updatedPost = await prisma.blog_posts.update({
       where: { id: post.id },
       data: {
-        likes: post.likes + 1,
+        likes: newLikeCount,
       },
       select: { likes: true },
     });
 
-    return NextResponse.json({ likes: updatedPost.likes });
+    return NextResponse.json({
+      likes: updatedPost.likes,
+      action: action || "like",
+    });
   } catch (error) {
     console.error("Error handling like:", error);
     return NextResponse.json(

@@ -10,6 +10,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import StructuredData from "@/components/structured-data";
+import CookieNotice from "@/components/cookie-notice";
 
 export const metadata: Metadata = {
   title: {
@@ -184,11 +185,32 @@ export default function RootLayout({
                   <p className="text-sm text-default-600">
                     © 2025 Laurent&apos;s Portfolio. Built with Next.js
                   </p>
+                  <div className="flex justify-center space-x-4 mt-2">
+                    <Link
+                      href="/privacy"
+                      className="text-xs text-default-500 hover:text-primary"
+                    >
+                      Privacy Policy
+                    </Link>
+                    <Link
+                      href="/terms"
+                      className="text-xs text-default-500 hover:text-primary"
+                    >
+                      Terms of Service
+                    </Link>
+                    <Link
+                      href="/consent"
+                      className="text-xs text-default-500 hover:text-primary"
+                    >
+                      Cookie Preferences
+                    </Link>
+                  </div>
                 </div>
               </div>
             </footer>
           </div>
         </Providers>
+        <CookieNotice />
         <StructuredData />
         <Analytics />
       </body>

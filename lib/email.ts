@@ -87,6 +87,10 @@ export async function sendContactEmail(data: EmailData) {
             <p style="color: #666; font-size: 14px;">
               You can also reach me directly at: laurentgagne.dev@pm.me
             </p>
+            <p style="color: #666; font-size: 12px;">
+              Your contact information is stored securely and will only be used to respond to your inquiry. 
+              View our <a href="${process.env.NEXT_PUBLIC_APP_URL}/privacy" style="color: #f59e0b;">Privacy Policy</a> for more details.
+            </p>
           </div>
         </div>
       `,

@@ -21,6 +21,7 @@ import ReactMarkdown from "react-markdown";
 import { title, subtitle } from "@/components/primitives";
 import CommentsSystem from "@/components/blog/comments-system";
 import SocialShare from "@/components/blog/social-share";
+import { canUsePreferences } from "@/lib/consent";
 
 interface BlogPost {
   id: string;
@@ -73,7 +74,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
 
   // Check localStorage for like status when post is loaded
   useEffect(() => {
-    if (post?.id) {
+    if (post?.id && canUsePreferences()) {
       const hasLiked = localStorage.getItem(`liked_post_${post.id}`) === "true";
       setLiked(hasLiked);
     }
@@ -112,6 +113,14 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
 
   const handleLike = async () => {
     if (!post) return;
+
+    // Check if user has consented to preferences
+    if (!canUsePreferences()) {
+      alert(
+        "Please accept preferences in the cookie banner to use the like feature.",
+      );
+      return;
+    }
 
     const action = liked ? "unlike" : "like";
     const previousLiked = liked;

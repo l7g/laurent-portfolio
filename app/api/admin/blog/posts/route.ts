@@ -61,29 +61,10 @@ export async function POST(request: NextRequest) {
         { error: "A post with this slug already exists" },
         { status: 409 },
       );
-    } // Validate that user email exists in session
-    if (!session.user?.email) {
-      return NextResponse.json(
-        { error: "Invalid session. Please log in again." },
-        { status: 401 },
-      );
     }
 
-    // Find existing user by email first, since database might have changed
-    let authorUser = await prisma.users.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!authorUser) {
-      // If user doesn't exist in database, this is a security issue
-      // Admin users should be properly created through the auth system
-      return NextResponse.json(
-        { error: "User account not found. Please contact an administrator." },
-        { status: 403 },
-      );
-    }
-
-    const authorId = authorUser.id;
+    // Use the already validated session.user.id directly
+    const authorId = session.user.id;
 
     // Create the post
     const post = await prisma.blog_posts.create({

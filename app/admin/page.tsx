@@ -29,6 +29,11 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { title } from "@/components/primitives";
+import SettingsManager from "@/components/admin/settings-manager";
+import ProjectEditModal from "@/components/admin/project-edit-modal";
+import SkillEditModal from "@/components/admin/skill-edit-modal";
+import ProgramEditModal from "@/components/admin/program-edit-modal";
+import CourseEditModal from "@/components/admin/course-edit-modal";
 
 interface AdminStats {
   totalProjects: number;
@@ -66,6 +71,12 @@ export default function AdminDashboard() {
   const [skills, setSkills] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [programs, setPrograms] = useState<any[]>([]);
+
+  // Modal states
+  const [editingProject, setEditingProject] = useState<any>(null);
+  const [editingSkill, setEditingSkill] = useState<any>(null);
+  const [editingProgram, setEditingProgram] = useState<any>(null);
+  const [editingCourse, setEditingCourse] = useState<any>(null);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -262,6 +273,60 @@ export default function AdminDashboard() {
       } catch (error) {
         console.error("Error deleting item:", error);
       }
+    }
+  };
+
+  // Modal handlers
+  const handleProjectSave = async (updates: any) => {
+    try {
+      const response = await fetch(`/api/projects/${editingProject.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        const updatedProject = await response.json();
+        setProjects(
+          projects.map((p) =>
+            p.id === editingProject.id ? updatedProject : p,
+          ),
+        );
+        setEditingProject(null);
+        fetchDashboardData();
+      }
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
+  };
+
+  const handleSkillSave = async (skillId: string, updates: any) => {
+    try {
+      await handleSkillUpdate(skillId, updates);
+      setEditingSkill(null);
+      fetchDashboardData();
+    } catch (error) {
+      console.error("Error updating skill:", error);
+    }
+  };
+
+  const handleProgramSave = async (programId: string, updates: any) => {
+    try {
+      await handleEducationUpdate("program", programId, updates);
+      setEditingProgram(null);
+      fetchDashboardData();
+    } catch (error) {
+      console.error("Error updating program:", error);
+    }
+  };
+
+  const handleCourseSave = async (courseData: any) => {
+    try {
+      await handleEducationUpdate("course", courseData.id, courseData);
+      setEditingCourse(null);
+      fetchDashboardData();
+    } catch (error) {
+      console.error("Error updating course:", error);
     }
   };
 
@@ -772,6 +837,7 @@ export default function AdminDashboard() {
                               variant="flat"
                               color="warning"
                               isIconOnly
+                              onPress={() => setEditingSkill(skill)}
                             >
                               <PencilIcon className="w-4 h-4" />
                             </Button>
@@ -897,6 +963,7 @@ export default function AdminDashboard() {
                                 variant="flat"
                                 color="warning"
                                 isIconOnly
+                                onPress={() => setEditingProgram(program)}
                               >
                                 <PencilIcon className="w-4 h-4" />
                               </Button>
@@ -980,6 +1047,7 @@ export default function AdminDashboard() {
                                 variant="flat"
                                 color="warning"
                                 isIconOnly
+                                onPress={() => setEditingCourse(course)}
                               >
                                 <PencilIcon className="w-4 h-4" />
                               </Button>
@@ -1190,6 +1258,7 @@ export default function AdminDashboard() {
                             color="warning"
                             className="flex-1"
                             startContent={<PencilIcon className="w-4 h-4" />}
+                            onPress={() => setEditingProject(project)}
                           >
                             Edit
                           </Button>
@@ -1400,6 +1469,44 @@ export default function AdminDashboard() {
           )}
         </motion.div>
       </div>
+
+      {/* Edit Modals */}
+      {editingProject && (
+        <ProjectEditModal
+          isOpen={!!editingProject}
+          onClose={() => setEditingProject(null)}
+          project={editingProject}
+          onSave={handleProjectSave}
+        />
+      )}
+
+      {editingSkill && (
+        <SkillEditModal
+          isOpen={!!editingSkill}
+          onClose={() => setEditingSkill(null)}
+          skill={editingSkill}
+          onSave={handleSkillSave}
+        />
+      )}
+
+      {editingProgram && (
+        <ProgramEditModal
+          isOpen={!!editingProgram}
+          onClose={() => setEditingProgram(null)}
+          program={editingProgram}
+          onSave={handleProgramSave}
+        />
+      )}
+
+      {editingCourse && (
+        <CourseEditModal
+          isOpen={!!editingCourse}
+          onClose={() => setEditingCourse(null)}
+          course={editingCourse}
+          onSave={handleCourseSave}
+          academic_programss={programs}
+        />
+      )}
     </div>
   );
 }

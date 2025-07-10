@@ -74,7 +74,7 @@ interface BlogPost {
 export default function EditBlogPostPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -84,14 +84,7 @@ export default function EditBlogPostPage({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [tagInput, setTagInput] = useState("");
-  const [id, setId] = useState<string>("");
-
-  // Get the ID from params
-  useEffect(() => {
-    params.then((resolvedParams) => {
-      setId(resolvedParams.id);
-    });
-  }, [params]);
+  const id = params.id;
   const [postData, setPostData] = useState<PostData>({
     title: "",
     slug: "",

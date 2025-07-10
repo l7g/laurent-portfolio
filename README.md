@@ -1,21 +1,32 @@
-# Portfolio Website
+# Modern Portfolio Website
 
-A modern personal portfolio website built with Next.js 15 and TypeScript, showcasing development projects, skills, and academic journey.
+A professional portfolio website built with Next.js 15, featuring a comprehensive blog system, admin panel, and responsive design. Perfect for developers, designers, and professionals looking to showcase their work.
 
-## Live Demo
+## ✨ Features
 
-Visit the live site: [laurentgagne.com](https://laurentgagne.com)
+### Core Features
 
-## Features
+- 📱 **Fully Responsive** - Optimized for desktop, tablet, and mobile
+- 🎨 **Modern UI/UX** - Clean design with smooth animations
+- 🌙 **Dark/Light Theme** - Automatic theme switching support
+- 📧 **Contact System** - Integrated contact form with email notifications
+- 🚀 **Fast Performance** - Built with Next.js 15 App Router
 
-- Responsive design optimized for all devices
-- Contact form with email notifications
-- Project showcase with detailed descriptions
-- Education and skills tracking
-- Blog system with admin panel
-- Database integration for content management
-- Light/dark theme support
-- Smooth animations and transitions
+### Content Management
+
+- 📝 **Blog System** - Full-featured blog with rich text editor
+- 🏷️ **Categories & Series** - Organize content with visual selectors
+- 👨‍💼 **Admin Panel** - Complete admin interface for content management
+- 🎓 **Education Tracking** - Academic achievements and course progress
+- 💼 **Project Showcase** - Interactive project gallery
+- 🛠️ **Skills Management** - Dynamic skills display with categories
+
+### Technical Features
+
+- 🔐 **Authentication** - Secure admin access with NextAuth.js
+- 🗃️ **Database Integration** - PostgreSQL with Prisma ORM
+- 📁 **File Management** - Image upload and storage system
+- 🔍 **SEO Optimized** - Meta tags, sitemap, and structured data
 
 ## Tech Stack
 
@@ -82,23 +93,48 @@ Visit the live site: [laurentgagne.com](https://laurentgagne.com)
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 portfolio/
-├── app/                    # Next.js 15 app directory
-│   ├── api/               # API routes
-│   ├── education/         # Education page
-│   ├── projects/          # Projects showcase
-│   ├── blog/              # Blog system
-│   ├── admin/             # Admin dashboard
-│   └── degree/            # Academic details
-├── components/            # Reusable React components
-├── lib/                   # Utility functions and configurations
-├── prisma/                # Database schema and seeds
-├── public/                # Static assets
-└── config/                # Site configuration
+├── app/                     # Next.js 15 App Router
+│   ├── admin/              # Admin panel pages
+│   │   ├── blog/           # Blog management
+│   │   └── projects/       # Project management
+│   ├── api/                # API routes
+│   │   ├── auth/           # Authentication endpoints
+│   │   ├── blog/           # Blog API
+│   │   └── contact/        # Contact form API
+│   ├── blog/               # Public blog pages
+│   ├── projects/           # Project showcase pages
+│   └── (other pages)       # Home, contact, education, etc.
+├── components/             # Reusable React components
+│   ├── admin/              # Admin-specific components
+│   │   ├── category-selector.tsx
+│   │   ├── series-selector.tsx
+│   │   └── rich-text-editor.tsx
+│   └── (ui components)     # Public UI components
+├── lib/                    # Utility functions and configurations
+├── prisma/                 # Database schema and migrations
+├── public/                 # Static assets
+├── scripts/                # Database and setup scripts
+├── styles/                 # Global styles
+└── types/                  # TypeScript type definitions
 ```
+
+│ ├── api/ # API routes
+│ ├── education/ # Education page
+│ ├── projects/ # Projects showcase
+│ ├── blog/ # Blog system
+│ ├── admin/ # Admin dashboard
+│ └── degree/ # Academic details
+├── components/ # Reusable React components
+├── lib/ # Utility functions and configurations
+├── prisma/ # Database schema and seeds
+├── public/ # Static assets
+└── config/ # Site configuration
+
+````
 
 ## Key Features
 
@@ -158,6 +194,54 @@ Ensure all environment variables are configured in your production environment:
 - Email service credentials
 - Authentication secrets
 - File storage configuration
+
+## 🛠️ Admin Features
+
+### Blog Management
+- **Rich Text Editor** - Full WYSIWYG editor with formatting options
+- **Category System** - Visual category selector with icons and colors
+- **Series Organization** - Group related posts with difficulty levels
+- **SEO Optimization** - Meta descriptions and slug management
+
+### Content Management
+- **Project Showcase** - Add/edit projects with images and technologies
+- **Skills Management** - Organize skills by categories
+- **Education Tracking** - Academic programs and course progress
+- **Settings Panel** - Toggle visibility and manage content
+
+### Security
+- **Admin Authentication** - Secure login system
+- **Protected Routes** - Admin-only access to management features
+- **Input Validation** - Comprehensive form validation and sanitization
+
+## 🎨 Customization
+
+### Theming
+The project uses HeroUI with Tailwind CSS for easy customization:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: [/* ... */],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          // Your brand colors
+        }
+      }
+    }
+  }
+}
+````
+
+### Components
+
+All components are modular and can be easily customized:
+
+- `components/` - Reusable UI components
+- `styles/globals.css` - Global styles and CSS variables
+- `config/site.ts` - Site configuration and metadata
 
 ## Contributing
 

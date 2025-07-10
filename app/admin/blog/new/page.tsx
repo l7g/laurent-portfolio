@@ -17,12 +17,16 @@ import Link from "next/link";
 import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import CategorySelector from "@/components/admin/category-selector";
+import SeriesSelector from "@/components/admin/series-selector";
 
 interface BlogCategory {
   id: string;
   name: string;
+  slug: string;
   color: string;
   icon: string;
+  description?: string;
 }
 
 interface BlogSeries {
@@ -31,7 +35,7 @@ interface BlogSeries {
   slug: string;
   description?: string;
   color: string;
-  icon?: string;
+  icon: string;
   difficulty?: string;
   _count: {
     blog_posts: number;
@@ -93,6 +97,64 @@ export default function NewBlogPostPage() {
       }
     } catch (error) {
       console.error("Failed to fetch categories and series:", error);
+    }
+  };
+
+  const createNewCategory = async (categoryData: Omit<BlogCategory, "id">) => {
+    try {
+      const response = await fetch("/api/admin/blog/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...categoryData,
+          isActive: true,
+          sortOrder: categories.length,
+        }),
+      });
+
+      if (response.ok) {
+        const newCategory = await response.json();
+        setCategories((prev) => [...prev, newCategory]);
+        return newCategory;
+      } else {
+        throw new Error("Failed to create category");
+      }
+    } catch (error) {
+      console.error("Error creating category:", error);
+      throw error;
+    }
+  };
+
+  const createNewSeries = async (
+    seriesData: Omit<BlogSeries, "id" | "_count">,
+  ) => {
+    try {
+      const response = await fetch("/api/admin/blog/series", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...seriesData,
+          isActive: true,
+          sortOrder: series.length,
+          tags: [],
+        }),
+      });
+
+      if (response.ok) {
+        const newSeries = await response.json();
+        const seriesWithCount = { ...newSeries, _count: { blog_posts: 0 } };
+        setSeries((prev) => [...prev, seriesWithCount]);
+        return seriesWithCount;
+      } else {
+        throw new Error("Failed to create series");
+      }
+    } catch (error) {
+      console.error("Error creating series:", error);
+      throw error;
     }
   };
 
@@ -345,20 +407,14 @@ export default function NewBlogPostPage() {
                   <h3 className="text-lg font-semibold">Category</h3>
                 </CardHeader>
                 <CardBody>
-                  <select
+                  <CategorySelector
                     value={postData.categoryId}
-                    onChange={(e) =>
-                      handleInputChange("categoryId", e.target.value)
+                    onChange={(value: string) =>
+                      handleInputChange("categoryId", value)
                     }
-                    className="w-full p-3 border border-default-200 rounded-lg"
-                  >
-                    <option value="">Select a category</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.icon} {category.name}
-                      </option>
-                    ))}
-                  </select>
+                    categories={categories}
+                    onCreateCategory={createNewCategory}
+                  />
                 </CardBody>
               </Card>
             </motion.div>
@@ -377,21 +433,14 @@ export default function NewBlogPostPage() {
                   </p>
                 </CardHeader>
                 <CardBody className="space-y-4">
-                  <select
+                  <SeriesSelector
                     value={postData.seriesId}
-                    onChange={(e) =>
-                      handleInputChange("seriesId", e.target.value)
+                    onChange={(value: string) =>
+                      handleInputChange("seriesId", value)
                     }
-                    className="w-full p-3 border border-default-200 rounded-lg"
-                  >
-                    <option value="">No series</option>
-                    {series.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.icon} {s.title} ({s._count.blog_posts} posts)
-                        {s.difficulty && ` - ${s.difficulty}`}
-                      </option>
-                    ))}
-                  </select>
+                    series={series}
+                    onCreateSeries={createNewSeries}
+                  />
 
                   {postData.seriesId && (
                     <div>

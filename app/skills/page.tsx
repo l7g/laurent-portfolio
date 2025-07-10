@@ -31,6 +31,7 @@ import {
   SiMysql,
 } from "react-icons/si";
 import { title } from "@/components/primitives";
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface SkillItem {
   id: string;
@@ -104,6 +105,7 @@ const categoryConfig: Record<
 };
 
 export default function SkillsPage() {
+  const { isEducationVisible } = useEducationVisibility();
   const [skills, setSkills] = useState<SkillItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -35,6 +35,7 @@ import {
   SiMysql,
 } from "react-icons/si";
 import CompactAcademicSkills from "./compact-academic-skills";
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface SkillItem {
   name: string;
@@ -92,11 +93,26 @@ const EducationSkillsSection = ({
   showCertifications = true,
   layout = "combined",
 }: EducationSkillsSectionProps) => {
+  const { isEducationVisible } = useEducationVisibility();
   const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [academic_programs, setacademic_programs] =
     useState<academic_programs | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Override education-related props based on visibility toggle
+  const effectiveShowAcademicProgress =
+    isEducationVisible && showAcademicProgress;
+  const effectiveShowCertifications = isEducationVisible && showCertifications;
+
+  // Update title and description when education is hidden
+  const effectiveTitle = isEducationVisible ? title : "Technical Skills";
+  const effectiveSubtitle = isEducationVisible
+    ? subtitle
+    : "Technical Expertise";
+  const effectiveDescription = isEducationVisible
+    ? description
+    : "Technical skills and proficiency across various technologies and tools.";
 
   // Helper function to get color for category
   const getColorForCategory = (categoryTitle: string) => {
@@ -382,18 +398,18 @@ const EducationSkillsSection = ({
           whileInView={{ opacity: 1, y: 0 }}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            {title.split(" ")[0]}{" "}
+            {effectiveTitle.split(" ")[0]}{" "}
             <span className="text-primary">
-              {title.split(" ").slice(1).join(" ")}
+              {effectiveTitle.split(" ").slice(1).join(" ")}
             </span>
           </h2>
           <p className="text-xl text-default-600 max-w-3xl mx-auto mb-8">
-            {description}
+            {effectiveDescription}
           </p>
         </motion.div>
 
         {/* Academic Progress Section */}
-        {showAcademicProgress && academic_programs && (
+        {effectiveShowAcademicProgress && academic_programs && (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -496,7 +512,7 @@ const EducationSkillsSection = ({
         )}
 
         {/* Academic Skills - Most Relevant */}
-        {showAcademicProgress && (
+        {effectiveShowAcademicProgress && (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}

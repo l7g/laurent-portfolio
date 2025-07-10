@@ -34,6 +34,7 @@ import ProjectEditModal from "@/components/admin/project-edit-modal";
 import SkillEditModal from "@/components/admin/skill-edit-modal";
 import ProgramEditModal from "@/components/admin/program-edit-modal";
 import CourseEditModal from "@/components/admin/course-edit-modal";
+import EducationVisibilityToggle from "@/components/admin/education-visibility-toggle";
 
 interface AdminStats {
   totalProjects: number;
@@ -904,6 +905,24 @@ export default function AdminDashboard() {
                   </Button>
                 </div>
               </div>
+
+              {/* Education Visibility Toggle */}
+              <Card className="border border-warning-200 bg-warning-50/50">
+                <CardBody>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground">
+                        Education Section Visibility
+                      </h3>
+                      <p className="text-sm text-default-600 mt-1">
+                        Control whether education content appears on your
+                        portfolio and in navigation
+                      </p>
+                    </div>
+                    <EducationVisibilityToggle />
+                  </div>
+                </CardBody>
+              </Card>
 
               {/* Programs Section */}
               <div className="space-y-4">

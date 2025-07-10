@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
@@ -21,6 +22,7 @@ import {
 import { BookmarkIcon, StarIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { title } from "@/components/primitives";
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface AcademicProgram {
   id: string;
@@ -50,9 +52,19 @@ interface Course {
 }
 
 export default function EducationPage() {
+  const router = useRouter();
+  const { isEducationVisible, loading: visibilityLoading } =
+    useEducationVisibility();
   const [programs, setPrograms] = useState<AcademicProgram[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Redirect if education is not visible
+  useEffect(() => {
+    if (!visibilityLoading && !isEducationVisible) {
+      router.push("/");
+    }
+  }, [isEducationVisible, visibilityLoading, router]);
 
   useEffect(() => {
     const fetchEducationData = async () => {
@@ -170,6 +182,11 @@ export default function EducationPage() {
         </div>
       </div>
     );
+  }
+
+  // Don't render anything if education is not visible
+  if (visibilityLoading || !isEducationVisible) {
+    return null;
   }
 
   return (

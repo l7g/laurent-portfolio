@@ -170,7 +170,6 @@ export default function NewBlogPostPage() {
       alert("Please fill in title, content, and category");
       return;
     }
-
     setSaving(true);
     try {
       const response = await fetch("/api/admin/blog/posts", {

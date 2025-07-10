@@ -71,12 +71,11 @@ interface BlogPost {
   series?: BlogSeries;
 }
 
-export default async function EditBlogPostPage({
+export default function EditBlogPostPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
   const router = useRouter();
   const { data: session, status } = useSession();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -85,6 +84,14 @@ export default async function EditBlogPostPage({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [tagInput, setTagInput] = useState("");
+  const [id, setId] = useState<string>("");
+
+  // Get the ID from params
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setId(resolvedParams.id);
+    });
+  }, [params]);
   const [postData, setPostData] = useState<PostData>({
     title: "",
     slug: "",
@@ -149,7 +156,9 @@ export default async function EditBlogPostPage({
 
   // All hooks must be at the top level
   useEffect(() => {
-    fetchData();
+    if (id) {
+      fetchData();
+    }
   }, [id]);
 
   // Handle authentication after all hooks

@@ -71,11 +71,18 @@ interface BlogPost {
   series?: BlogSeries;
 }
 
-export default function EditBlogPostPage({
+export default async function EditBlogPostPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
+
+  return <EditBlogPostClient id={id} />;
+}
+
+function EditBlogPostClient({ id }: { id: string }) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -84,7 +91,6 @@ export default function EditBlogPostPage({
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [tagInput, setTagInput] = useState("");
-  const id = params.id;
   const [postData, setPostData] = useState<PostData>({
     title: "",
     slug: "",

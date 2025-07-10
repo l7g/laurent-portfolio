@@ -46,6 +46,9 @@ interface AdminStats {
   totalViews: number;
   totalLikes: number;
   totalPrograms: number;
+  totalComments: number;
+  pendingComments: number;
+  approvedComments: number;
 }
 
 export default function AdminDashboard() {
@@ -63,6 +66,9 @@ export default function AdminDashboard() {
     totalViews: 0,
     totalLikes: 0,
     totalPrograms: 0,
+    totalComments: 0,
+    pendingComments: 0,
+    approvedComments: 0,
   });
 
   // Data states for each tab
@@ -98,6 +104,7 @@ export default function AdminDashboard() {
         skillsResponse,
         coursesResponse,
         programsResponse,
+        commentsResponse,
       ] = await Promise.all([
         fetch("/api/blog/posts"),
         fetch("/api/projects"),
@@ -105,6 +112,7 @@ export default function AdminDashboard() {
         fetch("/api/skills?admin=true"),
         fetch("/api/academic/courses?admin=true"),
         fetch("/api/academic/programs?admin=true"),
+        fetch("/api/admin/comments"),
       ]);
 
       const rawBlogData = blogResponse.ok ? await blogResponse.json() : {};
@@ -122,6 +130,9 @@ export default function AdminDashboard() {
       const programsData = programsResponse.ok
         ? await programsResponse.json()
         : [];
+      const commentsData = commentsResponse.ok
+        ? await commentsResponse.json()
+        : { comments: [], summary: { total: 0, approved: 0, pending: 0 } };
 
       // Ensure all data is arrays
       const safeBlogData = Array.isArray(blogData) ? blogData : [];
@@ -162,6 +173,9 @@ export default function AdminDashboard() {
         totalViews,
         totalLikes,
         totalPrograms: safeProgramsData.length,
+        totalComments: commentsData.summary?.total || 0,
+        approvedComments: commentsData.summary?.approved || 0,
+        pendingComments: commentsData.summary?.pending || 0,
       });
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -467,7 +481,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Quick Actions Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Blog Management */}
                 <Card>
                   <CardHeader className="pb-2">
@@ -512,6 +526,53 @@ export default function AdminDashboard() {
                       <Link href="/admin/blog/series">
                         <Button size="sm" variant="flat">
                           Series
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardBody>
+                </Card>
+
+                {/* Comments Management */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <ChatBubbleLeftRightIcon className="w-5 h-5" />
+                        Comments
+                      </h3>
+                      <Link href="/admin/blog/comments">
+                        <Button size="sm" variant="flat" color="primary">
+                          Manage All
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span>Pending Review</span>
+                        <span className="font-medium text-orange-600">
+                          {stats.pendingComments}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Approved</span>
+                        <span className="font-medium text-green-600">
+                          {stats.approvedComments}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Total Comments</span>
+                        <span className="font-medium">
+                          {stats.totalComments}
+                        </span>
+                      </div>
+                    </div>
+                    <Divider className="my-3" />
+                    <div className="flex gap-2">
+                      <Link href="/admin/blog/comments" className="flex-1">
+                        <Button size="sm" color="primary" className="w-full">
+                          Review Comments
                         </Button>
                       </Link>
                     </div>

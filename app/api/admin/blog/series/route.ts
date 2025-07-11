@@ -50,7 +50,6 @@ export async function POST(request: NextRequest) {
       color = "#8B5CF6",
       icon = "📚",
       difficulty = "Beginner",
-      sortOrder = 0,
       isActive = true,
       tags = [],
       metaTitle,
@@ -83,6 +82,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Calculate the next sortOrder by finding the maximum current sortOrder
+    const maxSortOrder = await prisma.blog_series.aggregate({
+      _max: {
+        sortOrder: true,
+      },
+    });
+
+    const nextSortOrder = (maxSortOrder._max.sortOrder || 0) + 1;
+
     const series = await prisma.blog_series.create({
       data: {
         id: randomUUID(),
@@ -92,7 +100,7 @@ export async function POST(request: NextRequest) {
         color,
         icon,
         difficulty,
-        sortOrder,
+        sortOrder: nextSortOrder,
         isActive,
         tags,
         metaTitle: metaTitle || title,

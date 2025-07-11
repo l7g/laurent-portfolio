@@ -110,7 +110,6 @@ export default function NewBlogPostPage() {
         body: JSON.stringify({
           ...categoryData,
           isActive: true,
-          sortOrder: categories.length,
         }),
       });
 
@@ -139,7 +138,6 @@ export default function NewBlogPostPage() {
         body: JSON.stringify({
           ...seriesData,
           isActive: true,
-          sortOrder: series.length,
           tags: [],
         }),
       });

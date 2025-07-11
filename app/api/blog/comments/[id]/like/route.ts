@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 // POST - Like a comment
@@ -39,6 +40,7 @@ export async function POST(
     return NextResponse.json({ likes: updatedComment.likes });
   } catch (error) {
     console.error("Error liking comment:", error);
+
     return NextResponse.json(
       { error: "Failed to like comment" },
       { status: 500 },

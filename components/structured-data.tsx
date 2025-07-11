@@ -60,18 +60,18 @@ export default function StructuredData() {
   return (
     <>
       <Script
-        id="structured-data-person"
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(structuredData),
         }}
+        id="structured-data-person"
+        type="application/ld+json"
       />
       <Script
-        id="structured-data-website"
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(websiteStructuredData),
         }}
+        id="structured-data-website"
+        type="application/ld+json"
       />
     </>
   );

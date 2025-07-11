@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -61,6 +62,7 @@ export async function GET(
     const totalReadingTime = transformedPosts.reduce((total, post) => {
       const wordsPerMinute = 200;
       const words = post.content.split(/\s+/).length;
+
       return total + Math.ceil(words / wordsPerMinute);
     }, 0);
 
@@ -74,6 +76,7 @@ export async function GET(
     return NextResponse.json(seriesWithMetadata);
   } catch (error) {
     console.error("Error fetching blog series:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch blog series" },
       { status: 500 },

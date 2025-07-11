@@ -1,8 +1,10 @@
+import { randomUUID } from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { randomUUID } from "crypto";
 
 export async function GET() {
   try {
@@ -28,6 +30,7 @@ export async function GET() {
     return NextResponse.json(series);
   } catch (error) {
     console.error("Error fetching blog series:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch blog series" },
       { status: 500 },
@@ -130,6 +133,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(series, { status: 201 });
   } catch (error) {
     console.error("Error creating blog series:", error);
+
     return NextResponse.json(
       { error: "Failed to create blog series" },
       { status: 500 },

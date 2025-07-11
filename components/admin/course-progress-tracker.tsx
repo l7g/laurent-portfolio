@@ -4,13 +4,10 @@ import { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
-import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
 import {
   AcademicCapIcon,
   TrophyIcon,
   ChartBarIcon,
-  StarIcon,
   ClockIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
@@ -54,8 +51,10 @@ export default function CourseProgressTracker() {
   const fetchProgressData = async () => {
     try {
       const response = await fetch("/api/course-progress");
+
       if (response.ok) {
         const data = await response.json();
+
         setProgressData(data);
       }
     } catch (error) {
@@ -205,9 +204,9 @@ export default function CourseProgressTracker() {
                 </span>
               </div>
               <Progress
-                value={progressData.summary.completionRate}
-                color="success"
                 className="h-2"
+                color="success"
+                value={progressData.summary.completionRate}
               />
             </div>
             <div>
@@ -219,13 +218,13 @@ export default function CourseProgressTracker() {
                 </span>
               </div>
               <Progress
+                className="h-2"
+                color="primary"
                 value={
                   (progressData.summary.completedCredits /
                     progressData.summary.totalCredits) *
                   100
                 }
-                color="primary"
-                className="h-2"
               />
             </div>
           </div>
@@ -240,7 +239,7 @@ export default function CourseProgressTracker() {
             <Card key={year}>
               <CardHeader>
                 <h3 className="text-lg font-semibold">Year {year}</h3>
-                <Chip color="default" variant="flat" size="sm">
+                <Chip color="default" size="sm" variant="flat">
                   {progressData.coursesByYear[parseInt(year)].length} courses
                 </Chip>
               </CardHeader>
@@ -268,11 +267,11 @@ export default function CourseProgressTracker() {
                         <div className="flex items-center gap-2">
                           <select
                             className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            disabled={updating === course.id}
                             value={course.status}
                             onChange={(e) =>
                               updateCourseProgress(course.id, e.target.value)
                             }
-                            disabled={updating === course.id}
                           >
                             <option value="UPCOMING">Upcoming</option>
                             <option value="IN_PROGRESS">In Progress</option>
@@ -283,9 +282,10 @@ export default function CourseProgressTracker() {
 
                           {course.status === "COMPLETED" && (
                             <input
-                              type="text"
-                              placeholder="Grade"
                               className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent w-20"
+                              disabled={updating === course.id}
+                              placeholder="Grade"
+                              type="text"
                               value={course.grade || ""}
                               onChange={(e) =>
                                 updateCourseProgress(
@@ -294,21 +294,20 @@ export default function CourseProgressTracker() {
                                   e.target.value,
                                 )
                               }
-                              disabled={updating === course.id}
                             />
                           )}
                         </div>
 
                         <Chip
                           color={getStatusColor(course.status)}
-                          variant="flat"
                           size="sm"
+                          variant="flat"
                         >
                           {course.status.replace("_", " ")}
                         </Chip>
 
                         {course.grade && (
-                          <Chip color="warning" variant="flat" size="sm">
+                          <Chip color="warning" size="sm" variant="flat">
                             {course.grade}
                           </Chip>
                         )}

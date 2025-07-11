@@ -19,9 +19,11 @@ export default function EducationVisibilityToggle() {
     const fetchEducationSetting = async () => {
       try {
         const response = await fetch("/api/settings/show_education");
+
         if (response.ok) {
           const result = await response.json();
           const setting = result.data;
+
           setIsEducationVisible(
             setting?.value === "true" || setting?.value === true,
           );
@@ -71,6 +73,7 @@ export default function EducationVisibilityToggle() {
         setTimeout(() => setStatus("idle"), 2000);
       } else {
         const errorData = await response.json();
+
         throw new Error(errorData.error || "Failed to update setting");
       }
     } catch (error) {
@@ -96,11 +99,11 @@ export default function EducationVisibilityToggle() {
   return (
     <div className="flex items-center gap-3">
       <Switch
-        isSelected={isEducationVisible}
-        onValueChange={handleToggle}
-        isDisabled={updating}
         color={isEducationVisible ? "success" : "default"}
+        isDisabled={updating}
+        isSelected={isEducationVisible}
         size="lg"
+        onValueChange={handleToggle}
       >
         <span className="text-sm font-medium">
           {isEducationVisible ? "Education Visible" : "Education Hidden"}

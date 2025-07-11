@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -25,12 +26,14 @@ export async function POST(
 
     // Check if post is published (unless user is admin)
     const isAdmin = session?.user?.role === "ADMIN";
+
     if (!isAdmin && post.status !== "PUBLISHED") {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
     // Calculate new like count based on action
     let newLikeCount;
+
     if (action === "unlike") {
       // Prevent negative likes
       newLikeCount = Math.max(0, post.likes - 1);
@@ -53,6 +56,7 @@ export async function POST(
     });
   } catch (error) {
     console.error("Error handling like:", error);
+
     return NextResponse.json(
       { error: "Failed to process like" },
       { status: 500 },

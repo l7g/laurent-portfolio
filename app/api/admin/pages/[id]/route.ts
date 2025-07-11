@@ -1,5 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: Request,
@@ -18,6 +19,7 @@ export async function GET(
     return NextResponse.json(page);
   } catch (error) {
     console.error("Error fetching page:", error);
+
     return NextResponse.json(
       {
         error: "Failed to fetch page",
@@ -64,6 +66,7 @@ export async function PUT(
     return NextResponse.json(page);
   } catch (error) {
     console.error("Error updating page:", error);
+
     return NextResponse.json(
       {
         error: "Failed to update page",
@@ -80,6 +83,7 @@ export async function DELETE(
 ) {
   try {
     const params = await context.params;
+
     await prisma.portfolio_pages.delete({
       where: { id: params.id },
     });
@@ -87,6 +91,7 @@ export async function DELETE(
     return NextResponse.json({ message: "Page deleted successfully" });
   } catch (error) {
     console.error("Error deleting page:", error);
+
     return NextResponse.json(
       {
         error: "Failed to delete page",

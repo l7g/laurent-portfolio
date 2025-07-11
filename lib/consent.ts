@@ -17,6 +17,7 @@ export function getConsentPreferences(): ConsentPreferences {
   if (typeof window === "undefined") return defaultConsent;
 
   const stored = localStorage.getItem("gdprConsent");
+
   if (!stored) return defaultConsent;
 
   try {
@@ -40,16 +41,19 @@ export function setConsentPreferences(preferences: ConsentPreferences) {
 
 export function hasGivenConsent(): boolean {
   if (typeof window === "undefined") return false;
+
   return localStorage.getItem("gdprConsent") !== null;
 }
 
 export function canUseAnalytics(): boolean {
   const preferences = getConsentPreferences();
+
   return preferences.analytics;
 }
 
 export function canUsePreferences(): boolean {
   const preferences = getConsentPreferences();
+
   return preferences.preferences;
 }
 
@@ -64,6 +68,7 @@ export function revokeAllConsent() {
 
   // Clear all preference data that requires consent
   const keys = Object.keys(localStorage);
+
   keys.forEach((key) => {
     if (key.startsWith("liked_post_") || key === "lastLikeTime") {
       localStorage.removeItem(key);
@@ -79,6 +84,7 @@ export function clearAllLikes() {
   if (typeof window === "undefined") return;
 
   const keys = Object.keys(localStorage);
+
   keys.forEach((key) => {
     if (key.startsWith("liked_post_")) {
       localStorage.removeItem(key);

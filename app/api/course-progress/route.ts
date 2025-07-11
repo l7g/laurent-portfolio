@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { CourseStatus } from "@prisma/client";
+
+import { prisma } from "@/lib/prisma";
 
 // Update course progress (status and grade)
 export async function PUT(request: NextRequest) {
@@ -22,6 +23,7 @@ export async function PUT(request: NextRequest) {
       "DEFERRED",
       "WITHDRAWN",
     ];
+
     if (status && !validStatuses.includes(status)) {
       return NextResponse.json(
         { error: "Invalid course status" },
@@ -45,6 +47,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error updating course progress:", error);
+
     return NextResponse.json(
       { error: "Failed to update course progress" },
       { status: 500 },
@@ -91,15 +94,18 @@ export async function GET() {
       (c) => c.status === "COMPLETED" && c.grade,
     );
     let gpa = 0;
+
     if (coursesWithGrades.length > 0) {
       const totalGradePoints = coursesWithGrades.reduce((sum, course) => {
         const gradePoints = getGradePoints(course.grade || "");
+
         return sum + gradePoints * course.credits;
       }, 0);
       const totalGradeCredits = coursesWithGrades.reduce(
         (sum, c) => sum + c.credits,
         0,
       );
+
       gpa = totalGradePoints / totalGradeCredits;
     }
 
@@ -107,10 +113,12 @@ export async function GET() {
     const coursesByYear = courses.reduce(
       (acc, course) => {
         const year = course.year;
+
         if (!acc[year]) {
           acc[year] = [];
         }
         acc[year].push(course);
+
         return acc;
       },
       {} as { [key: number]: typeof courses },
@@ -132,6 +140,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching course progress:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch course progress" },
       { status: 500 },

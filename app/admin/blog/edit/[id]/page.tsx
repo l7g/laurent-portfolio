@@ -14,8 +14,9 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
+
+import { title } from "@/components/primitives";
 import RichTextEditor from "@/components/admin/rich-text-editor";
 import CategorySelector from "@/components/admin/category-selector";
 import SeriesSelector from "@/components/admin/series-selector";
@@ -136,7 +137,9 @@ function EditBlogPostClient({ id }: { id: string }) {
 
       if (response.ok) {
         const newCategory = await response.json();
+
         setCategories((prev) => [...prev, newCategory]);
+
         return newCategory;
       } else {
         throw new Error("Failed to create category");
@@ -167,7 +170,9 @@ function EditBlogPostClient({ id }: { id: string }) {
       if (response.ok) {
         const newSeries = await response.json();
         const seriesWithCount = { ...newSeries, _count: { blog_posts: 0 } };
+
         setSeries((prev) => [...prev, seriesWithCount]);
+
         return seriesWithCount;
       } else {
         throw new Error("Failed to create series");
@@ -236,6 +241,7 @@ function EditBlogPostClient({ id }: { id: string }) {
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
     router.push("/admin/login");
+
     return null;
   }
 
@@ -274,6 +280,7 @@ function EditBlogPostClient({ id }: { id: string }) {
   const handleSave = async (status: "DRAFT" | "PUBLISHED" | "ARCHIVED") => {
     if (!postData.title || !postData.content || !postData.categoryId) {
       alert("Please fill in title, content, and category");
+
       return;
     }
 
@@ -292,9 +299,11 @@ function EditBlogPostClient({ id }: { id: string }) {
 
       if (response.ok) {
         const data = await response.json();
+
         router.push(`/admin/blog`);
       } else {
         const error = await response.json();
+
         alert(error.error || "Failed to save post");
       }
     } catch (error) {
@@ -310,9 +319,9 @@ function EditBlogPostClient({ id }: { id: string }) {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-default-300 rounded w-1/4"></div>
-            <div className="h-32 bg-default-300 rounded"></div>
-            <div className="h-96 bg-default-300 rounded"></div>
+            <div className="h-8 bg-default-300 rounded w-1/4" />
+            <div className="h-32 bg-default-300 rounded" />
+            <div className="h-96 bg-default-300 rounded" />
           </div>
         </div>
       </div>
@@ -325,7 +334,7 @@ function EditBlogPostClient({ id }: { id: string }) {
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
             <p className="text-default-600">Post not found</p>
-            <Button as={Link} href="/admin/blog" className="mt-4">
+            <Button as={Link} className="mt-4" href="/admin/blog">
               Back to Blog
             </Button>
           </div>
@@ -339,14 +348,14 @@ function EditBlogPostClient({ id }: { id: string }) {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button as={Link} href="/admin/blog" variant="light" isIconOnly>
+              <Button isIconOnly as={Link} href="/admin/blog" variant="light">
                 <ArrowLeftIcon className="w-5 h-5" />
               </Button>
               <div>
@@ -360,23 +369,23 @@ function EditBlogPostClient({ id }: { id: string }) {
               <Button
                 as={Link}
                 href={`/blog/${post.slug}`}
-                variant="bordered"
                 startContent={<EyeIcon className="w-4 h-4" />}
+                variant="bordered"
               >
                 Preview
               </Button>
               <Button
+                isLoading={saving}
                 variant="bordered"
                 onClick={() => handleSave("DRAFT")}
-                isLoading={saving}
               >
                 Save Draft
               </Button>
               <Button
                 color="primary"
-                onClick={() => handleSave("PUBLISHED")}
                 isLoading={saving}
                 startContent={<CloudArrowUpIcon className="w-4 h-4" />}
+                onClick={() => handleSave("PUBLISHED")}
               >
                 {post.status === "PUBLISHED" ? "Update" : "Publish"}
               </Button>
@@ -389,8 +398,8 @@ function EditBlogPostClient({ id }: { id: string }) {
           <div className="lg:col-span-2 space-y-6">
             {/* Title & Content */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <Card>
@@ -399,18 +408,18 @@ function EditBlogPostClient({ id }: { id: string }) {
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <Input
+                    isRequired
                     label="Title"
                     placeholder="Enter post title"
                     value={postData.title}
                     onChange={(e) => handleInputChange("title", e.target.value)}
-                    isRequired
                   />
                   <Input
+                    isRequired
                     label="URL Slug"
                     placeholder="post-url-slug"
                     value={postData.slug}
                     onChange={(e) => handleInputChange("slug", e.target.value)}
-                    isRequired
                   />
                   <Input
                     label="Excerpt"
@@ -425,9 +434,9 @@ function EditBlogPostClient({ id }: { id: string }) {
                       Content
                     </label>
                     <RichTextEditor
+                      placeholder="Write your post content here..."
                       value={postData.content}
                       onChange={(value) => handleInputChange("content", value)}
-                      placeholder="Write your post content here..."
                     />
                   </div>
                 </CardBody>
@@ -436,8 +445,8 @@ function EditBlogPostClient({ id }: { id: string }) {
 
             {/* SEO Settings */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <Card>
@@ -470,8 +479,8 @@ function EditBlogPostClient({ id }: { id: string }) {
           <div className="space-y-6">
             {/* Status Settings */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <Card>
@@ -484,6 +493,7 @@ function EditBlogPostClient({ id }: { id: string }) {
                       Status
                     </label>
                     <select
+                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
                       value={postData.status}
                       onChange={(e) =>
                         handleInputChange(
@@ -491,7 +501,6 @@ function EditBlogPostClient({ id }: { id: string }) {
                           e.target.value as "DRAFT" | "PUBLISHED" | "ARCHIVED",
                         )
                       }
-                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
                     >
                       <option value="DRAFT">Draft</option>
                       <option value="PUBLISHED">Published</option>
@@ -504,8 +513,8 @@ function EditBlogPostClient({ id }: { id: string }) {
 
             {/* Category */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Card>
@@ -514,11 +523,11 @@ function EditBlogPostClient({ id }: { id: string }) {
                 </CardHeader>
                 <CardBody>
                   <CategorySelector
+                    categories={categories}
                     value={postData.categoryId}
                     onChange={(value: string) =>
                       handleInputChange("categoryId", value)
                     }
-                    categories={categories}
                     onCreateCategory={createNewCategory}
                   />
                 </CardBody>
@@ -527,8 +536,8 @@ function EditBlogPostClient({ id }: { id: string }) {
 
             {/* Series */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <Card>
@@ -540,11 +549,11 @@ function EditBlogPostClient({ id }: { id: string }) {
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <SeriesSelector
+                    series={series}
                     value={postData.seriesId}
                     onChange={(value: string) =>
                       handleInputChange("seriesId", value)
                     }
-                    series={series}
                     onCreateSeries={createNewSeries}
                   />
                   {postData.seriesId && (
@@ -553,13 +562,13 @@ function EditBlogPostClient({ id }: { id: string }) {
                         Series Order
                       </label>
                       <Input
-                        type="number"
+                        min="1"
                         placeholder="1"
+                        type="number"
                         value={postData.seriesOrder.toString()}
                         onChange={(e) =>
                           handleInputChange("seriesOrder", e.target.value)
                         }
-                        min="1"
                       />
                     </div>
                   )}
@@ -569,8 +578,8 @@ function EditBlogPostClient({ id }: { id: string }) {
 
             {/* Tags */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Card>
@@ -593,15 +602,15 @@ function EditBlogPostClient({ id }: { id: string }) {
                   <div className="flex gap-2">
                     <Input
                       placeholder="Add tag"
+                      startContent={<TagIcon className="w-4 h-4" />}
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      startContent={<TagIcon className="w-4 h-4" />}
                     />
                     <Button
+                      isDisabled={!tagInput.trim()}
                       variant="bordered"
                       onClick={handleAddTag}
-                      isDisabled={!tagInput.trim()}
                     >
                       Add
                     </Button>
@@ -612,8 +621,8 @@ function EditBlogPostClient({ id }: { id: string }) {
 
             {/* Related Articles */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <RelatedArticlesManager

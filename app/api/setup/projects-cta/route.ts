@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
+
+import { NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function POST() {
   try {
@@ -106,6 +108,7 @@ export async function POST() {
     console.error("Error creating projects CTA section:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
+
     return NextResponse.json(
       {
         error: "Failed to create projects CTA section",

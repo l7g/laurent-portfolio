@@ -16,13 +16,12 @@ import {
   ChatBubbleLeftIcon,
   ClockIcon,
   BookOpenIcon,
-  SparklesIcon,
   ArrowRightIcon,
   FireIcon,
   RectangleStackIcon,
-  TagIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+
 import { title, subtitle } from "@/components/primitives";
 
 interface BlogPost {
@@ -115,8 +114,10 @@ export default function BlogPage() {
   const fetchCategories = async () => {
     try {
       const response = await fetch("/api/blog/categories");
+
       if (response.ok) {
         const data = await response.json();
+
         setCategories(data);
       }
     } catch (error) {
@@ -128,8 +129,10 @@ export default function BlogPage() {
     try {
       setSeriesLoading(true);
       const response = await fetch("/api/blog/series?published=true");
+
       if (response.ok) {
         const data = await response.json();
+
         setSeries(data.series);
       }
     } catch (error) {
@@ -158,8 +161,10 @@ export default function BlogPage() {
       params.append("published", "true");
 
       const response = await fetch(`/api/blog/posts?${params}`);
+
       if (response.ok) {
         const data = await response.json();
+
         setPosts(data.posts);
       }
     } catch (error) {
@@ -181,6 +186,7 @@ export default function BlogPage() {
     const wordsPerMinute = 200;
     const words = content.split(/\s+/).length;
     const minutes = Math.ceil(words / wordsPerMinute);
+
     return minutes;
   };
 
@@ -202,8 +208,8 @@ export default function BlogPage() {
       {/* Hero Section */}
       <section className="py-16 px-6 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
         >
           <h1 className={title({ size: "lg" })}>Blog & Insights</h1>
@@ -219,27 +225,27 @@ export default function BlogPage() {
           <div className="flex flex-col lg:flex-row gap-6 mb-10">
             <div className="flex-1">
               <Input
+                className="w-full"
                 placeholder="Search posts and series..."
+                startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
-                className="w-full"
               />
             </div>
             <div className="flex gap-2">
               <Button
-                variant={viewMode === "posts" ? "solid" : "flat"}
                 color={viewMode === "posts" ? "primary" : "default"}
-                onClick={() => setViewMode("posts")}
                 startContent={<BookOpenIcon className="w-4 h-4" />}
+                variant={viewMode === "posts" ? "solid" : "flat"}
+                onClick={() => setViewMode("posts")}
               >
                 Posts
               </Button>
               <Button
-                variant={viewMode === "series" ? "solid" : "flat"}
                 color={viewMode === "series" ? "primary" : "default"}
-                onClick={() => setViewMode("series")}
                 startContent={<RectangleStackIcon className="w-4 h-4" />}
+                variant={viewMode === "series" ? "solid" : "flat"}
+                onClick={() => setViewMode("series")}
               >
                 Series
               </Button>
@@ -251,13 +257,13 @@ export default function BlogPage() {
             <div className="space-y-6">
               {/* Category Tabs */}
               <Tabs
+                className="w-full"
+                color="primary"
                 selectedKey={selectedCategory}
+                variant="underlined"
                 onSelectionChange={(key: any) =>
                   setSelectedCategory(key.toString())
                 }
-                className="w-full"
-                variant="underlined"
-                color="primary"
               >
                 <Tab
                   key="all"
@@ -275,7 +281,7 @@ export default function BlogPage() {
                       <div className="flex items-center gap-2">
                         <span>{category.icon}</span>
                         <span>{category.name}</span>
-                        <Chip size="sm" variant="flat" className="ml-1">
+                        <Chip className="ml-1" size="sm" variant="flat">
                           {category._count.posts}
                         </Chip>
                       </div>
@@ -288,9 +294,9 @@ export default function BlogPage() {
               {series.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   <Button
+                    color={selectedSeries === "all" ? "primary" : "default"}
                     size="sm"
                     variant={selectedSeries === "all" ? "solid" : "flat"}
-                    color={selectedSeries === "all" ? "primary" : "default"}
                     onClick={() => setSelectedSeries("all")}
                   >
                     All Series
@@ -298,14 +304,14 @@ export default function BlogPage() {
                   {series.map((s) => (
                     <Button
                       key={s.slug}
-                      size="sm"
-                      variant={selectedSeries === s.slug ? "solid" : "flat"}
                       color={selectedSeries === s.slug ? "primary" : "default"}
-                      onClick={() => setSelectedSeries(s.slug)}
+                      size="sm"
                       style={{
                         backgroundColor:
                           selectedSeries === s.slug ? s.color : undefined,
                       }}
+                      variant={selectedSeries === s.slug ? "solid" : "flat"}
+                      onClick={() => setSelectedSeries(s.slug)}
                     >
                       {s.icon && <span className="mr-1">{s.icon}</span>}
                       {s.title}
@@ -335,11 +341,11 @@ export default function BlogPage() {
                     <Card key={i} className="h-auto">
                       <CardBody className="p-0">
                         <div className="animate-pulse">
-                          <div className="h-48 bg-content2 rounded-t-lg"></div>
+                          <div className="h-48 bg-content2 rounded-t-lg" />
                           <div className="p-6 space-y-4">
-                            <div className="h-6 bg-content2 rounded w-3/4"></div>
-                            <div className="h-4 bg-content2 rounded w-1/2"></div>
-                            <div className="h-4 bg-content2 rounded w-full"></div>
+                            <div className="h-6 bg-content2 rounded w-3/4" />
+                            <div className="h-4 bg-content2 rounded w-1/2" />
+                            <div className="h-4 bg-content2 rounded w-full" />
                           </div>
                         </div>
                       </CardBody>
@@ -351,10 +357,10 @@ export default function BlogPage() {
                   {series.map((s, index) => (
                     <motion.div
                       key={s.id}
-                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
                       className="w-full"
+                      initial={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
                     >
                       <Card className="h-full hover:shadow-xl transition-all duration-300 group">
                         <CardHeader className="pb-4 px-8 pt-8">
@@ -366,19 +372,19 @@ export default function BlogPage() {
                                 )}
                                 <Chip
                                   size="md"
-                                  variant="flat"
                                   style={{
                                     backgroundColor: `${s.color}20`,
                                     color: s.color,
                                   }}
+                                  variant="flat"
                                 >
                                   {s.totalPosts} posts
                                 </Chip>
                               </div>
                               {s.difficulty && (
                                 <Chip
-                                  size="md"
                                   color={getDifficultyColor(s.difficulty)}
+                                  size="md"
                                   variant="flat"
                                 >
                                   {s.difficulty}
@@ -400,18 +406,18 @@ export default function BlogPage() {
                             {s.tags.slice(0, 3).map((tag) => (
                               <Chip
                                 key={tag}
+                                className="text-sm"
                                 size="sm"
                                 variant="bordered"
-                                className="text-sm"
                               >
                                 {tag}
                               </Chip>
                             ))}
                             {s.tags.length > 3 && (
                               <Chip
+                                className="text-sm"
                                 size="sm"
                                 variant="bordered"
-                                className="text-sm"
                               >
                                 +{s.tags.length - 3} more
                               </Chip>
@@ -421,9 +427,9 @@ export default function BlogPage() {
                           <div className="flex items-center justify-between text-base text-default-500 mb-8">
                             <div className="flex items-center gap-2">
                               <Avatar
-                                size="sm"
-                                name={s.users.name}
                                 className="w-6 h-6"
+                                name={s.users.name}
+                                size="sm"
                               />
                               <span>{s.users.name}</span>
                             </div>
@@ -445,8 +451,8 @@ export default function BlogPage() {
                             {s.blog_posts.slice(0, 2).map((post) => (
                               <div key={post.id} className="pl-8 text-base">
                                 <Link
-                                  href={`/blog/${post.slug}`}
                                   className="text-default-600 hover:text-primary transition-colors line-clamp-1"
+                                  href={`/blog/${post.slug}`}
                                 >
                                   {post.seriesOrder && (
                                     <span className="text-sm text-default-400 mr-3">
@@ -461,13 +467,13 @@ export default function BlogPage() {
 
                           <Link href={`/blog/series/${s.slug}`}>
                             <Button
-                              color="primary"
-                              variant="flat"
                               className="w-full"
-                              size="lg"
+                              color="primary"
                               endContent={
                                 <ArrowRightIcon className="w-5 h-5" />
                               }
+                              size="lg"
+                              variant="flat"
                             >
                               View Series
                             </Button>
@@ -509,12 +515,12 @@ export default function BlogPage() {
                     <Card key={i} className="h-auto">
                       <CardBody className="p-0">
                         <div className="animate-pulse">
-                          <div className="h-48 bg-content2 rounded-t-lg"></div>
+                          <div className="h-48 bg-content2 rounded-t-lg" />
                           <div className="p-6 space-y-4">
-                            <div className="h-6 bg-content2 rounded w-3/4"></div>
-                            <div className="h-4 bg-content2 rounded w-1/2"></div>
-                            <div className="h-4 bg-content2 rounded w-full"></div>
-                            <div className="h-4 bg-content2 rounded w-2/3"></div>
+                            <div className="h-6 bg-content2 rounded w-3/4" />
+                            <div className="h-4 bg-content2 rounded w-1/2" />
+                            <div className="h-4 bg-content2 rounded w-full" />
+                            <div className="h-4 bg-content2 rounded w-2/3" />
                           </div>
                         </div>
                       </CardBody>
@@ -526,10 +532,10 @@ export default function BlogPage() {
                   {posts.map((post, index) => (
                     <motion.div
                       key={post.id}
-                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
                       className="w-full"
+                      initial={{ opacity: 0, y: 20 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
                     >
                       <Card className="h-full hover:shadow-xl transition-all duration-300 group">
                         <CardHeader className="pb-4 px-8 pt-8">
@@ -537,11 +543,11 @@ export default function BlogPage() {
                             <div className="flex items-center justify-between">
                               <Chip
                                 size="md"
-                                variant="flat"
                                 style={{
                                   backgroundColor: `${post.category.color}20`,
                                   color: post.category.color,
                                 }}
+                                variant="flat"
                               >
                                 <span className="mr-2">
                                   {post.category.icon}
@@ -559,11 +565,11 @@ export default function BlogPage() {
                                 <div className="relative">
                                   <Chip
                                     size="md"
-                                    variant="bordered"
                                     style={{
                                       borderColor: post.series.color,
                                       color: post.series.color,
                                     }}
+                                    variant="bordered"
                                   >
                                     {post.series.icon && (
                                       <span className="mr-2">
@@ -600,18 +606,18 @@ export default function BlogPage() {
                             {post.tags.slice(0, 3).map((tag) => (
                               <Chip
                                 key={tag}
+                                className="text-sm"
                                 size="sm"
                                 variant="bordered"
-                                className="text-sm"
                               >
                                 {tag}
                               </Chip>
                             ))}
                             {post.tags.length > 3 && (
                               <Chip
+                                className="text-sm"
                                 size="sm"
                                 variant="bordered"
-                                className="text-sm"
                               >
                                 +{post.tags.length - 3} more
                               </Chip>
@@ -637,13 +643,13 @@ export default function BlogPage() {
 
                           <Link href={`/blog/${post.slug}`}>
                             <Button
-                              color="primary"
-                              variant="flat"
                               className="w-full"
-                              size="lg"
+                              color="primary"
                               endContent={
                                 <ArrowRightIcon className="w-5 h-5" />
                               }
+                              size="lg"
+                              variant="flat"
                             >
                               Read More
                             </Button>

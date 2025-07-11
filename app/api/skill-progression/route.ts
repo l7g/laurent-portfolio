@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -23,6 +24,7 @@ export async function GET() {
       const month = now.getMonth();
 
       let academicYear = currentYear - startYear + 1;
+
       if (month < 8) {
         academicYear -= 1;
       }
@@ -48,8 +50,10 @@ export async function GET() {
 
         // Additional weight for grades
         let gradeMultiplier = 1;
+
         if (course.grade) {
           const grade = course.grade.toUpperCase();
+
           if (grade.includes("A")) gradeMultiplier = 1.2;
           else if (grade.includes("B")) gradeMultiplier = 1.1;
           else if (grade.includes("C")) gradeMultiplier = 1.0;
@@ -67,6 +71,7 @@ export async function GET() {
 
           // Add weighted skill points
           const skillPoints = 15 * courseWeight * gradeMultiplier;
+
           skill_progressions[skill].level = Math.min(
             100,
             skill_progressions[skill].level + skillPoints,
@@ -78,6 +83,7 @@ export async function GET() {
     // Apply year-based progression (skills develop over time)
     Object.keys(skill_progressions).forEach((skill) => {
       const yearMultiplier = Math.min(currentYear * 0.1, 0.4); // Up to 40% bonus based on year
+
       skill_progressions[skill].level = Math.min(
         100,
         skill_progressions[skill].level * (1 + yearMultiplier),
@@ -87,6 +93,7 @@ export async function GET() {
     return NextResponse.json(skill_progressions);
   } catch (error) {
     console.error("Error calculating skill progression:", error);
+
     return NextResponse.json(
       { error: "Failed to calculate skill progression" },
       { status: 500 },

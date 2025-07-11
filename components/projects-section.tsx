@@ -6,14 +6,14 @@ import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Link } from "@heroui/link";
 import { motion } from "framer-motion";
-import LoadingSkeleton from "./loading-skeleton";
 import {
   ArrowTopRightOnSquareIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
 
+import LoadingSkeleton from "./loading-skeleton";
+
 import { GithubIcon } from "@/components/icons";
-import { siteConfig } from "@/config/site";
 
 interface Project {
   title: string;
@@ -51,6 +51,7 @@ const ProjectsSection = ({
     async function fetchProjects() {
       try {
         const response = await fetch("/api/projects");
+
         if (response.ok) {
           const dbProjects = await response.json();
 
@@ -94,11 +95,13 @@ const ProjectsSection = ({
     async function fetchCtaData() {
       try {
         const response = await fetch("/api/sections");
+
         if (response.ok) {
           const sections = await response.json();
           const ctaSection = sections.find(
             (section: any) => section.name === "projects-cta",
           );
+
           if (ctaSection) {
             setCtaData(ctaSection);
           }
@@ -236,8 +239,8 @@ const ProjectsSection = ({
                   {projects[0].image &&
                   projects[0].image.startsWith("placeholder-") ? (
                     <PlaceholderImage
-                      type={projects[0].image}
                       title={projects[0].title}
+                      type={projects[0].image}
                     />
                   ) : (
                     <img
@@ -286,6 +289,7 @@ const ProjectsSection = ({
                               "Personal project currently in development. Code is private. Contact me to discuss my development approach and capabilities.";
 
                             const messageText = customText || defaultText;
+
                             return `${selectedEmoji} ${messageText}`;
                           })()}
                         </p>
@@ -322,8 +326,8 @@ const ProjectsSection = ({
                         {projects[0].links.live &&
                           projects[0].links.live !== "#" && (
                             <Button
-                              color="warning"
                               className="font-semibold shadow-lg"
+                              color="warning"
                               startContent={
                                 <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                               }
@@ -629,9 +633,9 @@ const ProjectsSection = ({
           >
             <Button
               as={Link}
-              href="/projects"
               color="primary"
               endContent={<ArrowRightIcon className="w-5 h-5" />}
+              href="/projects"
               size="lg"
               variant="bordered"
             >
@@ -691,11 +695,11 @@ const ProjectsSection = ({
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
+                className="min-w-[200px] font-semibold"
                 color="primary"
                 endContent={<ArrowRightIcon className="w-5 h-5" />}
                 size="lg"
                 variant="solid"
-                className="min-w-[200px] font-semibold"
                 onPress={() => {
                   document.getElementById("contact")?.scrollIntoView({
                     behavior: "smooth",
@@ -705,10 +709,10 @@ const ProjectsSection = ({
                 {ctaData?.content?.primaryButton?.text || "Start Your Project"}
               </Button>
               <Button
-                color="default"
-                variant="bordered"
-                size="lg"
                 className="min-w-[200px] font-semibold"
+                color="default"
+                size="lg"
+                variant="bordered"
                 onPress={() => {
                   const emailSubject = encodeURIComponent(
                     ctaData?.content?.emailSubject || "Project Inquiry",
@@ -717,6 +721,7 @@ const ProjectsSection = ({
                     ctaData?.content?.emailBody ||
                       "Hi Laurent, I'd like to discuss a project with you.",
                   );
+
                   window.open(
                     `mailto:contact@laurentgagne.com?subject=${emailSubject}&body=${emailBody}`,
                     "_blank",

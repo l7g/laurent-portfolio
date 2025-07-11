@@ -17,18 +17,16 @@ import { Tabs, Tab } from "@heroui/tabs";
 import { motion } from "framer-motion";
 import {
   AcademicCapIcon,
-  CalendarIcon,
-  ClockIcon,
   DocumentTextIcon,
   BookOpenIcon,
-  GlobeAltIcon,
   ChevronRightIcon,
   UserIcon,
   TrophyIcon,
   ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
-import { BookmarkIcon, StarIcon } from "@heroicons/react/24/solid";
+import { StarIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+
 import AcademicSkillsDisplay from "@/components/academic-skills-display";
 
 interface academic_programs {
@@ -111,11 +109,13 @@ const DegreePage = () => {
 
         if (programResponse.ok) {
           const programData = await programResponse.json();
+
           setProgram(programData[0] || null);
         }
 
         if (coursesResponse.ok) {
           const coursesData = await coursesResponse.json();
+
           setCourses(coursesData);
         }
       } catch (error) {
@@ -179,12 +179,14 @@ const DegreePage = () => {
 
   const groupCoursesByYear = (courses: Course[]) => {
     const grouped: { [key: number]: Course[] } = {};
+
     courses.forEach((course) => {
       if (!grouped[course.year]) {
         grouped[course.year] = [];
       }
       grouped[course.year].push(course);
     });
+
     return grouped;
   };
 
@@ -230,14 +232,14 @@ const DegreePage = () => {
       <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border-b border-default-200">
         <div className="container mx-auto px-6 py-12">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-2 mb-4">
               <Link
-                href="/#education-skills"
                 className="text-default-600 hover:text-primary transition-colors"
+                href="/#education-skills"
               >
                 Education & Skills
               </Link>
@@ -255,7 +257,7 @@ const DegreePage = () => {
                   <h1 className="text-4xl md:text-5xl font-bold">
                     {program.degree}
                   </h1>
-                  <Chip color="primary" variant="flat" size="lg">
+                  <Chip color="primary" size="lg" variant="flat">
                     Year {currentYear}
                   </Chip>
                 </div>
@@ -296,9 +298,9 @@ const DegreePage = () => {
                     </span>
                   </div>
                   <Progress
+                    className="h-3"
                     color="primary"
                     value={progressPercentage}
-                    className="h-3"
                   />
                 </div>
               </div>
@@ -310,9 +312,9 @@ const DegreePage = () => {
       {/* Main Content */}
       <div className="container mx-auto px-6 py-12">
         <Tabs
+          className="mb-8"
           selectedKey={activeTab}
           onSelectionChange={(key) => setActiveTab(key as string)}
-          className="mb-8"
         >
           <Tab key="overview" title="Overview">
             <div className="grid lg:grid-cols-3 gap-8">
@@ -376,8 +378,8 @@ const DegreePage = () => {
                         </div>
                         <Chip
                           color={getStatusColor(course.status)}
-                          variant="flat"
                           size="sm"
+                          variant="flat"
                         >
                           {getStatusText(course.status)}
                         </Chip>
@@ -396,8 +398,8 @@ const DegreePage = () => {
                 .map((year) => (
                   <motion.div
                     key={year}
-                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
                     transition={{ duration: 0.5 }}
                   >
                     <div className="flex items-center gap-4 mb-6">
@@ -426,8 +428,8 @@ const DegreePage = () => {
                               </div>
                               <Chip
                                 color={getStatusColor(course.status)}
-                                variant="flat"
                                 size="sm"
+                                variant="flat"
                               >
                                 {getStatusText(course.status)}
                               </Chip>
@@ -477,9 +479,9 @@ const DegreePage = () => {
           <Tab key="academic-skills" title="Academic Skills">
             <div className="space-y-8">
               <AcademicSkillsDisplay
-                showProgressionTargets={true}
-                showCourseBreakdown={true}
                 maxSkillsPerCategory={15}
+                showCourseBreakdown={true}
+                showProgressionTargets={true}
               />
             </div>
           </Tab>
@@ -489,9 +491,9 @@ const DegreePage = () => {
       {/* Course Detail Modal */}
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
-        size="5xl"
         scrollBehavior="inside"
+        size="5xl"
+        onClose={onClose}
       >
         <ModalContent>
           {selectedCourse && (
@@ -544,8 +546,8 @@ const DegreePage = () => {
                             <Chip
                               key={index}
                               color="primary"
-                              variant="flat"
                               size="sm"
+                              variant="flat"
                             >
                               {topic}
                             </Chip>
@@ -595,8 +597,8 @@ const DegreePage = () => {
                                 color={
                                   assessment.completed ? "success" : "warning"
                                 }
-                                variant="flat"
                                 size="sm"
+                                variant="flat"
                               >
                                 {assessment.completed ? "Completed" : "Pending"}
                               </Chip>

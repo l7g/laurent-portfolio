@@ -8,6 +8,7 @@ export function useEducationVisibility() {
     const fetchEducationSetting = async () => {
       try {
         const response = await fetch("/api/public/settings");
+
         if (response.ok) {
           const result = await response.json();
           const settingsData = result.data || {};

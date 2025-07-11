@@ -89,10 +89,10 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                   {flagshipProject.status === "WIP" && (
                     <div className="absolute top-4 left-4">
                       <Chip
-                        color="warning"
-                        variant="solid"
-                        size="sm"
                         className="text-white font-medium"
+                        color="warning"
+                        size="sm"
+                        variant="solid"
                       >
                         Work in Progress
                       </Chip>
@@ -101,11 +101,11 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                 </div>
                 <div className="p-8 lg:p-12 flex flex-col justify-center">
                   <div className="flex items-center gap-2 mb-4">
-                    <Chip color="primary" variant="flat" size="sm">
+                    <Chip color="primary" size="sm" variant="flat">
                       Flagship Project
                     </Chip>
                     {flagshipProject.status === "WIP" && (
-                      <Chip color="warning" variant="flat" size="sm">
+                      <Chip color="warning" size="sm" variant="flat">
                         WIP
                       </Chip>
                     )}
@@ -118,7 +118,7 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                   </p>
                   <div className="flex flex-wrap gap-2 mb-8">
                     {flagshipProject.technologies.map((tech) => (
-                      <Chip key={tech} variant="flat" size="sm">
+                      <Chip key={tech} size="sm" variant="flat">
                         {tech}
                       </Chip>
                     ))}
@@ -127,8 +127,8 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                     {flagshipProject.status === "WIP" ? (
                       <Button
                         color="warning"
-                        variant="flat"
                         startContent={<ArrowRightIcon className="w-4 h-4" />}
+                        variant="flat"
                       >
                         Coming Soon
                       </Button>
@@ -136,8 +136,8 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                       <>
                         {flagshipProject.githubUrl && (
                           <Button
-                            variant="flat"
                             startContent={<GithubIcon className="w-4 h-4" />}
+                            variant="flat"
                             onPress={() =>
                               window.open(flagshipProject.githubUrl!, "_blank")
                             }
@@ -188,10 +188,10 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                     {project.status === "WIP" && (
                       <div className="absolute top-4 left-4">
                         <Chip
-                          color="warning"
-                          variant="solid"
-                          size="sm"
                           className="text-white font-medium"
+                          color="warning"
+                          size="sm"
+                          variant="solid"
                         >
                           Work in Progress
                         </Chip>
@@ -201,11 +201,11 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                 </CardHeader>
                 <CardBody className="p-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <Chip color="secondary" variant="flat" size="sm">
+                    <Chip color="secondary" size="sm" variant="flat">
                       Featured
                     </Chip>
                     {project.status === "WIP" && (
-                      <Chip color="warning" variant="flat" size="sm">
+                      <Chip color="warning" size="sm" variant="flat">
                         WIP
                       </Chip>
                     )}
@@ -216,12 +216,12 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {project.technologies.slice(0, 4).map((tech) => (
-                      <Chip key={tech} variant="flat" size="sm">
+                      <Chip key={tech} size="sm" variant="flat">
                         {tech}
                       </Chip>
                     ))}
                     {project.technologies.length > 4 && (
-                      <Chip variant="flat" size="sm">
+                      <Chip size="sm" variant="flat">
                         +{project.technologies.length - 4}
                       </Chip>
                     )}
@@ -231,10 +231,10 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                   <div className="flex gap-3 w-full">
                     {project.status === "WIP" ? (
                       <Button
-                        color="warning"
-                        variant="flat"
                         className="flex-1"
+                        color="warning"
                         startContent={<ArrowRightIcon className="w-4 h-4" />}
+                        variant="flat"
                       >
                         In Development
                       </Button>
@@ -242,9 +242,9 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                       <>
                         {project.githubUrl && (
                           <Button
-                            variant="flat"
                             className="flex-1"
                             startContent={<GithubIcon className="w-4 h-4" />}
+                            variant="flat"
                             onPress={() =>
                               window.open(project.githubUrl!, "_blank")
                             }
@@ -254,8 +254,8 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                         )}
                         {project.liveUrl && (
                           <Button
-                            color="primary"
                             className="flex-1"
+                            color="primary"
                             startContent={
                               <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                             }
@@ -300,10 +300,10 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                       {project.status === "WIP" && (
                         <div className="absolute top-3 left-3">
                           <Chip
-                            color="warning"
-                            variant="solid"
-                            size="sm"
                             className="text-white font-medium"
+                            color="warning"
+                            size="sm"
+                            variant="solid"
                           >
                             WIP
                           </Chip>
@@ -318,7 +318,7 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {project.technologies.slice(0, 3).map((tech) => (
-                        <Chip key={tech} variant="flat" size="sm">
+                        <Chip key={tech} size="sm" variant="flat">
                           {tech}
                         </Chip>
                       ))}
@@ -328,11 +328,11 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                     <div className="flex gap-2 w-full">
                       {project.status === "WIP" ? (
                         <Button
-                          color="warning"
-                          variant="flat"
-                          size="sm"
                           className="flex-1"
+                          color="warning"
+                          size="sm"
                           startContent={<ArrowRightIcon className="w-3 h-3" />}
+                          variant="flat"
                         >
                           Soon
                         </Button>
@@ -340,10 +340,10 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                         <>
                           {project.githubUrl && (
                             <Button
-                              variant="flat"
-                              size="sm"
                               className="flex-1"
+                              size="sm"
                               startContent={<GithubIcon className="w-3 h-3" />}
+                              variant="flat"
                               onPress={() =>
                                 window.open(project.githubUrl!, "_blank")
                               }
@@ -353,9 +353,9 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                           )}
                           {project.liveUrl && (
                             <Button
+                              className="flex-1"
                               color="primary"
                               size="sm"
-                              className="flex-1"
                               startContent={
                                 <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                               }

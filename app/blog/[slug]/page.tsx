@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+
 import { prisma } from "@/lib/prisma";
 import BlogPostContent from "@/components/blog/blog-post-content";
 
@@ -25,6 +25,7 @@ export async function generateStaticParams() {
     }));
   } catch (error) {
     console.error("Error generating static params for blog posts:", error);
+
     return [];
   }
 }
@@ -97,6 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch (error) {
     console.error("Error generating metadata:", error);
+
     return {
       title: "Blog Post",
       description: "Read our latest blog post.",
@@ -106,5 +108,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
+
   return <BlogPostContent slug={slug} />;
 }

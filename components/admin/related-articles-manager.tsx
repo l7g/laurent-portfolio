@@ -10,7 +10,6 @@ import {
 } from "@heroui/modal";
 import { useDisclosure } from "@heroui/use-disclosure";
 import { Chip } from "@heroui/chip";
-import { Avatar } from "@heroui/avatar";
 import { motion } from "framer-motion";
 import {
   LinkIcon,
@@ -70,8 +69,10 @@ export default function RelatedArticlesManager({
     try {
       setLoading(true);
       const response = await fetch(`/api/blog/posts/${postSlug}/related`);
+
       if (response.ok) {
         const data = await response.json();
+
         setRelatedArticles(data);
       }
     } catch (error) {
@@ -85,6 +86,7 @@ export default function RelatedArticlesManager({
   const fetchAvailablePosts = async () => {
     try {
       const response = await fetch("/api/blog/posts?limit=100");
+
       if (response.ok) {
         const data = await response.json();
         // Filter out current post and already related posts
@@ -93,6 +95,7 @@ export default function RelatedArticlesManager({
           (post: BlogPost) =>
             post.slug !== postSlug && !currentRelatedIds.includes(post.id),
         );
+
         setAvailablePosts(filtered);
       }
     } catch (error) {
@@ -120,6 +123,7 @@ export default function RelatedArticlesManager({
         onClose();
       } else {
         const error = await response.json();
+
         alert(error.error || "Failed to add related article");
       }
     } catch (error) {
@@ -146,6 +150,7 @@ export default function RelatedArticlesManager({
         await fetchRelatedArticles();
       } else {
         const error = await response.json();
+
         alert(error.error || "Failed to remove related article");
       }
     } catch (error) {
@@ -178,11 +183,11 @@ export default function RelatedArticlesManager({
           </h2>
           <Button
             color="primary"
-            variant="flat"
+            isDisabled={loading}
             size="sm"
             startContent={<PlusIcon className="w-4 h-4" />}
+            variant="flat"
             onPress={onOpen}
-            isDisabled={loading}
           >
             Add Related
           </Button>
@@ -203,10 +208,10 @@ export default function RelatedArticlesManager({
               {relatedArticles.map((article) => (
                 <motion.div
                   key={article.relationId}
-                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
                   className="border rounded-lg p-3 hover:bg-gray-50 transition-colors"
+                  exit={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: 10 }}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
@@ -217,21 +222,21 @@ export default function RelatedArticlesManager({
                         <div className="flex items-center gap-1">
                           {article.status === "DRAFT" ? (
                             <Chip
-                              size="sm"
-                              variant="flat"
                               color="warning"
+                              size="sm"
                               startContent={
                                 <EyeSlashIcon className="w-3 h-3" />
                               }
+                              variant="flat"
                             >
                               Draft
                             </Chip>
                           ) : (
                             <Chip
-                              size="sm"
-                              variant="flat"
                               color="success"
+                              size="sm"
                               startContent={<EyeIcon className="w-3 h-3" />}
+                              variant="flat"
                             >
                               Published
                             </Chip>
@@ -244,11 +249,11 @@ export default function RelatedArticlesManager({
                       <div className="flex items-center gap-2 text-xs text-gray-500">
                         <Chip
                           size="sm"
-                          variant="flat"
                           style={{
                             backgroundColor: `${article.category.color}20`,
                             color: article.category.color,
                           }}
+                          variant="flat"
                         >
                           {article.category.name}
                         </Chip>
@@ -263,11 +268,11 @@ export default function RelatedArticlesManager({
                     </div>
                     <Button
                       isIconOnly
+                      color="danger"
+                      isDisabled={saving}
                       size="sm"
                       variant="light"
-                      color="danger"
                       onPress={() => removeRelatedArticle(article.relationId)}
-                      isDisabled={saving}
                     >
                       <TrashIcon className="w-4 h-4" />
                     </Button>
@@ -282,9 +287,9 @@ export default function RelatedArticlesManager({
       {/* Add Related Article Modal */}
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
-        size="2xl"
         scrollBehavior="inside"
+        size="2xl"
+        onClose={onClose}
       >
         <ModalContent>
           <ModalHeader>Add Related Article</ModalHeader>
@@ -314,21 +319,21 @@ export default function RelatedArticlesManager({
                           <h4 className="font-medium truncate">{post.title}</h4>
                           {post.status === "DRAFT" ? (
                             <Chip
-                              size="sm"
-                              variant="flat"
                               color="warning"
+                              size="sm"
                               startContent={
                                 <EyeSlashIcon className="w-3 h-3" />
                               }
+                              variant="flat"
                             >
                               Draft
                             </Chip>
                           ) : (
                             <Chip
-                              size="sm"
-                              variant="flat"
                               color="success"
+                              size="sm"
                               startContent={<EyeIcon className="w-3 h-3" />}
+                              variant="flat"
                             >
                               Published
                             </Chip>
@@ -337,23 +342,23 @@ export default function RelatedArticlesManager({
                         <div className="flex items-center gap-2 text-xs text-gray-500">
                           <Chip
                             size="sm"
-                            variant="flat"
                             style={{
                               backgroundColor: `${post.category.color}20`,
                               color: post.category.color,
                             }}
+                            variant="flat"
                           >
                             {post.category.name}
                           </Chip>
                         </div>
                       </div>
                       <Button
-                        size="sm"
                         color="primary"
-                        variant="flat"
-                        onPress={() => addRelatedArticle(post.id)}
                         isDisabled={saving}
                         isLoading={saving}
+                        size="sm"
+                        variant="flat"
+                        onPress={() => addRelatedArticle(post.id)}
                       >
                         Link
                       </Button>

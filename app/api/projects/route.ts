@@ -1,8 +1,10 @@
+import { randomUUID } from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { randomUUID } from "crypto";
 
 // GET /api/projects - Get all projects
 export async function GET() {
@@ -18,6 +20,7 @@ export async function GET() {
     return NextResponse.json(projects);
   } catch (error) {
     console.error("Failed to fetch projects:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch projects" },
       { status: 500 },
@@ -29,6 +32,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -115,6 +119,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(project, { status: 201 });
   } catch (error) {
     console.error("Failed to create project:", error);
+
     return NextResponse.json(
       { error: "Failed to create project" },
       { status: 500 },

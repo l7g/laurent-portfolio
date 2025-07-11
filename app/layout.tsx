@@ -104,11 +104,11 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <head />
       <body
+        suppressHydrationWarning
         className={clsx(
           "min-h-screen text-foreground bg-background font-sans antialiased",
           fontSans.variable,
         )}
-        suppressHydrationWarning
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
           <div className="relative flex flex-col min-h-screen">
@@ -187,20 +187,20 @@ export default function RootLayout({
                   </p>
                   <div className="flex justify-center space-x-4 mt-2">
                     <Link
-                      href="/privacy"
                       className="text-xs text-default-500 hover:text-primary"
+                      href="/privacy"
                     >
                       Privacy Policy
                     </Link>
                     <Link
-                      href="/terms"
                       className="text-xs text-default-500 hover:text-primary"
+                      href="/terms"
                     >
                       Terms of Service
                     </Link>
                     <Link
-                      href="/consent"
                       className="text-xs text-default-500 hover:text-primary"
+                      href="/consent"
                     >
                       Cookie Preferences
                     </Link>

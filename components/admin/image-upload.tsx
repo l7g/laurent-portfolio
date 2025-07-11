@@ -4,8 +4,10 @@ import { useState, useRef } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { PhotoIcon, TrashIcon, FolderIcon } from "@heroicons/react/24/outline";
-import { getProjectImageUrl, validateImageFile } from "@/lib/blob-storage";
+
 import BlobStorageManager from "./blob-storage-manager";
+
+import { getProjectImageUrl, validateImageFile } from "@/lib/blob-storage";
 
 interface ImageUploadProps {
   currentImageUrl?: string | null;
@@ -34,8 +36,10 @@ export default function ImageUpload({
 
     // Validate file
     const validation = validateImageFile(file);
+
     if (!validation.valid) {
       alert(validation.error);
+
       return;
     }
 
@@ -43,6 +47,7 @@ export default function ImageUpload({
 
     try {
       const formData = new FormData();
+
       formData.append("file", file);
       formData.append("folder", folder);
 
@@ -68,6 +73,7 @@ export default function ImageUpload({
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (file) {
       handleFileSelect(file);
     }
@@ -78,6 +84,7 @@ export default function ImageUpload({
     setDragActive(false);
 
     const file = e.dataTransfer.files?.[0];
+
     if (file) {
       handleFileSelect(file);
     }
@@ -108,6 +115,7 @@ export default function ImageUpload({
 
         if (!response.ok) {
           const error = await response.json();
+
           console.error("Delete error:", error);
         }
       }
@@ -141,9 +149,9 @@ export default function ImageUpload({
           {/* Image Preview */}
           <div className="relative aspect-video bg-gray-100 overflow-hidden">
             <img
-              src={imageUrl}
               alt="Project image"
               className="w-full h-full object-cover object-center"
+              src={imageUrl}
               onError={(e) => {
                 e.currentTarget.src = getProjectImageUrl(null, placeholder);
               }}
@@ -154,20 +162,20 @@ export default function ImageUpload({
               <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center opacity-70 hover:opacity-100">
                 <div className="flex gap-2">
                   <Button
-                    size="sm"
                     color="primary"
+                    isLoading={isUploading}
+                    size="sm"
                     startContent={<PhotoIcon className="w-4 h-4" />}
                     onPress={() => fileInputRef.current?.click()}
-                    isLoading={isUploading}
                   >
                     {currentImageUrl ? "Upload New" : "Upload"}
                   </Button>
 
                   <Button
-                    size="sm"
                     color="secondary"
-                    variant="flat"
+                    size="sm"
                     startContent={<FolderIcon className="w-4 h-4" />}
+                    variant="flat"
                     onPress={() => setShowBlobManager(true)}
                   >
                     Browse
@@ -184,20 +192,20 @@ export default function ImageUpload({
         <div className="flex gap-2 mb-4">
           {currentImageUrl && (
             <Button
-              size="sm"
               color="danger"
-              variant="flat"
+              size="sm"
               startContent={<TrashIcon className="w-4 h-4" />}
+              variant="flat"
               onPress={handleRemoveImage}
             >
               Clear Current Image
             </Button>
           )}
           <Button
-            size="sm"
             color="secondary"
-            variant="flat"
+            size="sm"
             startContent={<FolderIcon className="w-4 h-4" />}
+            variant="flat"
             onPress={() => setShowBlobManager(true)}
           >
             Browse Images
@@ -208,16 +216,16 @@ export default function ImageUpload({
       {/* Drag & Drop Upload Area */}
       {!disabled && (
         <Card
+          isPressable
           className={`border-2 border-dashed transition-colors cursor-pointer ${
             dragActive
               ? "border-primary-500 bg-primary-50"
               : "border-gray-300 hover:border-gray-400"
           } ${isUploading ? "opacity-50 pointer-events-none" : ""}`}
-          isPressable
-          onPress={() => fileInputRef.current?.click()}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onPress={() => fileInputRef.current?.click()}
         >
           <CardBody className="text-center py-8">
             <PhotoIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -249,35 +257,35 @@ export default function ImageUpload({
           </label>
           <div className="flex flex-wrap gap-2">
             <Button
+              color="primary"
               size="sm"
               variant={
                 currentImageUrl === "placeholder-ecommerce"
                   ? "solid"
                   : "bordered"
               }
-              color="primary"
               onPress={() => handlePlaceholderSelect("placeholder-ecommerce")}
             >
               E-Commerce
             </Button>
             <Button
+              color="primary"
               size="sm"
               variant={
                 currentImageUrl === "placeholder-tasks" ? "solid" : "bordered"
               }
-              color="primary"
               onPress={() => handlePlaceholderSelect("placeholder-tasks")}
             >
               Task Management
             </Button>
             <Button
+              color="primary"
               size="sm"
               variant={
                 currentImageUrl === "/projects/placeholder.png"
                   ? "solid"
                   : "bordered"
               }
-              color="primary"
               onPress={() =>
                 handlePlaceholderSelect("/projects/placeholder.png")
               }
@@ -291,22 +299,22 @@ export default function ImageUpload({
       {/* Hidden File Input */}
       <input
         ref={fileInputRef}
-        type="file"
         accept="image/*"
-        onChange={handleFileInputChange}
         className="hidden"
         disabled={disabled || isUploading}
+        type="file"
+        onChange={handleFileInputChange}
       />
 
       {/* Blob Storage Manager Modal */}
       <BlobStorageManager
+        currentImageUrl={currentImageUrl || undefined}
         isOpen={showBlobManager}
         onClose={() => setShowBlobManager(false)}
         onSelectImage={(imageUrl) => {
           onImageChange(imageUrl);
           setShowBlobManager(false);
         }}
-        currentImageUrl={currentImageUrl || undefined}
       />
     </div>
   );

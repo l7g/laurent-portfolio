@@ -63,7 +63,7 @@ export default function ProgramEditModal({
   const statuses = ["ACTIVE", "COMPLETED", "TRANSFERRED", "WITHDRAWN"];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg" scrollBehavior="inside">
+    <Modal isOpen={isOpen} scrollBehavior="inside" size="lg" onClose={onClose}>
       <ModalContent>
         <form onSubmit={handleSubmit}>
           <ModalHeader>
@@ -72,40 +72,40 @@ export default function ProgramEditModal({
           <ModalBody>
             <div className="space-y-4">
               <Input
+                required
                 label="Program Name"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                required
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Degree"
+                  placeholder="e.g., Bachelor of Science, Master of Arts"
                   value={formData.degree}
                   onChange={(e) =>
                     setFormData({ ...formData, degree: e.target.value })
                   }
-                  placeholder="e.g., Bachelor of Science, Master of Arts"
                 />
                 <Input
+                  required
                   label="Institution"
                   value={formData.institution}
                   onChange={(e) =>
                     setFormData({ ...formData, institution: e.target.value })
                   }
-                  required
                 />
               </div>
 
               <Textarea
                 label="Description"
+                rows={3}
                 value={formData.description}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                rows={3}
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -130,10 +130,10 @@ export default function ProgramEditModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="GPA"
-                  type="number"
-                  step="0.01"
-                  min="0"
                   max="4.0"
+                  min="0"
+                  step="0.01"
+                  type="number"
                   value={formData.gpa?.toString()}
                   onChange={(e) =>
                     setFormData({
@@ -165,11 +165,11 @@ export default function ProgramEditModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Location"
+                  placeholder="City, State/Country"
                   value={formData.location}
                   onChange={(e) =>
                     setFormData({ ...formData, location: e.target.value })
                   }
-                  placeholder="City, State/Country"
                 />
                 <Input
                   label="Website"
@@ -205,7 +205,7 @@ export default function ProgramEditModal({
             <Button variant="flat" onPress={onClose}>
               Cancel
             </Button>
-            <Button type="submit" color="primary" isLoading={loading}>
+            <Button color="primary" isLoading={loading} type="submit">
               Save Changes
             </Button>
           </ModalFooter>

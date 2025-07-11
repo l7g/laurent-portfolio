@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
-import LoadingSkeleton from "./loading-skeleton";
 import {
   CodeBracketIcon,
   CircleStackIcon,
   GlobeAltIcon,
   BoltIcon,
 } from "@heroicons/react/24/outline";
+
+import LoadingSkeleton from "./loading-skeleton";
 
 interface Highlight {
   icon: any;
@@ -44,6 +45,7 @@ const AboutSection = () => {
       globe: <GlobeAltIcon className="w-6 h-6" />,
       bolt: <BoltIcon className="w-6 h-6" />,
     };
+
     return (
       iconMap[iconType || "code"] || <CodeBracketIcon className="w-6 h-6" />
     );
@@ -53,6 +55,7 @@ const AboutSection = () => {
     async function fetchSectionData() {
       try {
         const response = await fetch("/api/sections");
+
         if (response.ok) {
           const sections = await response.json();
           const aboutSection = sections.find(

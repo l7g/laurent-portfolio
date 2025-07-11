@@ -45,8 +45,10 @@ export default function GraduationTracker() {
   const fetchGraduationData = async () => {
     try {
       const response = await fetch("/api/graduation-tracking");
+
       if (response.ok) {
         const graduationData = await response.json();
+
         setData(graduationData);
         setFormData(graduationData);
       }
@@ -106,6 +108,7 @@ export default function GraduationTracker() {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "Not set";
+
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -146,10 +149,10 @@ export default function GraduationTracker() {
               {getStatusText(data.graduationStatus)}
             </Chip>
             <Button
-              size="sm"
               color="primary"
-              variant={editing ? "solid" : "flat"}
+              size="sm"
               startContent={<PencilIcon className="w-4 h-4" />}
+              variant={editing ? "solid" : "flat"}
               onPress={() => setEditing(!editing)}
             >
               {editing ? "Cancel" : "Edit"}
@@ -171,7 +174,7 @@ export default function GraduationTracker() {
                 <p className="font-medium">Expected Graduation</p>
                 <p className="text-gray-600">{formatDate(data.expectedEnd)}</p>
               </div>
-              <Chip color="warning" variant="flat" size="sm">
+              <Chip color="warning" size="sm" variant="flat">
                 Expected
               </Chip>
             </div>
@@ -185,7 +188,7 @@ export default function GraduationTracker() {
                     {formatDate(data.actualGraduationDate)}
                   </p>
                 </div>
-                <Chip color="success" variant="flat" size="sm">
+                <Chip color="success" size="sm" variant="flat">
                   {data.hasGraduated ? "Completed" : "Scheduled"}
                 </Chip>
               </div>
@@ -208,8 +211,8 @@ export default function GraduationTracker() {
               </div>
               <Chip
                 color={data.dissertationStarted ? "success" : "default"}
-                variant="flat"
                 size="sm"
+                variant="flat"
               >
                 {data.dissertationStarted ? "Yes" : "No"}
               </Chip>
@@ -245,8 +248,8 @@ export default function GraduationTracker() {
                   </div>
                   <Chip
                     color={data.dissertationSubmitted ? "success" : "warning"}
-                    variant="flat"
                     size="sm"
+                    variant="flat"
                   >
                     {data.dissertationSubmitted ? "Yes" : "No"}
                   </Chip>
@@ -282,6 +285,7 @@ export default function GraduationTracker() {
                 Actual Graduation Date
               </label>
               <Input
+                description="Leave empty if not yet scheduled"
                 type="date"
                 value={
                   formData.actualGraduationDate
@@ -296,7 +300,6 @@ export default function GraduationTracker() {
                       : undefined,
                   })
                 }
-                description="Leave empty if not yet scheduled"
               />
             </div>
 
@@ -320,6 +323,7 @@ export default function GraduationTracker() {
                       Dissertation Title
                     </label>
                     <Input
+                      placeholder="Enter dissertation title"
                       value={formData.dissertationTitle || ""}
                       onChange={(e) =>
                         setFormData({
@@ -327,7 +331,6 @@ export default function GraduationTracker() {
                           dissertationTitle: e.target.value,
                         })
                       }
-                      placeholder="Enter dissertation title"
                     />
                   </div>
 

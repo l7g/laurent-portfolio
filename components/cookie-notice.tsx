@@ -5,6 +5,7 @@ import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
 import { Link } from "@heroui/link";
 import { Switch } from "@heroui/switch";
+
 import {
   hasGivenConsent,
   setConsentPreferences,
@@ -32,6 +33,7 @@ export default function CookieNotice() {
       analytics: true,
       preferences: true,
     };
+
     setConsentPreferences(allConsent);
     setShowNotice(false);
   };
@@ -60,7 +62,7 @@ export default function CookieNotice() {
               We use localStorage to remember your preferences and improve your
               experience. No tracking, no invasive cookies. You can withdraw
               consent anytime.{" "}
-              <Link href="/privacy" className="text-primary text-xs underline">
+              <Link className="text-primary text-xs underline" href="/privacy">
                 Read our Privacy Policy
               </Link>
             </p>
@@ -71,7 +73,7 @@ export default function CookieNotice() {
                   <span className="text-xs">
                     Necessary (Required for basic functionality)
                   </span>
-                  <Switch isSelected={true} isDisabled size="sm" />
+                  <Switch isDisabled isSelected={true} size="sm" />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs">
@@ -79,26 +81,26 @@ export default function CookieNotice() {
                   </span>
                   <Switch
                     isSelected={preferences.preferences}
+                    size="sm"
                     onValueChange={(checked: boolean) =>
                       setPreferences((prev) => ({
                         ...prev,
                         preferences: checked,
                       }))
                     }
-                    size="sm"
                   />
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs">Analytics (Improve website)</span>
                   <Switch
                     isSelected={preferences.analytics}
+                    size="sm"
                     onValueChange={(checked: boolean) =>
                       setPreferences((prev) => ({
                         ...prev,
                         analytics: checked,
                       }))
                     }
-                    size="sm"
                   />
                 </div>
               </div>
@@ -106,37 +108,37 @@ export default function CookieNotice() {
 
             <div className="flex gap-2 flex-wrap">
               <Button
-                size="sm"
-                color="primary"
-                onPress={acceptAll}
                 className="text-xs"
+                color="primary"
+                size="sm"
+                onPress={acceptAll}
               >
                 ✓ Accept All
               </Button>
               {showDetails && (
                 <Button
-                  size="sm"
+                  className="text-xs"
                   color="primary"
+                  size="sm"
                   variant="bordered"
                   onPress={acceptSelected}
-                  className="text-xs"
                 >
                   Save Preferences
                 </Button>
               )}
               <Button
+                className="text-xs"
                 size="sm"
                 variant="light"
                 onPress={() => setShowDetails(!showDetails)}
-                className="text-xs"
               >
                 {showDetails ? "Hide" : "Customize"}
               </Button>
               <Button
+                className="text-xs"
                 size="sm"
                 variant="bordered"
                 onPress={declineAll}
-                className="text-xs"
               >
                 ✗ Decline Optional
               </Button>

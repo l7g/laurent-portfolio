@@ -1,5 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import { randomUUID } from "crypto";
+﻿import { randomUUID } from "crypto";
+
+import { NextRequest, NextResponse } from "next/server";
+
 import { sendContactEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 

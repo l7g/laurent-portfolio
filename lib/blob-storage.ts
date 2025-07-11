@@ -76,6 +76,7 @@ export class BlobStorage {
       return blobs.map((blob) => blob.url);
     } catch (error) {
       console.error("Error listing blob storage:", error);
+
       return [];
     }
   }
@@ -149,6 +150,7 @@ export function getProjectImageUrl(
           return PLACEHOLDER_IMAGES.projects.default;
       }
     }
+
     return imageUrl;
   }
 

@@ -1,8 +1,10 @@
+import { randomUUID } from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { randomUUID } from "crypto";
 
 // GET /api/skills - Get all skills (with admin filtering)
 export async function GET(request: NextRequest) {
@@ -20,6 +22,7 @@ export async function GET(request: NextRequest) {
 
     // Build where clause - public users only see active skills
     const where: any = {};
+
     if (!isAdmin) {
       where.isActive = true;
     }
@@ -32,6 +35,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(skills);
   } catch (error) {
     console.error("Failed to fetch skills:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch skills" },
       { status: 500 },
@@ -43,6 +47,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -75,6 +80,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(skill, { status: 201 });
   } catch (error) {
     console.error("Failed to create skill:", error);
+
     return NextResponse.json(
       { error: "Failed to create skill" },
       { status: 500 },

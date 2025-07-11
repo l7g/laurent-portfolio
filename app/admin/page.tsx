@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
-import { Avatar } from "@heroui/avatar";
 import { Progress } from "@heroui/progress";
 import { Divider } from "@heroui/divider";
 import { Spinner } from "@heroui/spinner";
@@ -24,12 +23,11 @@ import {
   TrashIcon,
   Cog6ToothIcon,
   BookOpenIcon,
-  StarIcon,
   BuildingOfficeIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+
 import { title } from "@/components/primitives";
-import SettingsManager from "@/components/admin/settings-manager";
 import ProjectEditModal from "@/components/admin/project-edit-modal";
 import SkillEditModal from "@/components/admin/skill-edit-modal";
 import ProgramEditModal from "@/components/admin/program-edit-modal";
@@ -89,6 +87,7 @@ export default function AdminDashboard() {
     if (status === "loading") return;
     if (!session || session.user?.role !== "ADMIN") {
       router.push("/admin/login");
+
       return;
     }
     fetchDashboardData();
@@ -215,6 +214,7 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         const updatedProject = await response.json();
+
         setProjects(
           projects.map((p) => (p.id === projectId ? updatedProject : p)),
         );
@@ -242,6 +242,7 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         const updated = await response.json();
+
         if (type === "program") {
           setPrograms(programs.map((p) => (p.id === id ? updated : p)));
         } else {
@@ -263,6 +264,7 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         const updatedSkill = await response.json();
+
         setSkills(skills.map((s) => (s.id === skillId ? updatedSkill : s)));
       }
     } catch (error) {
@@ -302,6 +304,7 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         const updatedProject = await response.json();
+
         setProjects(
           projects.map((p) =>
             p.id === editingProject.id ? updatedProject : p,
@@ -371,8 +374,8 @@ export default function AdminDashboard() {
         {/* Header */}
         <div className="mb-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
           >
             <h1 className={title({ size: "lg" })}>Admin Dashboard</h1>
@@ -388,11 +391,11 @@ export default function AdminDashboard() {
             {tabs.map((tab) => (
               <Button
                 key={tab.id}
-                variant={activeTab === tab.id ? "solid" : "flat"}
+                className="flex-shrink-0"
                 color={activeTab === tab.id ? "primary" : "default"}
                 startContent={<tab.icon className="w-4 h-4" />}
+                variant={activeTab === tab.id ? "solid" : "flat"}
                 onPress={() => setActiveTab(tab.id)}
-                className="flex-shrink-0"
               >
                 {tab.label}
               </Button>
@@ -403,8 +406,8 @@ export default function AdminDashboard() {
         {/* Tab Content */}
         <motion.div
           key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3 }}
         >
           {activeTab === "overview" && (
@@ -419,10 +422,10 @@ export default function AdminDashboard() {
                     </div>
                     <p className="text-xs text-default-600">Blog Posts</p>
                     <Chip
-                      size="sm"
-                      color="success"
-                      variant="flat"
                       className="mt-1"
+                      color="success"
+                      size="sm"
+                      variant="flat"
                     >
                       {stats.publishedPosts} live
                     </Chip>
@@ -491,7 +494,7 @@ export default function AdminDashboard() {
                         Blog Posts
                       </h3>
                       <Link href="/admin/blog">
-                        <Button size="sm" variant="flat" color="primary">
+                        <Button color="primary" size="sm" variant="flat">
                           Manage All
                         </Button>
                       </Link>
@@ -518,8 +521,8 @@ export default function AdminDashboard() {
                     </div>
                     <Divider className="my-3" />
                     <div className="flex gap-2">
-                      <Link href="/admin/blog/new" className="flex-1">
-                        <Button size="sm" color="primary" className="w-full">
+                      <Link className="flex-1" href="/admin/blog/new">
+                        <Button className="w-full" color="primary" size="sm">
                           New Post
                         </Button>
                       </Link>
@@ -541,7 +544,7 @@ export default function AdminDashboard() {
                         Comments
                       </h3>
                       <Link href="/admin/blog/comments">
-                        <Button size="sm" variant="flat" color="primary">
+                        <Button color="primary" size="sm" variant="flat">
                           Manage All
                         </Button>
                       </Link>
@@ -570,8 +573,8 @@ export default function AdminDashboard() {
                     </div>
                     <Divider className="my-3" />
                     <div className="flex gap-2">
-                      <Link href="/admin/blog/comments" className="flex-1">
-                        <Button size="sm" color="primary" className="w-full">
+                      <Link className="flex-1" href="/admin/blog/comments">
+                        <Button className="w-full" color="primary" size="sm">
                           Review Comments
                         </Button>
                       </Link>
@@ -587,7 +590,7 @@ export default function AdminDashboard() {
                         <BriefcaseIcon className="w-5 h-5" />
                         Projects
                       </h3>
-                      <Button size="sm" variant="flat" color="primary">
+                      <Button color="primary" size="sm" variant="flat">
                         Add New
                       </Button>
                     </div>
@@ -610,7 +613,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <Divider className="my-3" />
-                    <Button size="sm" color="primary" className="w-full">
+                    <Button className="w-full" color="primary" size="sm">
                       Manage Projects
                     </Button>
                   </CardBody>
@@ -648,18 +651,18 @@ export default function AdminDashboard() {
                     <Divider className="my-3" />
                     <div className="flex gap-2">
                       <Button
+                        className="flex-1"
                         size="sm"
                         variant="flat"
                         onPress={() => setActiveTab("skills")}
-                        className="flex-1"
                       >
                         Skills
                       </Button>
                       <Button
+                        className="flex-1"
                         size="sm"
                         variant="flat"
                         onPress={() => setActiveTab("education")}
-                        className="flex-1"
                       >
                         Education
                       </Button>
@@ -730,7 +733,7 @@ export default function AdminDashboard() {
                     </Button>
                   </Link>
                   <Link href="/admin/blog">
-                    <Button variant="flat" color="primary">
+                    <Button color="primary" variant="flat">
                       Full Blog Manager
                     </Button>
                   </Link>
@@ -751,12 +754,12 @@ export default function AdminDashboard() {
                           </h3>
                           <div className="flex items-center gap-4">
                             <Chip
-                              size="sm"
                               color={
                                 post.status === "PUBLISHED"
                                   ? "success"
                                   : "warning"
                               }
+                              size="sm"
                               variant="flat"
                             >
                               {post.status}
@@ -764,11 +767,11 @@ export default function AdminDashboard() {
                             {post.blog_categories && (
                               <Chip
                                 size="sm"
-                                variant="flat"
                                 style={{
                                   backgroundColor: `${post.blog_categories.color}20`,
                                   color: post.blog_categories.color,
                                 }}
+                                variant="flat"
                               >
                                 {post.blog_categories.name}
                               </Chip>
@@ -785,16 +788,16 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex gap-2">
                           <Link href={`/blog/${post.slug}`}>
-                            <Button size="sm" variant="flat" isIconOnly>
+                            <Button isIconOnly size="sm" variant="flat">
                               <EyeIcon className="w-4 h-4" />
                             </Button>
                           </Link>
                           <Link href={`/admin/blog/edit/${post.id}`}>
                             <Button
+                              isIconOnly
+                              color="warning"
                               size="sm"
                               variant="flat"
-                              color="warning"
-                              isIconOnly
                             >
                               <PencilIcon className="w-4 h-4" />
                             </Button>
@@ -848,7 +851,7 @@ export default function AdminDashboard() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between mb-2">
                           <h3 className="font-medium">{skill.name}</h3>
-                          <Chip size="sm" variant="flat" color="secondary">
+                          <Chip color="secondary" size="sm" variant="flat">
                             {skill.category}
                           </Chip>
                         </div>
@@ -862,7 +865,7 @@ export default function AdminDashboard() {
                             </span>
                           </div>
                           <Progress
-                            value={skill.level}
+                            className="mb-2"
                             color={
                               skill.level >= 90
                                 ? "success"
@@ -870,22 +873,22 @@ export default function AdminDashboard() {
                                   ? "primary"
                                   : "warning"
                             }
-                            className="mb-2"
+                            value={skill.level}
                           />
                         </div>
                         <div className="flex justify-between items-center">
                           <Chip
-                            size="sm"
                             color={skill.isActive ? "success" : "default"}
+                            size="sm"
                             variant="flat"
                           >
                             {skill.isActive ? "Active" : "Inactive"}
                           </Chip>
                           <div className="flex gap-1">
                             <Button
+                              isIconOnly
                               size="sm"
                               variant="flat"
-                              isIconOnly
                               onPress={() =>
                                 handleSkillUpdate(skill.id, {
                                   isActive: !skill.isActive,
@@ -895,19 +898,19 @@ export default function AdminDashboard() {
                               <EyeIcon className="w-4 h-4" />
                             </Button>
                             <Button
+                              isIconOnly
+                              color="warning"
                               size="sm"
                               variant="flat"
-                              color="warning"
-                              isIconOnly
                               onPress={() => setEditingSkill(skill)}
                             >
                               <PencilIcon className="w-4 h-4" />
                             </Button>
                             <Button
+                              isIconOnly
+                              color="danger"
                               size="sm"
                               variant="flat"
-                              color="danger"
-                              isIconOnly
                               onPress={() =>
                                 handleDeleteItem(
                                   "/api/skills",
@@ -1015,7 +1018,6 @@ export default function AdminDashboard() {
                               </p>
                             </div>
                             <Chip
-                              size="sm"
                               color={
                                 program.status === "COMPLETED"
                                   ? "success"
@@ -1023,6 +1025,7 @@ export default function AdminDashboard() {
                                     ? "primary"
                                     : "warning"
                               }
+                              size="sm"
                               variant="flat"
                             >
                               {program.status}
@@ -1039,19 +1042,19 @@ export default function AdminDashboard() {
                             </div>
                             <div className="flex gap-1">
                               <Button
+                                isIconOnly
+                                color="warning"
                                 size="sm"
                                 variant="flat"
-                                color="warning"
-                                isIconOnly
                                 onPress={() => setEditingProgram(program)}
                               >
                                 <PencilIcon className="w-4 h-4" />
                               </Button>
                               <Button
+                                isIconOnly
+                                color="danger"
                                 size="sm"
                                 variant="flat"
-                                color="danger"
-                                isIconOnly
                                 onPress={() =>
                                   handleDeleteItem(
                                     "/api/academic/programs",
@@ -1099,7 +1102,6 @@ export default function AdminDashboard() {
                               </p>
                             </div>
                             <Chip
-                              size="sm"
                               color={
                                 course.status === "COMPLETED"
                                   ? "success"
@@ -1107,6 +1109,7 @@ export default function AdminDashboard() {
                                     ? "primary"
                                     : "warning"
                               }
+                              size="sm"
                               variant="flat"
                             >
                               {course.status}
@@ -1123,19 +1126,19 @@ export default function AdminDashboard() {
                             </div>
                             <div className="flex gap-1">
                               <Button
+                                isIconOnly
+                                color="warning"
                                 size="sm"
                                 variant="flat"
-                                color="warning"
-                                isIconOnly
                                 onPress={() => setEditingCourse(course)}
                               >
                                 <PencilIcon className="w-4 h-4" />
                               </Button>
                               <Button
+                                isIconOnly
+                                color="danger"
                                 size="sm"
                                 variant="flat"
-                                color="danger"
-                                isIconOnly
                                 onPress={() =>
                                   handleDeleteItem(
                                     "/api/academic/courses",
@@ -1195,8 +1198,8 @@ export default function AdminDashboard() {
                 <div className="flex gap-2">
                   <Link href="/projects">
                     <Button
-                      variant="flat"
                       startContent={<EyeIcon className="w-4 h-4" />}
+                      variant="flat"
                     >
                       View Portfolio
                     </Button>
@@ -1230,12 +1233,12 @@ export default function AdminDashboard() {
                           </div>
                           <div className="flex flex-col gap-1 ml-2">
                             {project.flagship && (
-                              <Chip size="sm" color="warning" variant="flat">
+                              <Chip color="warning" size="sm" variant="flat">
                                 Flagship
                               </Chip>
                             )}
                             {project.featured && (
-                              <Chip size="sm" color="secondary" variant="flat">
+                              <Chip color="secondary" size="sm" variant="flat">
                                 Featured
                               </Chip>
                             )}
@@ -1246,9 +1249,9 @@ export default function AdminDashboard() {
                         {project.image && (
                           <div className="relative w-full h-32 rounded-lg overflow-hidden bg-default-100">
                             <img
-                              src={project.image}
                               alt={project.title}
                               className="w-full h-full object-cover"
+                              src={project.image}
                             />
                           </div>
                         )}
@@ -1257,7 +1260,6 @@ export default function AdminDashboard() {
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <Chip
-                              size="sm"
                               color={
                                 project.status === "READY"
                                   ? "success"
@@ -1265,13 +1267,14 @@ export default function AdminDashboard() {
                                     ? "warning"
                                     : "default"
                               }
+                              size="sm"
                               variant="flat"
                             >
                               {project.status}
                             </Chip>
                             <Chip
-                              size="sm"
                               color={project.isActive ? "success" : "default"}
+                              size="sm"
                               variant="flat"
                             >
                               {project.isActive ? "Active" : "Hidden"}
@@ -1287,18 +1290,18 @@ export default function AdminDashboard() {
                                   .map((tech: string, index: number) => (
                                     <Chip
                                       key={index}
+                                      className="text-xs"
                                       size="sm"
                                       variant="flat"
-                                      className="text-xs"
                                     >
                                       {tech}
                                     </Chip>
                                   ))}
                                 {project.technologies.length > 3 && (
                                   <Chip
+                                    className="text-xs"
                                     size="sm"
                                     variant="flat"
-                                    className="text-xs"
                                   >
                                     +{project.technologies.length - 3} more
                                   </Chip>
@@ -1311,20 +1314,20 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-2">
                           {project.liveUrl && (
                             <Link href={project.liveUrl} target="_blank">
-                              <Button size="sm" variant="flat" isIconOnly>
+                              <Button isIconOnly size="sm" variant="flat">
                                 <EyeIcon className="w-4 h-4" />
                               </Button>
                             </Link>
                           )}
                           {project.githubUrl && (
                             <Link href={project.githubUrl} target="_blank">
-                              <Button size="sm" variant="flat" isIconOnly>
+                              <Button isIconOnly size="sm" variant="flat">
                                 <Cog6ToothIcon className="w-4 h-4" />
                               </Button>
                             </Link>
                           )}
                           <Link href={`/projects/${project.slug}`}>
-                            <Button size="sm" variant="flat" isIconOnly>
+                            <Button isIconOnly size="sm" variant="flat">
                               <DocumentTextIcon className="w-4 h-4" />
                             </Button>
                           </Link>
@@ -1333,11 +1336,11 @@ export default function AdminDashboard() {
                         {/* Actions */}
                         <div className="flex gap-2 pt-2 border-t border-default-200">
                           <Button
-                            size="sm"
-                            variant="flat"
-                            color="warning"
                             className="flex-1"
+                            color="warning"
+                            size="sm"
                             startContent={<PencilIcon className="w-4 h-4" />}
+                            variant="flat"
                             onPress={() => setEditingProject(project)}
                           >
                             Edit
@@ -1407,6 +1410,7 @@ export default function AdminDashboard() {
                       const unreadCount = contacts.filter(
                         (c) => !c.read,
                       ).length;
+
                       if (unreadCount > 0) {
                         // Mark all as read
                         Promise.all(
@@ -1425,7 +1429,7 @@ export default function AdminDashboard() {
                   >
                     Mark All Read
                   </Button>
-                  <Chip size="lg" color="primary" variant="flat">
+                  <Chip color="primary" size="lg" variant="flat">
                     {contacts.filter((c) => !c.read).length} unread
                   </Chip>
                 </div>
@@ -1456,7 +1460,7 @@ export default function AdminDashboard() {
                                 </p>
                               </div>
                               {!contact.read && (
-                                <Chip size="sm" color="primary" variant="flat">
+                                <Chip color="primary" size="sm" variant="flat">
                                   New
                                 </Chip>
                               )}
@@ -1487,8 +1491,8 @@ export default function AdminDashboard() {
                           <div className="flex gap-2">
                             <Link href={`mailto:${contact.email}`}>
                               <Button
-                                size="sm"
                                 color="primary"
+                                size="sm"
                                 startContent={
                                   <ChatBubbleLeftRightIcon className="w-4 h-4" />
                                 }
@@ -1497,9 +1501,9 @@ export default function AdminDashboard() {
                               </Button>
                             </Link>
                             <Button
+                              color={contact.read ? "default" : "primary"}
                               size="sm"
                               variant="flat"
-                              color={contact.read ? "default" : "primary"}
                               onPress={() =>
                                 handleContactStatusUpdate(
                                   contact.id,
@@ -1511,10 +1515,10 @@ export default function AdminDashboard() {
                             </Button>
                           </div>
                           <Button
+                            isIconOnly
+                            color="danger"
                             size="sm"
                             variant="flat"
-                            color="danger"
-                            isIconOnly
                             onPress={() =>
                               handleDeleteItem(
                                 "/api/contacts",
@@ -1554,8 +1558,8 @@ export default function AdminDashboard() {
       {editingProject && (
         <ProjectEditModal
           isOpen={!!editingProject}
-          onClose={() => setEditingProject(null)}
           project={editingProject}
+          onClose={() => setEditingProject(null)}
           onSave={handleProjectSave}
         />
       )}
@@ -1563,8 +1567,8 @@ export default function AdminDashboard() {
       {editingSkill && (
         <SkillEditModal
           isOpen={!!editingSkill}
-          onClose={() => setEditingSkill(null)}
           skill={editingSkill}
+          onClose={() => setEditingSkill(null)}
           onSave={handleSkillSave}
         />
       )}
@@ -1572,19 +1576,19 @@ export default function AdminDashboard() {
       {editingProgram && (
         <ProgramEditModal
           isOpen={!!editingProgram}
-          onClose={() => setEditingProgram(null)}
           program={editingProgram}
+          onClose={() => setEditingProgram(null)}
           onSave={handleProgramSave}
         />
       )}
 
       {editingCourse && (
         <CourseEditModal
+          academic_programs={programs}
+          course={editingCourse}
           isOpen={!!editingCourse}
           onClose={() => setEditingCourse(null)}
-          course={editingCourse}
           onSave={handleCourseSave}
-          academic_programs={programs}
         />
       )}
     </div>

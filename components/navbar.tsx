@@ -9,7 +9,6 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@heroui/navbar";
-import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
@@ -34,6 +33,7 @@ export const Navbar = () => {
     if (!isEducationVisible && item.href === "/education") {
       return false;
     }
+
     return true;
   });
 
@@ -42,6 +42,7 @@ export const Navbar = () => {
     if (!isEducationVisible && item.href === "/education") {
       return false;
     }
+
     return true;
   });
 
@@ -95,6 +96,7 @@ export const Navbar = () => {
     if (href.startsWith("#")) {
       if (currentPath !== "/") return false;
       const section = href.replace("#", "");
+
       return activeSection === section;
     }
 

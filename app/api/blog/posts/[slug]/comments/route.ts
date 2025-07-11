@@ -1,7 +1,9 @@
+import crypto from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 import { sendCommentNotification } from "@/lib/email";
-import crypto from "crypto";
 
 export async function GET(
   request: NextRequest,
@@ -17,6 +19,7 @@ export async function GET(
       );
 
     let post;
+
     if (isUUID) {
       // Find by ID
       post = await prisma.blog_posts.findUnique({
@@ -47,6 +50,7 @@ export async function GET(
     return NextResponse.json(comments);
   } catch (error) {
     console.error("Error fetching comments:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch comments" },
       { status: 500 },
@@ -76,6 +80,7 @@ export async function POST(
       );
 
     let post;
+
     if (isUUID) {
       // Find by ID - INCLUDE title and slug for email notifications
       post = await prisma.blog_posts.findUnique({
@@ -96,6 +101,7 @@ export async function POST(
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: "Invalid email address" },
@@ -151,6 +157,7 @@ export async function POST(
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {
     console.error("Error creating comment:", error);
+
     return NextResponse.json(
       { error: "Failed to create comment" },
       { status: 500 },

@@ -21,6 +21,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { BookmarkIcon, StarIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+
 import { title } from "@/components/primitives";
 import { useEducationVisibility } from "@/lib/use-education-visibility";
 
@@ -76,11 +77,13 @@ export default function EducationPage() {
 
         if (programsResponse.ok) {
           const programsData = await programsResponse.json();
+
           setPrograms(programsData);
         }
 
         if (coursesResponse.ok) {
           const coursesData = await coursesResponse.json();
+
           setCourses(coursesData);
         }
       } catch (error) {
@@ -125,6 +128,7 @@ export default function EducationPage() {
 
   const getActualProgress = (program: AcademicProgram) => {
     const actualYear = getCurrentAcademicYear();
+
     return Math.min((actualYear / program.totalYears) * 100, 100);
   };
 
@@ -133,6 +137,7 @@ export default function EducationPage() {
     const startDate = new Date(2025, 7, 1); // August 1st, 2025
     const timeDiff = startDate.getTime() - now.getTime();
     const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
     return daysDiff > 0 ? daysDiff : 0;
   };
 
@@ -172,10 +177,10 @@ export default function EducationPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-6">
-            <div className="h-12 bg-default-300 rounded w-1/3"></div>
+            <div className="h-12 bg-default-300 rounded w-1/3" />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-48 bg-default-300 rounded"></div>
+                <div key={i} className="h-48 bg-default-300 rounded" />
               ))}
             </div>
           </div>
@@ -194,10 +199,10 @@ export default function EducationPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="mb-12 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
         >
           <h1 className={title({ size: "lg", className: "mb-4" })}>
             Educational Journey
@@ -211,10 +216,10 @@ export default function EducationPage() {
         {/* Current Program */}
         {currentProgram && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
             className="mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
             <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
               <AcademicCapIcon className="w-6 h-6 text-primary" />
@@ -247,13 +252,13 @@ export default function EducationPage() {
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <Chip
-                      size="sm"
+                      className="font-medium"
                       color={
                         getCurrentAcademicYear() === 0 ? "warning" : "success"
                       }
-                      variant="flat"
+                      size="sm"
                       startContent={<BookmarkIcon className="w-3 h-3" />}
-                      className="font-medium"
+                      variant="flat"
                     >
                       {getCurrentAcademicYear() === 0
                         ? "Starting Soon"
@@ -306,11 +311,11 @@ export default function EducationPage() {
                         </span>
                       </div>
                       <Progress
-                        value={getActualProgress(currentProgram)}
-                        color="primary"
                         className="max-w-md"
-                        size="lg"
+                        color="primary"
                         showValueLabel={false}
+                        size="lg"
+                        value={getActualProgress(currentProgram)}
                       />
                       <div className="flex justify-between text-xs text-default-500 mt-1">
                         <span>Started</span>
@@ -372,20 +377,20 @@ export default function EducationPage() {
                     <div className="flex flex-col sm:flex-row gap-3">
                       <Button
                         as={Link}
-                        href="/degree"
-                        color="primary"
-                        variant="flat"
-                        endContent={<ChevronRightIcon className="w-4 h-4" />}
                         className="font-medium"
+                        color="primary"
+                        endContent={<ChevronRightIcon className="w-4 h-4" />}
+                        href="/degree"
+                        variant="flat"
                       >
                         View Detailed Progress
                       </Button>
                       <Button
                         as={Link}
+                        className="font-medium"
+                        endContent={<ChevronRightIcon className="w-4 h-4" />}
                         href="/skills"
                         variant="bordered"
-                        endContent={<ChevronRightIcon className="w-4 h-4" />}
-                        className="font-medium"
                       >
                         Academic Skills
                       </Button>
@@ -401,8 +406,8 @@ export default function EducationPage() {
           {/* Current Courses or Upcoming Courses */}
           {currentCourses.length > 0 ? (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -413,8 +418,8 @@ export default function EducationPage() {
                 {currentCourses.map((course, index) => (
                   <motion.div
                     key={course.id}
-                    initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
                     <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-default-200 hover:border-primary/30">
@@ -447,10 +452,10 @@ export default function EducationPage() {
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <Chip
-                              size="sm"
-                              color={getStatusColor(course.status)}
-                              variant="flat"
                               className="font-medium"
+                              color={getStatusColor(course.status)}
+                              size="sm"
+                              variant="flat"
                             >
                               {course.status}
                             </Chip>
@@ -469,8 +474,8 @@ export default function EducationPage() {
             </motion.div>
           ) : (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -516,8 +521,8 @@ export default function EducationPage() {
           {/* Completed Programs */}
           {completedPrograms.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -528,8 +533,8 @@ export default function EducationPage() {
                 {completedPrograms.map((program, index) => (
                   <motion.div
                     key={program.id}
-                    initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
                     <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-default-200 hover:border-primary/30">
@@ -565,11 +570,11 @@ export default function EducationPage() {
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <Chip
-                              size="sm"
-                              color="primary"
-                              variant="flat"
-                              startContent={<StarIcon className="w-3 h-3" />}
                               className="font-medium"
+                              color="primary"
+                              size="sm"
+                              startContent={<StarIcon className="w-3 h-3" />}
+                              variant="flat"
                             >
                               Completed
                             </Chip>
@@ -591,8 +596,8 @@ export default function EducationPage() {
           {/* Planned Programs */}
           {plannedPrograms.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.35 }}
             >
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -603,8 +608,8 @@ export default function EducationPage() {
                 {plannedPrograms.map((program, index) => (
                   <motion.div
                     key={program.id}
-                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
                     <Card className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-default-200 hover:border-warning/30">
@@ -639,11 +644,11 @@ export default function EducationPage() {
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <Chip
-                              size="sm"
-                              color="warning"
-                              variant="flat"
-                              startContent={<ClockIcon className="w-3 h-3" />}
                               className="font-medium"
+                              color="warning"
+                              size="sm"
+                              startContent={<ClockIcon className="w-3 h-3" />}
+                              variant="flat"
                             >
                               Planned
                             </Chip>
@@ -660,16 +665,16 @@ export default function EducationPage() {
 
         {/* Academic Statistics */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
           <h2 className="text-xl font-semibold mb-6">Academic Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <motion.div
-              whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
+              whileHover={{ scale: 1.02 }}
             >
               <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300">
                 <CardBody className="p-6 text-center">
@@ -683,8 +688,8 @@ export default function EducationPage() {
               </Card>
             </motion.div>
             <motion.div
-              whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
+              whileHover={{ scale: 1.02 }}
             >
               <Card className="bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
                 <CardBody className="p-6 text-center">
@@ -698,8 +703,8 @@ export default function EducationPage() {
               </Card>
             </motion.div>
             <motion.div
-              whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
+              whileHover={{ scale: 1.02 }}
             >
               <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300">
                 <CardBody className="p-6 text-center">
@@ -713,8 +718,8 @@ export default function EducationPage() {
               </Card>
             </motion.div>
             <motion.div
-              whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
+              whileHover={{ scale: 1.02 }}
             >
               <Card className="bg-gradient-to-r from-orange-500/10 to-orange-600/10 border border-orange-500/20 hover:border-orange-500/40 transition-all duration-300">
                 <CardBody className="p-6 text-center">
@@ -735,10 +740,10 @@ export default function EducationPage() {
 
         {/* Call to Action */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-12 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
           <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/10 hover:border-primary/20 transition-all duration-300">
             <CardBody className="p-10">
@@ -759,11 +764,11 @@ export default function EducationPage() {
                 >
                   <Button
                     as={Link}
-                    href="/degree"
-                    color="primary"
-                    size="lg"
-                    endContent={<ChevronRightIcon className="w-5 h-5" />}
                     className="font-semibold px-8"
+                    color="primary"
+                    endContent={<ChevronRightIcon className="w-5 h-5" />}
+                    href="/degree"
+                    size="lg"
                   >
                     View Degree Details
                   </Button>
@@ -774,11 +779,11 @@ export default function EducationPage() {
                 >
                   <Button
                     as={Link}
-                    href="/skills"
-                    variant="bordered"
-                    size="lg"
-                    endContent={<ChevronRightIcon className="w-5 h-5" />}
                     className="font-semibold px-8"
+                    endContent={<ChevronRightIcon className="w-5 h-5" />}
+                    href="/skills"
+                    size="lg"
+                    variant="bordered"
                   >
                     Technical Skills
                   </Button>

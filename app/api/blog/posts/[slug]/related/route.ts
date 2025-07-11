@@ -1,8 +1,10 @@
+import crypto from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import crypto from "crypto";
 
 // GET - Fetch related articles for a specific post
 export async function GET(
@@ -88,6 +90,7 @@ export async function GET(
     return NextResponse.json(relatedPosts);
   } catch (error) {
     console.error("Error fetching related articles:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch related articles" },
       { status: 500 },
@@ -102,6 +105,7 @@ export async function POST(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session || session.user?.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -207,6 +211,7 @@ export async function POST(
     });
   } catch (error) {
     console.error("Error adding related article:", error);
+
     return NextResponse.json(
       { error: "Failed to add related article" },
       { status: 500 },
@@ -221,6 +226,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session || session.user?.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -234,6 +240,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error removing related article:", error);
+
     return NextResponse.json(
       { error: "Failed to remove related article" },
       { status: 500 },

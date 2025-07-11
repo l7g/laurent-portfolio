@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Switch } from "@heroui/switch";
+
 import {
   getConsentPreferences,
   setConsentPreferences,
@@ -71,7 +72,7 @@ export default function ConsentManager() {
                 Required for basic website functionality
               </p>
             </div>
-            <Switch isSelected={true} isDisabled />
+            <Switch isDisabled isSelected={true} />
           </div>
 
           <div className="flex items-center justify-between p-3 bg-default-50 rounded-lg">

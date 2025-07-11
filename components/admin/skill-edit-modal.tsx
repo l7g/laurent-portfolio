@@ -67,7 +67,7 @@ export default function SkillEditModal({
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
+    <Modal isOpen={isOpen} size="lg" onClose={onClose}>
       <ModalContent>
         <form onSubmit={handleSubmit}>
           <ModalHeader>
@@ -76,12 +76,12 @@ export default function SkillEditModal({
           <ModalBody>
             <div className="space-y-4">
               <Input
+                required
                 label="Skill Name"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                required
               />
 
               <div>
@@ -108,10 +108,11 @@ export default function SkillEditModal({
                   Proficiency Level: {formData.level}%
                 </label>
                 <input
-                  type="range"
-                  min="0"
+                  className="w-full"
                   max="100"
+                  min="0"
                   step="5"
+                  type="range"
                   value={formData.level}
                   onChange={(e) =>
                     setFormData({
@@ -119,12 +120,13 @@ export default function SkillEditModal({
                       level: parseInt(e.target.value),
                     })
                   }
-                  className="w-full"
                 />
               </div>
 
               <Input
                 label="Years of Experience"
+                max="50"
+                min="0"
                 type="number"
                 value={formData.yearsOfExperience?.toString()}
                 onChange={(e) =>
@@ -133,8 +135,6 @@ export default function SkillEditModal({
                     yearsOfExperience: parseInt(e.target.value) || 0,
                   })
                 }
-                min="0"
-                max="50"
               />
 
               <Input
@@ -159,7 +159,7 @@ export default function SkillEditModal({
             <Button variant="flat" onPress={onClose}>
               Cancel
             </Button>
-            <Button type="submit" color="primary" isLoading={loading}>
+            <Button color="primary" isLoading={loading} type="submit">
               Save Changes
             </Button>
           </ModalFooter>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { list } from "@vercel/blob";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Blob storage list error:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch images" },
       { status: 500 },

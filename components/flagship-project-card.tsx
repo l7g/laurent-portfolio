@@ -15,6 +15,7 @@ import {
   ArrowTopRightOnSquareIcon,
   CodeBracketIcon,
 } from "@heroicons/react/24/outline";
+
 import { getProjectImageUrl } from "@/lib/blob-storage";
 
 interface Project {
@@ -79,10 +80,10 @@ export function FlagshipProjectCard({ project }: FlagshipProjectCardProps) {
           {/* Project Image */}
           <div className="mb-4">
             <Image
-              src={getProjectImageUrl(project.image, "web")}
               alt={project.title}
               className="w-full h-48 object-cover rounded-lg"
               fallbackSrc={getProjectImageUrl(null, "web")}
+              src={getProjectImageUrl(project.image, "web")}
             />
           </div>
 

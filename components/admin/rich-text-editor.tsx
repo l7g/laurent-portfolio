@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
-import { Input } from "@heroui/input";
 import { Chip } from "@heroui/chip";
-import { motion } from "framer-motion";
 import {
   BoldIcon,
   ItalicIcon,
@@ -21,7 +19,6 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/24/outline";
-import { title } from "@/components/primitives";
 import ReactMarkdown from "react-markdown";
 
 interface RichTextEditorProps {
@@ -48,6 +45,7 @@ export default function RichTextEditor({
     placeholder: string = "",
   ) => {
     const textarea = textareaRef.current;
+
     if (!textarea) return;
 
     const start = textarea.selectionStart;
@@ -57,6 +55,7 @@ export default function RichTextEditor({
 
     const newValue =
       value.substring(0, start) + replacement + value.substring(end);
+
     onChange(newValue);
 
     // Restore cursor position
@@ -64,23 +63,27 @@ export default function RichTextEditor({
       textarea.focus();
       const newCursorPos =
         start + before.length + (selectedText || placeholder).length;
+
       textarea.setSelectionRange(newCursorPos, newCursorPos);
     }, 0);
   };
 
   const insertAtCursor = (text: string) => {
     const textarea = textareaRef.current;
+
     if (!textarea) return;
 
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const newValue = value.substring(0, start) + text + value.substring(end);
+
     onChange(newValue);
 
     // Restore cursor position
     setTimeout(() => {
       textarea.focus();
       const newCursorPos = start + text.length;
+
       textarea.setSelectionRange(newCursorPos, newCursorPos);
     }, 0);
   };
@@ -89,6 +92,7 @@ export default function RichTextEditor({
     setImageUploadLoading(true);
     try {
       const formData = new FormData();
+
       formData.append("file", file);
       formData.append("folder", "blog");
 
@@ -100,6 +104,7 @@ export default function RichTextEditor({
       if (response.ok) {
         const data = await response.json();
         const imageMarkdown = `![${file.name}](${data.url})`;
+
         insertAtCursor(imageMarkdown);
       } else {
         console.error("Failed to upload image");
@@ -113,6 +118,7 @@ export default function RichTextEditor({
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
     if (file && file.type.startsWith("image/")) {
       handleImageUpload(file);
     }
@@ -191,13 +197,12 @@ export default function RichTextEditor({
           <div className="flex items-center gap-2">
             <h3 className="text-lg font-semibold">Content Editor</h3>
             {imageUploadLoading && (
-              <Chip size="sm" color="primary" variant="flat">
+              <Chip color="primary" size="sm" variant="flat">
                 Uploading...
               </Chip>
             )}
           </div>
           <Button
-            variant="bordered"
             size="sm"
             startContent={
               isPreviewMode ? (
@@ -206,6 +211,7 @@ export default function RichTextEditor({
                 <EyeIcon className="w-4 h-4" />
               )
             }
+            variant="bordered"
             onClick={() => setIsPreviewMode(!isPreviewMode)}
           >
             {isPreviewMode ? "Edit" : "Preview"}
@@ -222,16 +228,17 @@ export default function RichTextEditor({
                   <div key={index} className="w-px h-6 bg-default-300 mx-1" />
                 );
               }
+
               return (
                 <Button
                   key={index}
-                  size="sm"
-                  variant="light"
                   isIconOnly
-                  onClick={button.action}
-                  title={button.title}
-                  disabled={button.loading}
                   className="min-w-8 h-8"
+                  disabled={button.loading}
+                  size="sm"
+                  title={button.title}
+                  variant="light"
+                  onClick={button.action}
                 >
                   {button.icon && <button.icon className="w-4 h-4" />}
                 </Button>
@@ -243,10 +250,10 @@ export default function RichTextEditor({
         {/* Hidden file input */}
         <input
           ref={fileInputRef}
-          type="file"
           accept="image/*"
-          onChange={handleFileSelect}
           className="hidden"
+          type="file"
+          onChange={handleFileSelect}
         />
 
         {/* Editor/Preview Area */}
@@ -304,17 +311,17 @@ export default function RichTextEditor({
                       ),
                       img: ({ src, alt }: any) => (
                         <img
-                          src={src}
                           alt={alt}
                           className="max-w-full h-auto rounded-lg shadow-md mb-4"
+                          src={src}
                         />
                       ),
                       a: ({ href, children }: any) => (
                         <a
-                          href={href}
                           className="text-primary hover:text-primary/80 underline"
-                          target="_blank"
+                          href={href}
                           rel="noopener noreferrer"
+                          target="_blank"
                         >
                           {children}
                         </a>
@@ -335,11 +342,11 @@ export default function RichTextEditor({
           ) : (
             <textarea
               ref={textareaRef}
+              className="w-full p-6 border-none outline-none resize-none bg-transparent text-foreground font-mono text-sm leading-relaxed"
+              placeholder={placeholder}
+              style={{ minHeight }}
               value={value}
               onChange={(e) => onChange(e.target.value)}
-              placeholder={placeholder}
-              className="w-full p-6 border-none outline-none resize-none bg-transparent text-foreground font-mono text-sm leading-relaxed"
-              style={{ minHeight }}
             />
           )}
         </div>
@@ -357,7 +364,7 @@ export default function RichTextEditor({
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs">Markdown supported</span>
-              <Chip size="sm" variant="flat" color="success">
+              <Chip color="success" size="sm" variant="flat">
                 Auto-save
               </Chip>
             </div>

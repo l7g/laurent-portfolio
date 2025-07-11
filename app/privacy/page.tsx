@@ -210,7 +210,7 @@ export default function PrivacyPage() {
         <h2>Manage Your Consent</h2>
         <p>
           You can change your consent preferences at any time by visiting our{" "}
-          <a href="/consent" className="text-primary underline">
+          <a className="text-primary underline" href="/consent">
             Consent Management page
           </a>
           .

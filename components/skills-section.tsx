@@ -64,6 +64,7 @@ const SkillsSection = () => {
 
     // Academic year typically starts in September (month 8)
     let academicYear = currentYear - startYear + 1;
+
     if (month < 8) {
       academicYear -= 1;
     }
@@ -89,6 +90,7 @@ const SkillsSection = () => {
       "Academic Skills": <AcademicCapIcon className="w-6 h-6" />,
       "International Relations": <GlobeAltIcon className="w-6 h-6" />,
     };
+
     return iconMap[categoryTitle] || <CogIcon className="w-6 h-6" />;
   };
 
@@ -150,6 +152,7 @@ const SkillsSection = () => {
         color: "#E10098",
       },
     };
+
     return iconMap[techName] || { icon: <CogIcon className="w-8 h-8" /> };
   };
 
@@ -218,6 +221,7 @@ const SkillsSection = () => {
             // Add to technologies list if it's a main technology (has isFeatured field or high level)
             if (skill.level >= 80 && skill.category !== "ACADEMIC") {
               const techIconData = getTechIcon(skill.name);
+
               techList.push({
                 name: skill.name,
                 icon: techIconData.icon,
@@ -229,6 +233,7 @@ const SkillsSection = () => {
           // Set academic program data
           if (programResponse.ok) {
             const programData = await programResponse.json();
+
             setacademic_programs(programData[0] || null);
           }
 

@@ -32,16 +32,21 @@ export function useApi() {
 
       if (!response.ok) {
         const error = data.error || `HTTP ${response.status}`;
+
         apiOptions.onError?.(error);
+
         return { error };
       }
 
       apiOptions.onSuccess?.();
+
       return { data };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
+
       apiOptions.onError?.(errorMessage);
+
       return { error: errorMessage };
     } finally {
       setLoading(false);
@@ -141,6 +146,7 @@ export function useApi() {
       // Keys are typically shorter and may contain underscores
       const isId = keyOrId.length > 15 && /^[a-zA-Z0-9]+$/.test(keyOrId);
       const paramName = isId ? "id" : "key";
+
       return request<{ message: string }>(
         `/api/settings?${paramName}=${keyOrId}`,
         { method: "DELETE" },

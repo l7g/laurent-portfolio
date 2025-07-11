@@ -1,6 +1,9 @@
 ﻿import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Only initialize Resend if API key is available
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 export interface EmailData {
   to: string;
@@ -16,6 +19,12 @@ export interface EmailData {
 
 export async function sendContactEmail(data: EmailData) {
   const { to, subject, name, email, message } = data;
+
+  // Return early if Resend is not available (e.g., during build)
+  if (!resend) {
+    console.log("⚠️ Resend not available - skipping email send");
+    return { success: false, error: "Email service not configured" };
+  }
 
   try {
     console.log("📧 Starting sendContactEmail for:", { name, email, to });
@@ -133,6 +142,12 @@ export async function sendContactEmail(data: EmailData) {
 export async function sendWorkInquiryEmail(data: EmailData) {
   const { to, name, email, message, company, position, workType, timeline } =
     data;
+
+  // Return early if Resend is not available (e.g., during build)
+  if (!resend) {
+    console.log("⚠️ Resend not available - skipping email send");
+    return { success: false, error: "Email service not configured" };
+  }
 
   console.log("📧 sendWorkInquiryEmail called with:", {
     to,
@@ -272,6 +287,12 @@ export async function sendCommentNotification(data: {
     commentWebsite,
     isApproved,
   } = data;
+
+  // Return early if Resend is not available (e.g., during build)
+  if (!resend) {
+    console.log("⚠️ Resend not available - skipping email send");
+    return { success: false, error: "Email service not configured" };
+  }
 
   try {
     console.log("📧 Sending comment notification for post:", postTitle);

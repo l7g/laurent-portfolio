@@ -33,6 +33,7 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
+          RESEND_API_KEY: "dummy_key_for_build"
 
       - name: Run linting
         run: npm run lint

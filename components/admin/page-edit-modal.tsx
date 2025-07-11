@@ -91,6 +91,7 @@ export default function PageEditModal({
   const handleSubmit = async () => {
     if (!formData.title || !formData.slug) {
       alert("Title and slug are required");
+
       return;
     }
 
@@ -124,7 +125,7 @@ export default function PageEditModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="2xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} scrollBehavior="inside" size="2xl" onClose={onClose}>
       <ModalContent>
         <ModalHeader>
           <h3 className="text-lg font-semibold">
@@ -139,22 +140,22 @@ export default function PageEditModal({
             </h4>
 
             <Input
+              isRequired
               label="Page Title"
               placeholder="Enter page title"
               value={formData.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              isRequired
             />
 
             <Input
+              isRequired
+              description="This will be the URL path for your page"
               label="URL Slug"
               placeholder="page-url"
               value={formData.slug}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, slug: e.target.value }))
               }
-              description="This will be the URL path for your page"
-              isRequired
             />
 
             <div>
@@ -162,7 +163,9 @@ export default function PageEditModal({
                 Description
               </label>
               <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Brief description of this page"
+                rows={3}
                 value={formData.description}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setFormData((prev) => ({
@@ -170,8 +173,6 @@ export default function PageEditModal({
                     description: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows={3}
               />
             </div>
           </div>
@@ -183,13 +184,13 @@ export default function PageEditModal({
             </h4>
 
             <Input
+              description="Recommended: 50-60 characters"
               label="Meta Title"
               placeholder="SEO title for search engines"
               value={formData.metaTitle}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, metaTitle: e.target.value }))
               }
-              description="Recommended: 50-60 characters"
             />
 
             <div>
@@ -197,7 +198,9 @@ export default function PageEditModal({
                 Meta Description
               </label>
               <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="SEO description for search engines"
+                rows={3}
                 value={formData.metaDescription}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setFormData((prev) => ({
@@ -205,8 +208,6 @@ export default function PageEditModal({
                     metaDescription: e.target.value,
                   }))
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                rows={3}
               />
               <p className="text-sm text-gray-500 mt-1">
                 Recommended: 150-160 characters
@@ -229,6 +230,7 @@ export default function PageEditModal({
                 value={formData.content.layout}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                   const layout = e.target.value;
+
                   setFormData((prev) => ({
                     ...prev,
                     content: { ...prev.content, layout },
@@ -245,9 +247,10 @@ export default function PageEditModal({
             </div>
 
             <Input
+              description="Lower numbers appear first in navigation"
               label="Sort Order"
-              type="number"
               placeholder="0"
+              type="number"
               value={formData.sortOrder.toString()}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -255,7 +258,6 @@ export default function PageEditModal({
                   sortOrder: parseInt(e.target.value) || 0,
                 }))
               }
-              description="Lower numbers appear first in navigation"
             />
           </div>
 
@@ -290,7 +292,7 @@ export default function PageEditModal({
           <Button variant="flat" onPress={onClose}>
             Cancel
           </Button>
-          <Button color="primary" onPress={handleSubmit} isLoading={loading}>
+          <Button color="primary" isLoading={loading} onPress={handleSubmit}>
             {page ? "Update Page" : "Create Page"}
           </Button>
         </ModalFooter>

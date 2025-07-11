@@ -12,6 +12,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/modal";
+
 import ImageUpload from "./image-upload";
 
 interface Project {
@@ -125,7 +126,7 @@ export default function ProjectEditModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} scrollBehavior="inside" size="3xl" onClose={onClose}>
       <ModalContent>
         <ModalHeader>
           <h2 className="text-xl font-bold">
@@ -137,13 +138,13 @@ export default function ProjectEditModal({
           {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
+              isRequired
               label="Project Title"
               placeholder="Enter project title"
               value={formData.title || ""}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, title: e.target.value }))
               }
-              isRequired
             />
 
             <Input
@@ -163,9 +164,9 @@ export default function ProjectEditModal({
             </label>
             <ImageUpload
               currentImageUrl={formData.image}
-              onImageChange={handleImageChange}
               folder="projects"
               placeholder="default"
+              onImageChange={handleImageChange}
             />
           </div>
 
@@ -175,7 +176,9 @@ export default function ProjectEditModal({
               Full Description
             </label>
             <textarea
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Detailed project description"
+              rows={3}
               value={formData.description || ""}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setFormData((prev) => ({
@@ -183,23 +186,22 @@ export default function ProjectEditModal({
                   description: e.target.value,
                 }))
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              rows={3}
             />
           </div>
 
           {/* Technologies */}
           <div>
             <Input
+              description="Separate technologies with commas"
               label="Technologies"
               placeholder="React, TypeScript, Node.js, PostgreSQL"
               value={technologiesInput}
               onChange={(e) => setTechnologiesInput(e.target.value)}
-              description="Separate technologies with commas"
             />
             <div className="flex flex-wrap gap-1 mt-2">
               {technologiesInput.split(",").map((tech, index) => {
                 const trimmedTech = tech.trim();
+
                 return trimmedTech ? (
                   <Chip key={index} size="sm" variant="flat">
                     {trimmedTech}
@@ -236,13 +238,13 @@ export default function ProjectEditModal({
               Key Highlights
             </label>
             <textarea
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter key features or achievements, one per line"
+              rows={3}
               value={highlightsInput}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setHighlightsInput(e.target.value)
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              rows={3}
             />
             <p className="text-xs text-gray-500 mt-1">One highlight per line</p>
           </div>
@@ -334,6 +336,7 @@ export default function ProjectEditModal({
                     <textarea
                       className="w-full p-3 border border-gray-300 rounded-lg resize-none"
                       placeholder="Personal project currently in development. Code is private. Contact me to discuss my development approach and capabilities."
+                      rows={3}
                       value={formData.wipWarningText || ""}
                       onChange={(e) =>
                         setFormData((prev) => ({
@@ -341,7 +344,6 @@ export default function ProjectEditModal({
                           wipWarningText: e.target.value,
                         }))
                       }
-                      rows={3}
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Selected emoji ({selectedEmoji}) will be automatically
@@ -376,7 +378,9 @@ export default function ProjectEditModal({
                   Detailed Description
                 </label>
                 <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Extended description for flagship project"
+                  rows={3}
                   value={formData.detailedDescription || ""}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setFormData((prev) => ({
@@ -384,8 +388,6 @@ export default function ProjectEditModal({
                       detailedDescription: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={3}
                 />
               </div>
 
@@ -443,7 +445,9 @@ export default function ProjectEditModal({
                   Challenges
                 </label>
                 <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Technical challenges overcome during the project"
+                  rows={3}
                   value={formData.challenges || ""}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setFormData((prev) => ({
@@ -451,8 +455,6 @@ export default function ProjectEditModal({
                       challenges: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={3}
                 />
               </div>
 
@@ -461,7 +463,9 @@ export default function ProjectEditModal({
                   Solutions
                 </label>
                 <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Solutions implemented to overcome challenges"
+                  rows={3}
                   value={formData.solutions || ""}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setFormData((prev) => ({
@@ -469,8 +473,6 @@ export default function ProjectEditModal({
                       solutions: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={3}
                 />
               </div>
 
@@ -479,7 +481,9 @@ export default function ProjectEditModal({
                   Results
                 </label>
                 <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Project outcomes and results achieved"
+                  rows={3}
                   value={formData.results || ""}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setFormData((prev) => ({
@@ -487,8 +491,6 @@ export default function ProjectEditModal({
                       results: e.target.value,
                     }))
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={3}
                 />
               </div>
             </div>
@@ -501,9 +503,9 @@ export default function ProjectEditModal({
           </Button>
           <Button
             color="primary"
-            onPress={handleSave}
-            isLoading={isSaving}
             isDisabled={!formData.title}
+            isLoading={isSaving}
+            onPress={handleSave}
           >
             {project ? "Update Project" : "Create Project"}
           </Button>

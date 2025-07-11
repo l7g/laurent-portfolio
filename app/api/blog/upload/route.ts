@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { BlobStorage, validateImageFile } from "@/lib/blob-storage";
 
@@ -7,6 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
+
     if (!session || session.user?.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -21,6 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Validate image file
     const validation = validateImageFile(file);
+
     if (!validation.valid) {
       return NextResponse.json({ error: validation.error }, { status: 400 });
     }
@@ -38,6 +41,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error uploading blog image:", error);
+
     return NextResponse.json(
       { error: "Failed to upload image" },
       { status: 500 },

@@ -8,6 +8,7 @@ import {
   ArrowTopRightOnSquareIcon,
   CodeBracketIcon,
 } from "@heroicons/react/24/outline";
+
 import { getProjectImageUrl } from "@/lib/blob-storage";
 
 interface Project {
@@ -109,10 +110,10 @@ export function ProjectCard({
         {/* Project Image */}
         <div className="mb-4">
           <Image
-            src={getProjectImageUrl(project.image, projectImageType)}
             alt={project.title}
             className="w-full h-40 object-cover rounded-lg"
             fallbackSrc={getProjectImageUrl(null, projectImageType)}
+            src={getProjectImageUrl(project.image, projectImageType)}
           />
         </div>
 
@@ -169,7 +170,7 @@ export function ProjectCard({
             </Button>
           )}
           {!project.liveUrl && !project.githubUrl && (
-            <Chip size="sm" variant="flat" color="default">
+            <Chip color="default" size="sm" variant="flat">
               Coming Soon
             </Chip>
           )}

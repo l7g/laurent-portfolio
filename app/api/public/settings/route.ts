@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -36,6 +37,7 @@ export async function GET() {
         }
 
         acc[setting.key] = value;
+
         return acc;
       },
       {} as Record<string, any>,
@@ -54,6 +56,7 @@ export async function GET() {
     );
   } catch (error) {
     console.error("Error fetching public settings:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch public settings" },
       { status: 500 },

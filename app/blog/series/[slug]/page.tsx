@@ -2,12 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Avatar } from "@heroui/avatar";
-import { Progress } from "@heroui/progress";
-import { Divider } from "@heroui/divider";
 import { motion } from "framer-motion";
 import {
   ArrowLeftIcon,
@@ -16,12 +14,11 @@ import {
   ChatBubbleLeftIcon,
   ClockIcon,
   BookOpenIcon,
-  CheckCircleIcon,
   PlayIcon,
   TagIcon,
-  UserIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+
 import { title, subtitle } from "@/components/primitives";
 
 interface BlogPost {
@@ -96,10 +93,12 @@ export default function SeriesPage() {
         } else {
           setError("Failed to fetch series");
         }
+
         return;
       }
 
       const data = await response.json();
+
       setSeries(data);
     } catch (error) {
       console.error("Failed to fetch series:", error);
@@ -135,15 +134,15 @@ export default function SeriesPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80">
         <div className="py-20 px-4 max-w-4xl mx-auto">
           <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-content2 rounded w-1/4"></div>
+            <div className="h-8 bg-content2 rounded w-1/4" />
             <div className="space-y-4">
-              <div className="h-12 bg-content2 rounded w-3/4"></div>
-              <div className="h-4 bg-content2 rounded w-1/2"></div>
-              <div className="h-32 bg-content2 rounded"></div>
+              <div className="h-12 bg-content2 rounded w-3/4" />
+              <div className="h-4 bg-content2 rounded w-1/2" />
+              <div className="h-32 bg-content2 rounded" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-32 bg-content2 rounded"></div>
+                <div key={i} className="h-32 bg-content2 rounded" />
               ))}
             </div>
           </div>
@@ -183,17 +182,17 @@ export default function SeriesPage() {
         <div className="max-w-4xl mx-auto">
           <Link href="/blog">
             <Button
-              variant="flat"
-              startContent={<ArrowLeftIcon className="w-4 h-4" />}
               className="mb-6"
+              startContent={<ArrowLeftIcon className="w-4 h-4" />}
+              variant="flat"
             >
               Back to Blog
             </Button>
           </Link>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-3 mb-4">
@@ -203,21 +202,21 @@ export default function SeriesPage() {
 
             <div className="flex flex-wrap items-center gap-4 mb-6">
               <div className="flex items-center gap-2">
-                <Avatar size="sm" name={series.users.name} />
+                <Avatar name={series.users.name} size="sm" />
                 <span className="text-default-600">{series.users.name}</span>
               </div>
 
               {series.difficulty && (
                 <Chip
-                  size="sm"
                   color={getDifficultyColor(series.difficulty)}
+                  size="sm"
                   variant="flat"
                 >
                   {series.difficulty}
                 </Chip>
               )}
 
-              <Chip size="sm" variant="flat" color="primary">
+              <Chip color="primary" size="sm" variant="flat">
                 {series.totalPosts} posts
               </Chip>
 
@@ -238,8 +237,8 @@ export default function SeriesPage() {
                 <Chip
                   key={tag}
                   size="sm"
-                  variant="bordered"
                   startContent={<TagIcon className="w-3 h-3" />}
+                  variant="bordered"
                 >
                   {tag}
                 </Chip>
@@ -261,8 +260,8 @@ export default function SeriesPage() {
             {series.blog_posts.map((post, index) => (
               <motion.div
                 key={post.id}
-                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Card className="hover:shadow-lg transition-all duration-300 group">
@@ -291,11 +290,11 @@ export default function SeriesPage() {
                           </div>
                           <Chip
                             size="sm"
-                            variant="flat"
                             style={{
                               backgroundColor: `${post.category.color}20`,
                               color: post.category.color,
                             }}
+                            variant="flat"
                           >
                             {post.category.icon && (
                               <span className="mr-1">{post.category.icon}</span>
@@ -327,9 +326,9 @@ export default function SeriesPage() {
                           <Link href={`/blog/${post.slug}`}>
                             <Button
                               color="primary"
-                              variant="flat"
-                              size="sm"
                               endContent={<PlayIcon className="w-4 h-4" />}
+                              size="sm"
+                              variant="flat"
                             >
                               Read Post
                             </Button>

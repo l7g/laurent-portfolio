@@ -1,8 +1,10 @@
+import { randomUUID } from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { SectionType } from "@prisma/client";
-import { randomUUID } from "crypto";
+
+import { prisma } from "@/lib/prisma";
 
 // This endpoint should only be used once for initial setup
 // Remove or disable after first use!
@@ -134,6 +136,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Setup error:", error);
+
     return NextResponse.json(
       {
         error: "Setup failed",

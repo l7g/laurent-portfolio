@@ -78,6 +78,7 @@ export default function DynamicSkillsSection() {
 
       if (skillsRes.ok) {
         const skillsData = await skillsRes.json();
+
         setSkills(
           skillsData.flatMap((skill: any) =>
             skill.progressions.map((prog: any) => ({
@@ -90,6 +91,7 @@ export default function DynamicSkillsSection() {
 
       if (programsRes.ok) {
         const programsData = await programsRes.json();
+
         setPrograms(programsData);
       }
     } catch (error) {
@@ -150,6 +152,7 @@ export default function DynamicSkillsSection() {
     const monthsElapsed = Math.floor(
       (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
     );
+
     return Math.min(monthsElapsed / 12, program.totalYears);
   };
 
@@ -157,6 +160,7 @@ export default function DynamicSkillsSection() {
     if (selectedCategory === "all") return true;
     if (selectedCategory === "academic") return skill.isAcademicSkill;
     if (selectedCategory === "technical") return skill.isTechnicalSkill;
+
     return true;
   });
 
@@ -166,8 +170,8 @@ export default function DynamicSkillsSection() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <div className="animate-pulse">
-              <div className="h-8 bg-default-300 rounded w-64 mx-auto mb-4"></div>
-              <div className="h-4 bg-default-300 rounded w-96 mx-auto"></div>
+              <div className="h-8 bg-default-300 rounded w-64 mx-auto mb-4" />
+              <div className="h-4 bg-default-300 rounded w-96 mx-auto" />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -175,9 +179,9 @@ export default function DynamicSkillsSection() {
               <Card key={i} className="h-64">
                 <CardBody className="animate-pulse">
                   <div className="space-y-3">
-                    <div className="h-4 bg-default-300 rounded w-3/4"></div>
-                    <div className="h-3 bg-default-300 rounded w-1/2"></div>
-                    <div className="h-2 bg-default-300 rounded w-full"></div>
+                    <div className="h-4 bg-default-300 rounded w-3/4" />
+                    <div className="h-3 bg-default-300 rounded w-1/2" />
+                    <div className="h-2 bg-default-300 rounded w-full" />
                   </div>
                 </CardBody>
               </Card>
@@ -193,9 +197,9 @@ export default function DynamicSkillsSection() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
         >
           <h2 className="text-3xl font-bold mb-4">
             Skills Development Journey
@@ -209,10 +213,10 @@ export default function DynamicSkillsSection() {
         {/* Academic Program Info */}
         {programs.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
             className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            transition={{ delay: 0.1 }}
           >
             <Card className="bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
               <CardBody className="p-6">
@@ -264,11 +268,11 @@ export default function DynamicSkillsSection() {
           ].map((category) => (
             <Button
               key={category.key}
-              variant={selectedCategory === category.key ? "solid" : "bordered"}
               color={selectedCategory === category.key ? "primary" : "default"}
               size="sm"
-              onPress={() => setSelectedCategory(category.key)}
               startContent={<span>{category.icon}</span>}
+              variant={selectedCategory === category.key ? "solid" : "bordered"}
+              onPress={() => setSelectedCategory(category.key)}
             >
               {category.label}
             </Button>
@@ -284,8 +288,8 @@ export default function DynamicSkillsSection() {
             return (
               <motion.div
                 key={progression.id}
-                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Card className="h-full hover:shadow-lg transition-shadow duration-300">
@@ -301,11 +305,10 @@ export default function DynamicSkillsSection() {
                         </h3>
                       </div>
                       <Chip
-                        size="sm"
-                        variant="flat"
                         color={
                           progression.isAcademicSkill ? "success" : "primary"
                         }
+                        size="sm"
                         startContent={
                           progression.isAcademicSkill ? (
                             <AcademicCapIcon className="w-3 h-3" />
@@ -313,6 +316,7 @@ export default function DynamicSkillsSection() {
                             <CodeBracketIcon className="w-3 h-3" />
                           )
                         }
+                        variant="flat"
                       >
                         {progression.isAcademicSkill ? "Academic" : "Technical"}
                       </Chip>
@@ -331,10 +335,10 @@ export default function DynamicSkillsSection() {
                         </span>
                       </div>
                       <Progress
-                        value={progression.currentLevel}
+                        className="mb-2"
                         color="primary"
                         size="sm"
-                        className="mb-2"
+                        value={progression.currentLevel}
                       />
 
                       {expectedLevel > progression.currentLevel && (
@@ -348,10 +352,10 @@ export default function DynamicSkillsSection() {
                             </span>
                           </div>
                           <Progress
-                            value={expectedLevel}
+                            className="opacity-60"
                             color="success"
                             size="sm"
-                            className="opacity-60"
+                            value={expectedLevel}
                           />
                         </>
                       )}
@@ -388,7 +392,7 @@ export default function DynamicSkillsSection() {
                         <span className="text-sm text-default-600">
                           Final Target
                         </span>
-                        <Chip size="sm" variant="flat" color="secondary">
+                        <Chip color="secondary" size="sm" variant="flat">
                           {progression.targetLevel}%
                         </Chip>
                       </div>

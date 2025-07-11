@@ -37,12 +37,14 @@ export default function RelatedArticles({
     const fetchRelatedArticles = async () => {
       try {
         const response = await fetch(`/api/blog/posts/${postSlug}/related`);
+
         if (response.ok) {
           const data = await response.json();
           // Only show published articles to public users
           const publishedArticles = data.filter(
             (article: RelatedArticle) => article.publishedAt,
           );
+
           setRelatedArticles(publishedArticles);
         }
       } catch (error) {
@@ -60,13 +62,13 @@ export default function RelatedArticles({
   if (loading) {
     return (
       <div className={`animate-pulse ${className}`}>
-        <div className="h-8 bg-gray-200 rounded mb-4"></div>
+        <div className="h-8 bg-gray-200 rounded mb-4" />
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div key={i} className="border rounded-lg p-4">
-              <div className="h-4 bg-gray-200 rounded mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded mb-2 w-3/4"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-4 bg-gray-200 rounded mb-2" />
+              <div className="h-3 bg-gray-200 rounded mb-2 w-3/4" />
+              <div className="h-3 bg-gray-200 rounded w-1/2" />
             </div>
           ))}
         </div>
@@ -92,8 +94,8 @@ export default function RelatedArticles({
             {relatedArticles.map((article, index) => (
               <motion.div
                 key={article.id}
-                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <Link href={`/blog/${article.slug}`}>
@@ -105,9 +107,9 @@ export default function RelatedArticles({
                       {article.coverImage && (
                         <div className="relative w-full h-32 mb-3 rounded-lg overflow-hidden">
                           <img
-                            src={article.coverImage}
                             alt={article.title}
                             className="w-full h-full object-cover"
+                            src={article.coverImage}
                           />
                         </div>
                       )}
@@ -122,11 +124,11 @@ export default function RelatedArticles({
                           <div className="flex items-center gap-2">
                             <Chip
                               size="sm"
-                              variant="flat"
                               style={{
                                 backgroundColor: `${article.category.color}20`,
                                 color: article.category.color,
                               }}
+                              variant="flat"
                             >
                               {article.category.name}
                             </Chip>

@@ -1,12 +1,15 @@
+import { randomUUID } from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { randomUUID } from "crypto";
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -20,6 +23,7 @@ export async function GET() {
     return NextResponse.json({ data: settings });
   } catch (error) {
     console.error("Error fetching settings:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch settings" },
       { status: 500 },
@@ -30,6 +34,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -72,6 +77,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ data: setting });
   } catch (error) {
     console.error("Error saving setting:", error);
+
     return NextResponse.json(
       { error: "Failed to save setting" },
       { status: 500 },
@@ -82,6 +88,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -98,6 +105,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     let setting;
+
     try {
       if (key) {
         setting = await prisma.site_settings.delete({
@@ -123,6 +131,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ data: setting });
   } catch (error) {
     console.error("Error deleting setting:", error);
+
     return NextResponse.json(
       { error: "Failed to delete setting" },
       { status: 500 },

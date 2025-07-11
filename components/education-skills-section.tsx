@@ -6,11 +6,9 @@ import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import LoadingSkeleton from "./loading-skeleton";
 import {
   CodeBracketIcon,
   CircleStackIcon,
-  PaintBrushIcon,
   ServerIcon,
   CloudIcon,
   CommandLineIcon,
@@ -34,7 +32,10 @@ import {
   SiTailwindcss,
   SiMysql,
 } from "react-icons/si";
+
+import LoadingSkeleton from "./loading-skeleton";
 import CompactAcademicSkills from "./compact-academic-skills";
+
 import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface SkillItem {
@@ -127,6 +128,7 @@ const EducationSkillsSection = ({
       "Analytical Skills": "warning",
       Other: "default",
     };
+
     return colorMap[categoryTitle] || "primary";
   };
 
@@ -174,6 +176,7 @@ const EducationSkillsSection = ({
       "Academic Skills": <AcademicCapIcon className="w-6 h-6" />,
       "International Relations": <GlobeAltIcon className="w-6 h-6" />,
     };
+
     return iconMap[categoryTitle] || <CogIcon className="w-6 h-6" />;
   };
 
@@ -234,6 +237,7 @@ const EducationSkillsSection = ({
         color: "#E10098",
       },
     };
+
     return iconMap[techName] || { icon: <CogIcon className="w-8 h-8" /> };
   };
 
@@ -312,6 +316,7 @@ const EducationSkillsSection = ({
             // Add to technologies list if high level and not academic
             if (skill.level >= 80 && skill.category !== "ACADEMIC") {
               const techIconData = getTechIcon(skill.name);
+
               techList.push({
                 name: skill.name,
                 icon: techIconData.icon,
@@ -383,6 +388,7 @@ const EducationSkillsSection = ({
 
         if (programResponse.ok) {
           const programData = await programResponse.json();
+
           setacademic_programs(programData[0] || null);
         }
       } catch (error) {
@@ -396,7 +402,7 @@ const EducationSkillsSection = ({
   }, []);
 
   if (loading) {
-    return <LoadingSkeleton type="education" className="bg-default-50/50" />;
+    return <LoadingSkeleton className="bg-default-50/50" type="education" />;
   }
 
   return (
@@ -429,7 +435,7 @@ const EducationSkillsSection = ({
             viewport={{ once: true }}
             whileInView={{ opacity: 1, y: 0 }}
           >
-            <Link href="/degree" className="block">
+            <Link className="block" href="/degree">
               <Card className="mb-8 hover:shadow-lg transition-shadow cursor-pointer group">
                 <CardBody className="p-8">
                   <div className="flex items-start gap-6">
@@ -442,7 +448,7 @@ const EducationSkillsSection = ({
                           <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
                             {academic_programs.degree}
                           </h3>
-                          <Chip color="success" variant="flat" size="sm">
+                          <Chip color="success" size="sm" variant="flat">
                             Year {getCurrentAcademicYear()}
                           </Chip>
                         </div>
@@ -488,13 +494,13 @@ const EducationSkillsSection = ({
                           </span>
                         </div>
                         <Progress
+                          className="h-3"
                           color="success"
                           value={
                             (getCurrentAcademicYear() /
                               academic_programs.totalYears) *
                             100
                           }
-                          className="h-3"
                         />
                       </div>
 
@@ -533,10 +539,10 @@ const EducationSkillsSection = ({
             whileInView={{ opacity: 1, y: 0 }}
           >
             <CompactAcademicSkills
+              description="Key skills being developed through coursework, prioritized by frequency across courses"
               maxSkills={6}
               showViewAllLink={true}
               title="Most Relevant Academic Skills"
-              description="Key skills being developed through coursework, prioritized by frequency across courses"
             />
           </motion.div>
         )}

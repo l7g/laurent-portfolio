@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { exec } from "child_process";
 import { promisify } from "util";
+
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+
+import { authOptions } from "@/lib/auth";
 
 const execAsync = promisify(exec);
 
@@ -20,6 +22,7 @@ export async function POST(request: NextRequest) {
 
     // Check if user is admin (you can also check against a specific admin email)
     const adminEmail = process.env.ADMIN_EMAIL;
+
     if (!adminEmail || session.user.email !== adminEmail) {
       return NextResponse.json(
         { error: "Admin access required" },
@@ -107,6 +110,7 @@ export async function GET(request: NextRequest) {
     }
 
     const adminEmail = process.env.ADMIN_EMAIL;
+
     if (!adminEmail || session.user.email !== adminEmail) {
       return NextResponse.json(
         { error: "Admin access required" },

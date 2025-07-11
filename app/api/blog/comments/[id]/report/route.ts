@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 // POST - Report a comment
@@ -40,6 +41,7 @@ export async function POST(
     return NextResponse.json({ message: "Comment reported successfully" });
   } catch (error) {
     console.error("Error reporting comment:", error);
+
     return NextResponse.json(
       { error: "Failed to report comment" },
       { status: 500 },

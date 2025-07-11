@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import {
   BlobStorage,
@@ -11,6 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
+
     if (!session || session.user?.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -50,6 +52,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Upload error:", error);
+
     return NextResponse.json(
       { error: "Failed to upload file" },
       { status: 500 },
@@ -61,6 +64,7 @@ export async function DELETE(request: NextRequest) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
+
     if (!session || session.user?.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -81,6 +85,7 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     console.error("Delete error:", error);
+
     return NextResponse.json(
       { error: "Failed to delete image" },
       { status: 500 },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Avatar } from "@heroui/avatar";
@@ -13,11 +13,11 @@ import {
   ChatBubbleLeftIcon,
   ClockIcon,
   HeartIcon,
-  ShareIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+
 import { title, subtitle } from "@/components/primitives";
 import CommentsSystem from "@/components/blog/comments-system";
 import SocialShare from "@/components/blog/social-share";
@@ -76,6 +76,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
   useEffect(() => {
     if (post?.id && canUsePreferences()) {
       const hasLiked = localStorage.getItem(`liked_post_${post.id}`) === "true";
+
       setLiked(hasLiked);
     }
   }, [post?.id]);
@@ -84,8 +85,10 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
     try {
       setLoading(true);
       const response = await fetch(`/api/blog/posts/${slug}`);
+
       if (response.ok) {
         const data = await response.json();
+
         setPost(data);
         setLikeCount(data.likes);
       }
@@ -108,6 +111,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
     const wordsPerMinute = 200;
     const words = content.split(/\s+/).length;
     const minutes = Math.ceil(words / wordsPerMinute);
+
     return minutes;
   };
 
@@ -119,6 +123,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
       alert(
         "Please accept preferences in the cookie banner to use the like feature.",
       );
+
       return;
     }
 
@@ -142,6 +147,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
       // Safely parse the last like time and check rate limit
       if (lastLikeTime) {
         const lastTime = parseInt(lastLikeTime, 10);
+
         if (!isNaN(lastTime) && now - lastTime < rateLimitMs) {
           // Too fast, revert and ignore
           setLiked(previousLiked);
@@ -150,6 +156,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
             `liked_post_${post.id}`,
             previousLiked.toString(),
           );
+
           return;
         }
       }
@@ -166,6 +173,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
 
       if (response.ok) {
         const data = await response.json();
+
         setLikeCount(data.likes);
       } else {
         // Revert optimistic update on error
@@ -186,6 +194,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
   // Utility function to clear all like data (for privacy/debugging)
   const clearAllLikes = () => {
     const keys = Object.keys(localStorage);
+
     keys.forEach((key) => {
       if (key.startsWith("liked_post_") || key === "lastLikeTime") {
         localStorage.removeItem(key);
@@ -204,15 +213,12 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-default-300 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-default-300 rounded w-1/2 mb-8"></div>
-            <div className="h-64 bg-default-300 rounded mb-8"></div>
+            <div className="h-8 bg-default-300 rounded w-3/4 mb-4" />
+            <div className="h-4 bg-default-300 rounded w-1/2 mb-8" />
+            <div className="h-64 bg-default-300 rounded mb-8" />
             <div className="space-y-4">
               {[...Array(10)].map((_, i) => (
-                <div
-                  key={i}
-                  className="h-4 bg-default-300 rounded w-full"
-                ></div>
+                <div key={i} className="h-4 bg-default-300 rounded w-full" />
               ))}
             </div>
           </div>
@@ -245,16 +251,16 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Button */}
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
           className="mb-8"
+          initial={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.5 }}
         >
           <Link href="/blog">
             <Button
-              variant="light"
-              startContent={<ArrowLeftIcon className="w-4 h-4" />}
               className="text-default-600 hover:text-default-900"
+              startContent={<ArrowLeftIcon className="w-4 h-4" />}
+              variant="light"
             >
               Back to Blog
             </Button>
@@ -263,33 +269,33 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
 
         {/* Post Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
           className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.6 }}
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               {post.category && (
                 <Chip
                   size="sm"
-                  variant="flat"
                   style={{
                     backgroundColor: `${post.category.color}20`,
                     color: post.category.color,
                   }}
+                  variant="flat"
                 >
                   <span className="mr-1">{post.category.icon}</span>
                   {post.category.name}
                 </Chip>
               )}
               {post.status === "DRAFT" && (
-                <Chip size="sm" color="warning" variant="bordered">
+                <Chip color="warning" size="sm" variant="bordered">
                   📝 Draft - Only visible to admin
                 </Chip>
               )}
               {post.status === "ARCHIVED" && (
-                <Chip size="sm" color="default" variant="bordered">
+                <Chip color="default" size="sm" variant="bordered">
                   📦 Archived - Only visible to admin
                 </Chip>
               )}
@@ -302,7 +308,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
             {/* Meta Information */}
             <div className="flex flex-wrap items-center gap-4 text-small text-default-500">
               <div className="flex items-center gap-2">
-                <Avatar size="sm" name={post.author.name} className="w-6 h-6" />
+                <Avatar className="w-6 h-6" name={post.author.name} size="sm" />
                 <span>{post.author.name}</span>
               </div>
               <div className="flex items-center gap-1">
@@ -328,9 +334,9 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
               {post.tags.map((tag) => (
                 <Chip
                   key={tag}
+                  className="text-xs"
                   size="sm"
                   variant="bordered"
-                  className="text-xs"
                 >
                   #{tag}
                 </Chip>
@@ -341,8 +347,8 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
 
         {/* Post Content */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <Card className="mb-8">
@@ -397,17 +403,17 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
                     ),
                     img: ({ src, alt }: any) => (
                       <img
-                        src={src}
                         alt={alt}
                         className="max-w-full h-auto rounded-lg shadow-md mb-4"
+                        src={src}
                       />
                     ),
                     a: ({ href, children }: any) => (
                       <a
-                        href={href}
                         className="text-primary hover:text-primary/80 underline"
-                        target="_blank"
+                        href={href}
                         rel="noopener noreferrer"
+                        target="_blank"
                       >
                         {children}
                       </a>
@@ -423,14 +429,14 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
 
         {/* Engagement Actions */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
           className="flex items-center justify-between mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
         >
           <div className="flex items-center gap-4">
             <Button
-              variant={liked ? "solid" : "bordered"}
+              className="gap-2"
               color="danger"
               startContent={
                 liked ? (
@@ -439,25 +445,25 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
                   <HeartIcon className="w-4 h-4" />
                 )
               }
-              onClick={handleLike}
-              className="gap-2"
               title={liked ? "Unlike this post" : "Like this post"}
+              variant={liked ? "solid" : "bordered"}
+              onClick={handleLike}
             >
               {likeCount} {liked ? "Liked" : ""}
             </Button>
             <SocialShare
-              url={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
-              title={post.title}
               excerpt={post.excerpt || ""}
               tags={post.tags}
+              title={post.title}
+              url={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}
             />
           </div>
         </motion.div>
 
         {/* Comments Section */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <CommentsSystem postId={post.id} postTitle={post.title} />
@@ -466,7 +472,6 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
 
       {/* Structured Data */}
       <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
@@ -494,6 +499,7 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
             },
           }),
         }}
+        type="application/ld+json"
       />
     </div>
   );

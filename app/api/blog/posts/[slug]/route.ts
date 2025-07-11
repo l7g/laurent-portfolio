@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -89,6 +90,7 @@ export async function GET(
     return NextResponse.json(transformedPost);
   } catch (error) {
     console.error("Error fetching blog post:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch blog post" },
       { status: 500 },

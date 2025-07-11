@@ -348,6 +348,7 @@ export async function sendCommentNotification(data: {
     };
   } catch (error) {
     console.error("❌ Comment notification failed:", error);
+
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

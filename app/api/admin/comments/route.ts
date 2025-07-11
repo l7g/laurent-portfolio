@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
+
+import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
+
     if (
       !session?.user?.email ||
       session.user.email !== process.env.ADMIN_EMAIL
@@ -66,6 +68,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching admin comments:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch comments" },
       { status: 500 },
@@ -77,6 +80,7 @@ export async function PATCH(request: NextRequest) {
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
+
     if (
       !session?.user?.email ||
       session.user.email !== process.env.ADMIN_EMAIL
@@ -107,6 +111,7 @@ export async function PATCH(request: NextRequest) {
         await prisma.blog_comments.delete({
           where: { id: commentId },
         });
+
         return NextResponse.json({ success: true, action: "deleted" });
       default:
         return NextResponse.json(
@@ -136,6 +141,7 @@ export async function PATCH(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error updating comment:", error);
+
     return NextResponse.json(
       { error: "Failed to update comment" },
       { status: 500 },

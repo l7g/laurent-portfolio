@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -28,6 +29,7 @@ export async function GET() {
     return NextResponse.json(transformedCategories);
   } catch (error) {
     console.error("Error fetching blog categories:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch blog categories" },
       { status: 500 },

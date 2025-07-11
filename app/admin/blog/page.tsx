@@ -14,16 +14,16 @@ import {
   EyeIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
-  EllipsisVerticalIcon,
   DocumentDuplicateIcon,
   ArchiveBoxIcon,
   ChartBarIcon,
   BookOpenIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+import { title } from "@/components/primitives";
 
 interface BlogPost {
   id: string;
@@ -97,6 +97,7 @@ export default function BlogAdminPage() {
           postsResponse.json(),
           categoriesResponse.json(),
         ]);
+
         // Fix: extract posts array from the response object
         setPosts(postsData.posts || []);
         setCategories(categoriesData);
@@ -117,6 +118,7 @@ export default function BlogAdminPage() {
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
     router.push("/admin/login");
+
     return null;
   }
 
@@ -126,6 +128,7 @@ export default function BlogAdminPage() {
         const response = await fetch(`/api/admin/blog/posts/${id}`, {
           method: "DELETE",
         });
+
         if (response.ok) {
           setPosts(posts.filter((post) => post.id !== id));
         }
@@ -142,6 +145,7 @@ export default function BlogAdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
+
       if (response.ok) {
         setPosts(
           posts.map((post) =>
@@ -159,6 +163,7 @@ export default function BlogAdminPage() {
       const response = await fetch(`/api/admin/blog/posts/${id}/duplicate`, {
         method: "POST",
       });
+
       if (response.ok) {
         fetchData(); // Refresh the list
       }
@@ -181,6 +186,7 @@ export default function BlogAdminPage() {
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "Never";
+
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -193,10 +199,10 @@ export default function BlogAdminPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-default-300 rounded w-1/4"></div>
-            <div className="h-12 bg-default-300 rounded"></div>
+            <div className="h-8 bg-default-300 rounded w-1/4" />
+            <div className="h-12 bg-default-300 rounded" />
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-20 bg-default-300 rounded"></div>
+              <div key={i} className="h-20 bg-default-300 rounded" />
             ))}
           </div>
         </div>
@@ -209,10 +215,10 @@ export default function BlogAdminPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="mb-6 lg:mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
@@ -231,28 +237,28 @@ export default function BlogAdminPage() {
             <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 as={Link}
-                href="/admin/blog/series"
-                variant="bordered"
-                startContent={<BookOpenIcon className="w-4 h-4" />}
                 className="w-full sm:w-auto"
+                href="/admin/blog/series"
+                startContent={<BookOpenIcon className="w-4 h-4" />}
+                variant="bordered"
               >
                 Series
               </Button>
               <Button
                 as={Link}
-                href="/admin/blog/categories"
-                variant="bordered"
-                startContent={<FunnelIcon className="w-4 h-4" />}
                 className="w-full sm:w-auto"
+                href="/admin/blog/categories"
+                startContent={<FunnelIcon className="w-4 h-4" />}
+                variant="bordered"
               >
                 Categories
               </Button>
               <Button
                 as={Link}
-                href="/admin/blog/new"
-                color="primary"
-                startContent={<PlusIcon className="w-4 h-4" />}
                 className="w-full sm:w-auto"
+                color="primary"
+                href="/admin/blog/new"
+                startContent={<PlusIcon className="w-4 h-4" />}
               >
                 New Post
               </Button>
@@ -262,26 +268,26 @@ export default function BlogAdminPage() {
 
         {/* Filters */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
           <Card>
             <CardBody className="p-4">
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                 <Input
+                  className="w-full sm:max-w-sm"
                   placeholder="Search posts..."
+                  startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
-                  className="w-full sm:max-w-sm"
                 />
                 <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                   <select
+                    className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg w-full sm:w-auto"
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg w-full sm:w-auto"
                   >
                     <option value="all">All Status</option>
                     <option value="DRAFT">Draft</option>
@@ -289,9 +295,9 @@ export default function BlogAdminPage() {
                     <option value="ARCHIVED">Archived</option>
                   </select>
                   <select
+                    className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg w-full sm:w-auto"
                     value={categoryFilter}
                     onChange={(e) => setCategoryFilter(e.target.value)}
-                    className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg w-full sm:w-auto"
                   >
                     <option value="all">All Categories</option>
                     {categories.map((category) => (
@@ -308,10 +314,10 @@ export default function BlogAdminPage() {
 
         {/* Stats */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
           className="mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="bg-gradient-to-r from-blue-500/10 to-blue-600/10">
@@ -377,8 +383,8 @@ export default function BlogAdminPage() {
 
         {/* Posts Table */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <Card>
@@ -424,9 +430,9 @@ export default function BlogAdminPage() {
                         <td className="p-3 sm:p-4">
                           <div className="flex items-center gap-3">
                             <Avatar
-                              size="sm"
-                              name={post.author.name}
                               className="w-8 h-8 flex-shrink-0"
+                              name={post.author.name}
+                              size="sm"
                             />
                             <div className="min-w-0">
                               <p className="font-medium truncate">
@@ -445,11 +451,11 @@ export default function BlogAdminPage() {
                           <div className="space-y-1">
                             <Chip
                               size="sm"
-                              variant="flat"
                               style={{
                                 backgroundColor: `${post.category.color}20`,
                                 color: post.category.color,
                               }}
+                              variant="flat"
                             >
                               {post.category.icon && (
                                 <span className="mr-1">
@@ -461,11 +467,11 @@ export default function BlogAdminPage() {
                             {post.series && (
                               <Chip
                                 size="sm"
-                                variant="bordered"
                                 style={{
                                   borderColor: post.series.color,
                                   color: post.series.color,
                                 }}
+                                variant="bordered"
                               >
                                 {post.series.icon && (
                                   <span className="mr-1">
@@ -480,8 +486,8 @@ export default function BlogAdminPage() {
                         </td>
                         <td className="p-3 sm:p-4">
                           <Chip
-                            size="sm"
                             color={statusColors[post.status]}
+                            size="sm"
                             variant="flat"
                           >
                             {post.status.toLowerCase()}
@@ -507,53 +513,53 @@ export default function BlogAdminPage() {
                         <td className="p-3 sm:p-4">
                           <div className="flex items-center gap-1">
                             <Button
+                              isIconOnly
                               as={Link}
                               href={`/blog/${post.slug}`}
                               size="sm"
-                              variant="light"
-                              isIconOnly
                               title="View"
+                              variant="light"
                             >
                               <EyeIcon className="w-4 h-4" />
                             </Button>
                             <Button
+                              isIconOnly
                               as={Link}
                               href={`/admin/blog/edit/${post.id}`}
                               size="sm"
-                              variant="light"
-                              isIconOnly
                               title="Edit"
+                              variant="light"
                             >
                               <PencilIcon className="w-4 h-4" />
                             </Button>
                             <div className="hidden sm:flex items-center gap-1">
                               <Button
-                                size="sm"
-                                variant="light"
                                 isIconOnly
-                                onClick={() => handleDuplicate(post.id)}
+                                size="sm"
                                 title="Duplicate"
+                                variant="light"
+                                onClick={() => handleDuplicate(post.id)}
                               >
                                 <DocumentDuplicateIcon className="w-4 h-4" />
                               </Button>
                               <Button
-                                size="sm"
-                                variant="light"
                                 isIconOnly
+                                size="sm"
+                                title="Archive"
+                                variant="light"
                                 onClick={() =>
                                   handleStatusChange(post.id, "ARCHIVED")
                                 }
-                                title="Archive"
                               >
                                 <ArchiveBoxIcon className="w-4 h-4" />
                               </Button>
                               <Button
-                                size="sm"
-                                variant="light"
                                 isIconOnly
-                                onClick={() => handleDelete(post.id)}
-                                title="Delete"
                                 color="danger"
+                                size="sm"
+                                title="Delete"
+                                variant="light"
+                                onClick={() => handleDelete(post.id)}
                               >
                                 <TrashIcon className="w-4 h-4" />
                               </Button>

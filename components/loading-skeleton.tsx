@@ -45,7 +45,7 @@ const LoadingSkeleton = ({
         <div className="flex items-center justify-center min-h-[200px]">
           <div className="text-center">
             <div className="inline-flex items-center gap-3 px-4 py-2 bg-default-50 rounded-lg border border-default-200">
-              <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+              <div className="w-3 h-3 bg-primary rounded-full animate-pulse" />
               <span className="text-sm text-default-600">
                 Loading {getSectionTitle()}...
               </span>

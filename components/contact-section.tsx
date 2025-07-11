@@ -130,6 +130,7 @@ const ContactSection = () => {
     async function fetchContent() {
       try {
         const response = await fetch("/api/site-settings");
+
         if (response.ok) {
           const settings = await response.json();
 

@@ -66,8 +66,10 @@ const BlogWidget = ({
         const response = await fetch(
           `/api/blog/posts?limit=${postCount}&published=true`,
         );
+
         if (response.ok) {
           const data = await response.json();
+
           setPosts(data.posts || []);
           setTotalPosts(data.total || 0);
         }
@@ -108,6 +110,7 @@ const BlogWidget = ({
       News: "default",
       Opinion: "default",
     };
+
     return colorMap[categoryName] || "default";
   };
 
@@ -117,9 +120,9 @@ const BlogWidget = ({
         <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
           <div className="text-center mb-12 lg:mb-16">
             <div className="animate-pulse">
-              <div className="h-8 sm:h-10 bg-gradient-to-r from-default-200 to-default-100 rounded-xl w-64 sm:w-80 mx-auto mb-4 sm:mb-6"></div>
-              <div className="h-4 sm:h-6 bg-gradient-to-r from-default-200 to-default-100 rounded-lg w-72 sm:w-96 mx-auto mb-3 sm:mb-4"></div>
-              <div className="h-3 sm:h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-48 sm:w-64 mx-auto"></div>
+              <div className="h-8 sm:h-10 bg-gradient-to-r from-default-200 to-default-100 rounded-xl w-64 sm:w-80 mx-auto mb-4 sm:mb-6" />
+              <div className="h-4 sm:h-6 bg-gradient-to-r from-default-200 to-default-100 rounded-lg w-72 sm:w-96 mx-auto mb-3 sm:mb-4" />
+              <div className="h-3 sm:h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-48 sm:w-64 mx-auto" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
@@ -128,14 +131,14 @@ const BlogWidget = ({
                 <Card className="h-full bg-content1">
                   <CardBody className="p-6 sm:p-7 lg:p-8">
                     <div className="flex items-center justify-between mb-4 sm:mb-6">
-                      <div className="h-5 sm:h-6 bg-gradient-to-r from-default-200 to-default-100 rounded-full w-20 sm:w-24"></div>
-                      <div className="h-3 sm:h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-16 sm:w-20"></div>
+                      <div className="h-5 sm:h-6 bg-gradient-to-r from-default-200 to-default-100 rounded-full w-20 sm:w-24" />
+                      <div className="h-3 sm:h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-16 sm:w-20" />
                     </div>
-                    <div className="h-6 sm:h-7 bg-gradient-to-r from-default-200 to-default-100 rounded-lg w-full mb-3 sm:mb-4"></div>
-                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-full mb-2"></div>
-                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-4/5 mb-2"></div>
-                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-3/5 mb-4"></div>
-                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-24"></div>
+                    <div className="h-6 sm:h-7 bg-gradient-to-r from-default-200 to-default-100 rounded-lg w-full mb-3 sm:mb-4" />
+                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-full mb-2" />
+                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-4/5 mb-2" />
+                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-3/5 mb-4" />
+                    <div className="h-4 bg-gradient-to-r from-default-200 to-default-100 rounded w-24" />
                   </CardBody>
                 </Card>
               </div>
@@ -152,10 +155,10 @@ const BlogWidget = ({
         <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
           <div className="text-center max-w-2xl mx-auto">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
               className="mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.8 }}
             >
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
                 <BookOpenIcon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
@@ -204,12 +207,12 @@ const BlogWidget = ({
           {totalPosts > 0 && (
             <div className="flex items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-default-500 bg-content2 backdrop-blur-sm rounded-full px-4 sm:px-6 py-2 sm:py-3 mx-4 shadow-sm">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-success rounded-full animate-pulse"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-success rounded-full animate-pulse" />
                 <span className="font-medium">
                   {totalPosts} articles published
                 </span>
               </div>
-              <span className="w-1 h-1 bg-default-400 dark:bg-default-500 rounded-full hidden sm:block"></span>
+              <span className="w-1 h-1 bg-default-400 dark:bg-default-500 rounded-full hidden sm:block" />
               <span className="hidden sm:inline">Regular updates</span>
             </div>
           )}
@@ -229,13 +232,13 @@ const BlogWidget = ({
           {posts.map((post, index) => (
             <motion.div
               key={post.id}
+              className="group h-full"
               initial={{ opacity: 0, y: 30 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
               whileInView={{ opacity: 1, y: 0 }}
-              className="group h-full"
             >
-              <Link href={`/blog/${post.slug}`} className="block h-full">
+              <Link className="block h-full" href={`/blog/${post.slug}`}>
                 <Card className="h-full transition-all duration-300 cursor-pointer bg-content1 shadow-lg hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 overflow-hidden group-hover:shadow-primary/20">
                   <CardBody
                     className={`${compactMode ? "p-5 sm:p-6" : "p-6 sm:p-7 lg:p-8"} h-full flex flex-col`}
@@ -243,10 +246,10 @@ const BlogWidget = ({
                     <div className="flex items-start justify-between mb-4 sm:mb-6 gap-3 flex-wrap">
                       {showCategories && post.category && (
                         <Chip
+                          className="font-medium px-3 py-1.5 text-xs sm:text-sm flex-shrink-0 dark:text-white"
                           color={getCategoryColor(post.category.name) as any}
                           size="sm"
                           variant="flat"
-                          className="font-medium px-3 py-1.5 text-xs sm:text-sm flex-shrink-0 dark:text-white"
                         >
                           {post.category.name}
                         </Chip>
@@ -286,9 +289,9 @@ const BlogWidget = ({
                           {post.tags.slice(0, 3).map((tag) => (
                             <Chip
                               key={tag}
+                              className="text-xs border-default-200 dark:border-default-600 hover:border-primary dark:hover:border-primary transition-colors dark:text-default-300"
                               size="sm"
                               variant="bordered"
-                              className="text-xs border-default-200 dark:border-default-600 hover:border-primary dark:hover:border-primary transition-colors dark:text-default-300"
                             >
                               {tag}
                             </Chip>
@@ -325,13 +328,13 @@ const BlogWidget = ({
           >
             <Link href="/blog">
               <Button
+                className="bg-content2 backdrop-blur-sm hover:bg-primary hover:text-white transition-all duration-300 px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-base font-semibold shadow-lg hover:shadow-primary/20 touch-manipulation active:scale-95"
                 color="primary"
-                variant="bordered"
-                size="lg"
                 endContent={
                   <ArrowRightIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                 }
-                className="bg-content2 backdrop-blur-sm hover:bg-primary hover:text-white transition-all duration-300 px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-base font-semibold shadow-lg hover:shadow-primary/20 touch-manipulation active:scale-95"
+                size="lg"
+                variant="bordered"
               >
                 View All Articles
               </Button>

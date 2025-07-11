@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -45,6 +46,7 @@ export async function GET() {
         }
 
         const skillData = skillsMap.get(skill);
+
         skillData.courses.push(course);
         skillData.maxLevel += 20; // Each course can contribute up to 20 points
 
@@ -55,6 +57,7 @@ export async function GET() {
           // Adjust contribution based on grade
           if (course.grade) {
             const gradeMultiplier = getGradeMultiplier(course.grade);
+
             courseContribution = Math.floor(
               courseContribution * gradeMultiplier,
             );
@@ -79,10 +82,12 @@ export async function GET() {
     const skillsByCategory = skills.reduce(
       (acc, skill) => {
         const category = skill.category;
+
         if (!acc[category]) {
           acc[category] = [];
         }
         acc[category].push(skill);
+
         return acc;
       },
       {} as Record<string, any[]>,
@@ -98,6 +103,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching course skills:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch course skills" },
       { status: 500 },

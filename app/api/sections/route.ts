@@ -1,8 +1,10 @@
+import { randomUUID } from "crypto";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { randomUUID } from "crypto";
 
 // GET /api/sections - Get all sections
 export async function GET() {
@@ -14,6 +16,7 @@ export async function GET() {
     return NextResponse.json(sections);
   } catch (error) {
     console.error("Failed to fetch sections:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch sections" },
       { status: 500 },
@@ -25,6 +28,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -52,10 +56,12 @@ export async function POST(request: NextRequest) {
 
     // If no sortOrder is specified, put it at the end
     let sectionSortOrder = sortOrder;
+
     if (sectionSortOrder === undefined) {
       const lastSection = await prisma.portfolio_sections.findFirst({
         orderBy: { sortOrder: "desc" },
       });
+
       sectionSortOrder = (lastSection?.sortOrder || 0) + 1;
     }
 
@@ -79,6 +85,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(section, { status: 201 });
   } catch (error) {
     console.error("Failed to create section:", error);
+
     return NextResponse.json(
       { error: "Failed to create section" },
       { status: 500 },

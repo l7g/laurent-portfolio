@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+
 import { prisma } from "@/lib/prisma";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -107,6 +108,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [...staticPages, ...blogPages, ...projectPages, ...seriesPages];
   } catch (error) {
     console.error("Error generating sitemap:", error);
+
     return staticPages;
   }
 }

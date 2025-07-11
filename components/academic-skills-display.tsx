@@ -73,8 +73,10 @@ const AcademicSkillsDisplay = ({
   const fetchSkillsData = async () => {
     try {
       const response = await fetch("/api/course-skills");
+
       if (response.ok) {
         const data = await response.json();
+
         setSkills(data.skills);
 
         // Filter academic skills and group by category
@@ -95,6 +97,7 @@ const AcademicSkillsDisplay = ({
               acc[skill.category] = [];
             }
             acc[skill.category].push(skill);
+
             return acc;
           },
           {},
@@ -107,6 +110,7 @@ const AcademicSkillsDisplay = ({
               if (a.frequency !== b.frequency) {
                 return b.frequency - a.frequency;
               }
+
               return b.level - a.level;
             })
             .slice(0, maxSkillsPerCategory);
@@ -131,6 +135,7 @@ const AcademicSkillsDisplay = ({
     const month = now.getMonth();
 
     let academicYear = currentYear - 2025;
+
     if (month < 7) academicYear -= 1;
 
     return Math.max(0, academicYear) + 1;
@@ -138,10 +143,12 @@ const AcademicSkillsDisplay = ({
 
   const getYearTargets = (skill: SkillProgression) => {
     const targets = [];
+
     if (skill.year1Target) targets.push({ year: 1, target: skill.year1Target });
     if (skill.year2Target) targets.push({ year: 2, target: skill.year2Target });
     if (skill.year3Target) targets.push({ year: 3, target: skill.year3Target });
     if (skill.year4Target) targets.push({ year: 4, target: skill.year4Target });
+
     return targets;
   };
 
@@ -154,6 +161,7 @@ const AcademicSkillsDisplay = ({
       ),
       "Analytical Skills": <CalculatorIcon className="w-6 h-6" />,
     };
+
     return (
       icons[category as keyof typeof icons] || (
         <BookOpenIcon className="w-6 h-6" />
@@ -168,6 +176,7 @@ const AcademicSkillsDisplay = ({
       "Language & Communication": "secondary",
       "Analytical Skills": "warning",
     };
+
     return colors[category as keyof typeof colors] || "default";
   };
 
@@ -180,10 +189,10 @@ const AcademicSkillsDisplay = ({
     return (
       <div className="w-full py-8">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-default-300 rounded w-1/3"></div>
+          <div className="h-8 bg-default-300 rounded w-1/3" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-64 bg-default-200 rounded-lg"></div>
+              <div key={i} className="h-64 bg-default-200 rounded-lg" />
             ))}
           </div>
         </div>
@@ -205,26 +214,26 @@ const AcademicSkillsDisplay = ({
       {/* Category Filter */}
       <div className="flex flex-wrap gap-2 justify-center mb-8">
         <Button
-          variant={selectedCategory === "all" ? "solid" : "bordered"}
           color={selectedCategory === "all" ? "primary" : "default"}
           size="sm"
-          onPress={() => setSelectedCategory("all")}
           startContent={<UserGroupIcon className="w-4 h-4" />}
+          variant={selectedCategory === "all" ? "solid" : "bordered"}
+          onPress={() => setSelectedCategory("all")}
         >
           All Skills
         </Button>
         {Object.keys(skillsByCategory).map((category) => (
           <Button
             key={category}
-            variant={selectedCategory === category ? "solid" : "bordered"}
             color={
               selectedCategory === category
                 ? (getCategoryColor(category) as any)
                 : "default"
             }
             size="sm"
-            onPress={() => setSelectedCategory(category)}
             startContent={getCategoryIcon(category)}
+            variant={selectedCategory === category ? "solid" : "bordered"}
+            onPress={() => setSelectedCategory(category)}
           >
             {category}
           </Button>
@@ -236,8 +245,8 @@ const AcademicSkillsDisplay = ({
         {filteredCategories.map((category) => (
           <motion.div
             key={category}
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
           >
             <Card className="h-full">
@@ -260,10 +269,10 @@ const AcademicSkillsDisplay = ({
                 {skillsByCategory[category]?.map((skill, index) => (
                   <motion.div
                     key={skill.id}
-                    initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
                     className="p-4 rounded-lg border border-default-200 hover:border-default-300 transition-colors"
+                    initial={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
@@ -283,9 +292,9 @@ const AcademicSkillsDisplay = ({
                         </div>
                       </div>
                       <Chip
+                        color={getCategoryColor(category) as any}
                         size="sm"
                         variant="flat"
-                        color={getCategoryColor(category) as any}
                       >
                         {skill.level}%
                       </Chip>
@@ -294,10 +303,10 @@ const AcademicSkillsDisplay = ({
                     {/* Progress Bar */}
                     <div className="mb-3">
                       <Progress
-                        value={skill.level}
+                        className="mb-1"
                         color={getCategoryColor(category) as any}
                         size="sm"
-                        className="mb-1"
+                        value={skill.level}
                       />
                       <div className="flex justify-between text-xs text-default-500">
                         <span>Current Level</span>
@@ -342,8 +351,6 @@ const AcademicSkillsDisplay = ({
                           {skill.courses.slice(0, 3).map((course: Course) => (
                             <Chip
                               key={course.id}
-                              size="sm"
-                              variant="flat"
                               color={
                                 course.status === "COMPLETED"
                                   ? "success"
@@ -351,12 +358,14 @@ const AcademicSkillsDisplay = ({
                                     ? "warning"
                                     : "default"
                               }
+                              size="sm"
+                              variant="flat"
                             >
                               {course.code}
                             </Chip>
                           ))}
                           {skill.courses.length > 3 && (
-                            <Chip size="sm" variant="flat" color="default">
+                            <Chip color="default" size="sm" variant="flat">
                               +{skill.courses.length - 3} more
                             </Chip>
                           )}

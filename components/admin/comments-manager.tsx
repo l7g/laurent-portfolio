@@ -42,6 +42,7 @@ export default function AdminCommentsManager() {
     try {
       setLoading(true);
       const params = new URLSearchParams();
+
       if (filter !== "all") {
         params.append("status", filter);
       }
@@ -116,7 +117,7 @@ export default function AdminCommentsManager() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
       </div>
     );
   }
@@ -154,14 +155,14 @@ export default function AdminCommentsManager() {
       {/* Filter */}
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <label htmlFor="filter" className="text-sm font-medium">
+          <label className="text-sm font-medium" htmlFor="filter">
             Filter:
           </label>
           <select
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             id="filter"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">All Comments</option>
             <option value="pending">Pending Review</option>
@@ -171,9 +172,9 @@ export default function AdminCommentsManager() {
 
         <Button
           color="primary"
+          disabled={loading}
           variant="ghost"
           onClick={fetchComments}
-          disabled={loading}
         >
           {loading ? "Loading..." : "Refresh"}
         </Button>
@@ -203,10 +204,10 @@ export default function AdminCommentsManager() {
                     </span>
                     {comment.website && (
                       <a
-                        href={comment.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="text-sm text-blue-500 hover:text-blue-700"
+                        href={comment.website}
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         🌐
                       </a>
@@ -222,8 +223,8 @@ export default function AdminCommentsManager() {
                 <div className="flex items-center space-x-2">
                   <Chip
                     color={getStatusColor(comment.isApproved)}
-                    variant="flat"
                     size="sm"
+                    variant="flat"
                   >
                     {getStatusText(comment.isApproved)}
                   </Chip>
@@ -238,10 +239,10 @@ export default function AdminCommentsManager() {
 
                 <div className="flex justify-between items-center">
                   <a
-                    href={`/blog/${comment.blog_posts.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="text-sm text-blue-500 hover:text-blue-700"
+                    href={`/blog/${comment.blog_posts.slug}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
                   >
                     View Post →
                   </a>
@@ -250,13 +251,13 @@ export default function AdminCommentsManager() {
                     {!comment.isApproved && (
                       <Button
                         color="success"
-                        variant="flat"
+                        disabled={actionLoading === comment.id}
                         size="sm"
                         startContent={<CheckIcon className="w-4 h-4" />}
+                        variant="flat"
                         onClick={() =>
                           handleCommentAction(comment.id, "approve")
                         }
-                        disabled={actionLoading === comment.id}
                       >
                         {actionLoading === comment.id ? "..." : "Approve"}
                       </Button>
@@ -265,13 +266,13 @@ export default function AdminCommentsManager() {
                     {comment.isApproved && (
                       <Button
                         color="warning"
-                        variant="flat"
+                        disabled={actionLoading === comment.id}
                         size="sm"
                         startContent={<XMarkIcon className="w-4 h-4" />}
+                        variant="flat"
                         onClick={() =>
                           handleCommentAction(comment.id, "reject")
                         }
-                        disabled={actionLoading === comment.id}
                       >
                         {actionLoading === comment.id ? "..." : "Reject"}
                       </Button>
@@ -279,9 +280,10 @@ export default function AdminCommentsManager() {
 
                     <Button
                       color="danger"
-                      variant="flat"
+                      disabled={actionLoading === comment.id}
                       size="sm"
                       startContent={<TrashIcon className="w-4 h-4" />}
+                      variant="flat"
                       onClick={() => {
                         if (
                           confirm(
@@ -291,7 +293,6 @@ export default function AdminCommentsManager() {
                           handleCommentAction(comment.id, "delete");
                         }
                       }}
-                      disabled={actionLoading === comment.id}
                     >
                       {actionLoading === comment.id ? "..." : "Delete"}
                     </Button>

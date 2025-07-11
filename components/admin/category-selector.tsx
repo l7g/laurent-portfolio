@@ -108,8 +108,8 @@ export default function CategorySelector({
   return (
     <>
       <Card
-        className="cursor-pointer hover:bg-default-50 transition-all duration-200 border-2 border-default-200 hover:border-default-300 shadow-sm hover:shadow-md"
         isPressable
+        className="cursor-pointer hover:bg-default-50 transition-all duration-200 border-2 border-default-200 hover:border-default-300 shadow-sm hover:shadow-md"
         onPress={() => setIsOpen(true)}
       >
         <CardBody className="p-4">
@@ -152,10 +152,10 @@ export default function CategorySelector({
       </Card>
 
       <Modal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        size="lg"
         backdrop="blur"
+        isOpen={isOpen}
+        size="lg"
+        onClose={() => setIsOpen(false)}
       >
         <ModalContent className="mx-4">
           <ModalHeader className="flex flex-col gap-1 pb-4 border-b border-default-200">
@@ -174,12 +174,12 @@ export default function CategorySelector({
                 {categories.map((category) => (
                   <Card
                     key={category.id}
+                    isPressable
                     className={`cursor-pointer transition-all duration-200 border-2 ${
                       value === category.id
                         ? "border-primary bg-primary-50 shadow-md"
                         : "border-default-200 hover:border-default-300 hover:bg-default-50 hover:shadow-sm"
                     }`}
-                    isPressable
                     onPress={() => handleSelect(category.id)}
                   >
                     <CardBody className="p-4">
@@ -224,21 +224,21 @@ export default function CategorySelector({
 
               <div className="bg-default-50 p-5 rounded-lg border border-default-200 space-y-4">
                 <Input
+                  classNames={{
+                    input: "bg-white",
+                    inputWrapper:
+                      "border-2 border-default-200 hover:border-default-300 focus-within:border-primary",
+                  }}
                   label="Category Name"
+                  placeholder="e.g., Web Development"
                   value={newCategory.name}
+                  variant="bordered"
                   onChange={(e) =>
                     setNewCategory((prev) => ({
                       ...prev,
                       name: e.target.value,
                     }))
                   }
-                  placeholder="e.g., Web Development"
-                  variant="bordered"
-                  classNames={{
-                    input: "bg-white",
-                    inputWrapper:
-                      "border-2 border-default-200 hover:border-default-300 focus-within:border-primary",
-                  }}
                 />
 
                 <div className="grid grid-cols-2 gap-4">
@@ -250,15 +250,15 @@ export default function CategorySelector({
                       {iconOptions.map((icon) => (
                         <Button
                           key={icon}
-                          variant={
-                            newCategory.icon === icon ? "solid" : "bordered"
-                          }
+                          isIconOnly
+                          className="min-w-10 h-10"
                           color={
                             newCategory.icon === icon ? "primary" : "default"
                           }
                           size="sm"
-                          isIconOnly
-                          className="min-w-10 h-10"
+                          variant={
+                            newCategory.icon === icon ? "solid" : "bordered"
+                          }
                           onPress={() =>
                             setNewCategory((prev) => ({ ...prev, icon }))
                           }
@@ -277,15 +277,15 @@ export default function CategorySelector({
                       {colorOptions.map((color) => (
                         <Button
                           key={color}
-                          variant="bordered"
-                          size="sm"
                           isIconOnly
                           className={`border-2 min-w-10 h-10 ${
                             newCategory.color === color
                               ? "border-black shadow-md"
                               : "border-gray-300 hover:border-gray-400"
                           }`}
+                          size="sm"
                           style={{ backgroundColor: color }}
+                          variant="bordered"
                           onPress={() =>
                             setNewCategory((prev) => ({ ...prev, color }))
                           }
@@ -300,39 +300,39 @@ export default function CategorySelector({
                 </div>
 
                 <Input
+                  classNames={{
+                    input: "bg-white",
+                    inputWrapper:
+                      "border-2 border-default-200 hover:border-default-300 focus-within:border-primary",
+                  }}
                   label="Description (Optional)"
+                  placeholder="Brief description of this category"
                   value={newCategory.description}
+                  variant="bordered"
                   onChange={(e) =>
                     setNewCategory((prev) => ({
                       ...prev,
                       description: e.target.value,
                     }))
                   }
-                  placeholder="Brief description of this category"
-                  variant="bordered"
-                  classNames={{
-                    input: "bg-white",
-                    inputWrapper:
-                      "border-2 border-default-200 hover:border-default-300 focus-within:border-primary",
-                  }}
                 />
               </div>
             </div>
           </ModalBody>
           <ModalFooter className="px-6 py-4 bg-default-50 border-t border-default-200">
             <Button
+              className="font-medium"
               variant="light"
               onPress={() => setIsOpen(false)}
-              className="font-medium"
             >
               Cancel
             </Button>
             <Button
-              color="primary"
-              onPress={handleCreate}
-              isLoading={isCreating}
-              isDisabled={!newCategory.name.trim()}
               className="font-semibold"
+              color="primary"
+              isDisabled={!newCategory.name.trim()}
+              isLoading={isCreating}
+              onPress={handleCreate}
             >
               Create Category
             </Button>

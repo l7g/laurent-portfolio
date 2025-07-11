@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -21,6 +22,7 @@ export async function GET(
     return NextResponse.json(section);
   } catch (error) {
     console.error("Failed to fetch section:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch section" },
       { status: 500 },
@@ -35,6 +37,7 @@ export async function PUT(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -84,6 +87,7 @@ export async function PUT(
     return NextResponse.json(section);
   } catch (error) {
     console.error("Failed to update section:", error);
+
     return NextResponse.json(
       { error: "Failed to update section" },
       { status: 500 },
@@ -98,6 +102,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -120,6 +125,7 @@ export async function DELETE(
     return NextResponse.json({ message: "Section deleted successfully" });
   } catch (error) {
     console.error("Failed to delete section:", error);
+
     return NextResponse.json(
       { error: "Failed to delete section" },
       { status: 500 },

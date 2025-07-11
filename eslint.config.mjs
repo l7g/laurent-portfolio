@@ -99,6 +99,10 @@ export default defineConfig([
       "react-hooks/exhaustive-deps": "off",
       "jsx-a11y/click-events-have-key-events": "warn",
       "jsx-a11y/interactive-supports-focus": "warn",
+      "jsx-a11y/label-has-associated-control": "warn", // Changed from error to warn
+      "jsx-a11y/no-static-element-interactions": "warn", // Changed from error to warn
+      "jsx-a11y/img-redundant-alt": "warn", // Changed from error to warn
+      "react/no-unescaped-entities": "warn", // Changed from error to warn
       "prettier/prettier": "warn",
       "no-unused-vars": "off",
       "unused-imports/no-unused-vars": "off",

@@ -1,7 +1,8 @@
-import ProjectsSection from "@/components/projects-section";
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+
+import ProjectsSection from "@/components/projects-section";
 
 export default function ProjectsPage() {
   return (
@@ -10,10 +11,10 @@ export default function ProjectsPage() {
       <div className="container mx-auto px-6 py-8">
         <Button
           as={Link}
-          href="/"
-          variant="ghost"
-          startContent={<ArrowLeftIcon className="w-4 h-4" />}
           className="mb-6"
+          href="/"
+          startContent={<ArrowLeftIcon className="w-4 h-4" />}
+          variant="ghost"
         >
           Back to Home
         </Button>

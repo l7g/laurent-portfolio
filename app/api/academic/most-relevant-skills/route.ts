@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -52,6 +53,7 @@ export async function GET() {
     courses.forEach((course) => {
       course.skillsDelivered.forEach((skill) => {
         const frequency = skillFrequency.get(skill) || 0;
+
         skillFrequency.set(skill, frequency + 1);
 
         if (!skillsMap.has(skill)) {
@@ -66,6 +68,7 @@ export async function GET() {
         }
 
         const skillData = skillsMap.get(skill);
+
         skillData.courses.push(course);
         skillData.maxLevel += 20; // Each course can contribute up to 20 points
         skillData.frequency = frequency + 1;
@@ -77,6 +80,7 @@ export async function GET() {
           // Adjust contribution based on grade
           if (course.grade) {
             const gradeMultiplier = getGradeMultiplier(course.grade);
+
             courseContribution = Math.floor(
               courseContribution * gradeMultiplier,
             );
@@ -108,6 +112,7 @@ export async function GET() {
         if (a.frequency !== b.frequency) {
           return b.frequency - a.frequency; // Higher frequency first
         }
+
         return b.level - a.level; // Higher level first
       })
       .slice(0, 8); // Take top 8 most relevant skills
@@ -136,10 +141,12 @@ export async function GET() {
     const skillsByCategory = allSkills.reduce(
       (acc, skill) => {
         const category = skill.category;
+
         if (!acc[category]) {
           acc[category] = [];
         }
         acc[category].push(skill);
+
         return acc;
       },
       {} as Record<string, any[]>,
@@ -156,6 +163,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching relevant academic skills:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch relevant academic skills" },
       { status: 500 },

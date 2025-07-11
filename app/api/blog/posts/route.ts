@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+import { BlogStatus } from "@prisma/client";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { BlogStatus } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -127,6 +128,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching blog posts:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch blog posts" },
       { status: 500 },

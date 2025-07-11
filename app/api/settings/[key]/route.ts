@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -9,6 +10,7 @@ export async function GET(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -25,6 +27,7 @@ export async function GET(
     return NextResponse.json({ data: setting });
   } catch (error) {
     console.error("Error fetching setting:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch setting" },
       { status: 500 },
@@ -38,6 +41,7 @@ export async function PUT(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -74,6 +78,7 @@ export async function PUT(
     return NextResponse.json({ data: setting });
   } catch (error) {
     console.error("Error updating setting:", error);
+
     return NextResponse.json(
       { error: "Failed to update setting" },
       { status: 500 },
@@ -87,11 +92,13 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { key } = await params;
+
     await prisma.site_settings.delete({
       where: { key },
     });
@@ -99,6 +106,7 @@ export async function DELETE(
     return NextResponse.json({ message: "Setting deleted successfully" });
   } catch (error) {
     console.error("Error deleting setting:", error);
+
     return NextResponse.json(
       { error: "Failed to delete setting" },
       { status: 500 },

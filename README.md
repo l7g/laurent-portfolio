@@ -1,32 +1,46 @@
 # Modern Portfolio Website
 
-A professional portfolio website built with Next.js 15, featuring a comprehensive blog system, admin panel, and responsive design. Perfect for developers, designers, and professionals looking to showcase their work.
+A professional portfolio website built with Next.js 15, featuring a comprehensive blog system with email notifications, admin panel, and responsive design. Perfect for developers, designers, and professionals looking to showcase their work.
 
-## ✨ Features
+**[Live Demo](https://laurentgagne.com)** | **[Documentation](./DEPLOYMENT.md)** | **[Deployment Guide](./DEPLOYMENT.md)**
+
+## What Makes This Special
+
+This isn't just another portfolio template - it's a **full-stack application** that demonstrates:
+
+- **Production-ready architecture** with proper database design
+- **Advanced blog system** with comments, email notifications, and moderation
+- **Admin dashboard** for content management without redeployment
+- **Real-time progress tracking** for education and skills
+- **Professional email integration** with Resend
+- **Windows-compatible deployment tools** (no PostgreSQL tools required)
+- **Type-safe development** with TypeScript and Prisma
+
+## Features
 
 ### Core Features
 
-- 📱 **Fully Responsive** - Optimized for desktop, tablet, and mobile
-- 🎨 **Modern UI/UX** - Clean design with smooth animations
-- 🌙 **Dark/Light Theme** - Automatic theme switching support
-- 📧 **Contact System** - Integrated contact form with email notifications
-- 🚀 **Fast Performance** - Built with Next.js 15 App Router
+- **Fully Responsive** - Optimized for desktop, tablet, and mobile
+- **Modern UI/UX** - Clean design with smooth animations
+- **Dark/Light Theme** - Automatic theme switching support
+- **Contact System** - Integrated contact form with email notifications
+- **Fast Performance** - Built with Next.js 15 App Router
 
 ### Content Management
 
-- 📝 **Blog System** - Full-featured blog with rich text editor
-- 🏷️ **Categories & Series** - Organize content with visual selectors
-- 👨‍💼 **Admin Panel** - Complete admin interface for content management
-- 🎓 **Education Tracking** - Academic achievements and course progress
-- 💼 **Project Showcase** - Interactive project gallery
-- 🛠️ **Skills Management** - Dynamic skills display with categories
+- **Blog System** - Full-featured blog with rich text editor
+- **Categories & Series** - Organize content with visual selectors
+- **Admin Panel** - Complete admin interface for content management
+- **Education Tracking** - Academic achievements and course progress
+- **Project Showcase** - Interactive project gallery
+- **Skills Management** - Dynamic skills display with categories
 
 ### Technical Features
 
-- 🔐 **Authentication** - Secure admin access with NextAuth.js
-- 🗃️ **Database Integration** - PostgreSQL with Prisma ORM
-- 📁 **File Management** - Image upload and storage system
-- 🔍 **SEO Optimized** - Meta tags, sitemap, and structured data
+- **Authentication** - Secure admin access with NextAuth.js
+- **Database Integration** - PostgreSQL with Prisma ORM
+- **File Management** - Image upload and storage system
+- **SEO Optimized** - Meta tags, sitemap, and structured data
 
 ## Tech Stack
 
@@ -93,7 +107,7 @@ A professional portfolio website built with Next.js 15, featuring a comprehensiv
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 portfolio/
@@ -195,7 +209,7 @@ Ensure all environment variables are configured in your production environment:
 - Authentication secrets
 - File storage configuration
 
-## 🛠️ Admin Features
+## Admin Features
 
 ### Blog Management
 - **Rich Text Editor** - Full WYSIWYG editor with formatting options
@@ -214,7 +228,7 @@ Ensure all environment variables are configured in your production environment:
 - **Protected Routes** - Admin-only access to management features
 - **Input Validation** - Comprehensive form validation and sanitization
 
-## 🎨 Customization
+## Customization
 
 ### Theming
 The project uses HeroUI with Tailwind CSS for easy customization:
@@ -245,12 +259,51 @@ All components are modular and can be easily customized:
 
 ## Contributing
 
-This is a personal portfolio project. While it's primarily for showcasing my work, feedback and suggestions are welcome.
+This is a personal portfolio project, but contributions are welcome! If you find bugs or have suggestions for improvements:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/improvement`)
+3. Commit your changes (`git commit -am 'Add some improvement'`)
+4. Push to the branch (`git push origin feature/improvement`)
+5. Create a Pull Request
+
+## Deployment Scripts
+
+The project includes production-ready deployment tools:
+
+- `scripts/copy-dev-to-prod.js` - Safely copies development data to production
+- `scripts/fix-production-migration.js` - Resolves migration conflicts
+- `scripts/check-production-schema.js` - Validates production database schema
+- `scripts/seed-production-safe.js` - Seeds essential data without destroying content
+
+## Environment Variables
+
+Required environment variables for production:
+
+```env
+# Database
+DATABASE_URL="postgresql://..."
+PROD_DATABASE_URL="postgresql://..."
+
+# Authentication
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="https://yourdomain.com"
+
+# Email Service
+RESEND_API_KEY="re_..."
+
+# Admin Credentials
+ADMIN_EMAIL="admin@yourdomain.com"
+ADMIN_PASSWORD="secure-password"
+
+# File Storage (Optional)
+BLOB_READ_WRITE_TOKEN="vercel_blob_..."
+```
 
 ## License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-_Built with Next.js, TypeScript, and modern web technologies._
+**Built with Next.js, TypeScript, and modern web technologies.**

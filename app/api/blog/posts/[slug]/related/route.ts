@@ -31,39 +31,39 @@ export async function GET(
           { targetPostId: currentPost.id },
         ],
       },
+    });
+
+    // Get the IDs of related posts
+    const relatedPostIds = relations.map((relation) =>
+      relation.sourcePostId === currentPost.id
+        ? relation.targetPostId
+        : relation.sourcePostId,
+    );
+
+    // Fetch the actual post data for related posts
+    const relatedPostsData = await prisma.blog_posts.findMany({
+      where: {
+        id: { in: relatedPostIds },
+      },
       include: {
-        sourcePost: {
-          include: {
-            blog_categories: true,
-            users: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-        targetPost: {
-          include: {
-            blog_categories: true,
-            users: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
+        blog_categories: true,
+        users: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
     });
 
     // Extract related posts and filter based on admin status
-    const relatedPosts = relations
-      .map((relation) => {
-        const relatedPost =
-          relation.sourcePostId === currentPost.id
-            ? relation.targetPost
-            : relation.sourcePost;
+    const relatedPosts = relatedPostsData
+      .map((relatedPost) => {
+        const relation = relations.find(
+          (r) =>
+            r.sourcePostId === relatedPost.id ||
+            r.targetPostId === relatedPost.id,
+        );
 
         return {
           id: relatedPost.id,
@@ -75,8 +75,8 @@ export async function GET(
           category: relatedPost.blog_categories,
           author: relatedPost.users,
           publishedAt: relatedPost.publishedAt,
-          relationType: relation.relationType,
-          relationId: relation.id,
+          relationType: relation?.relationType || "related",
+          relationId: relation?.id,
         };
       })
       .filter((post) => {

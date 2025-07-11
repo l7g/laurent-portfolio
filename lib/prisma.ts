@@ -12,7 +12,7 @@ if (!process.env.DATABASE_URL) {
     );
   } else {
     console.warn(
-      "DATABASE_URL environment variable is not set. Database operations will fail.",
+      "DATABASE_URL environment variable is not set. Using fallback URL - ensure your local database is running.",
     );
   }
 }

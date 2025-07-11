@@ -12,16 +12,8 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { Switch } from "@heroui/switch";
 import { Chip } from "@heroui/chip";
-import { Card, CardBody } from "@heroui/card";
 import { Tabs, Tab } from "@heroui/tabs";
-import {
-  PlusIcon,
-  TrashIcon,
-  BookOpenIcon,
-  AcademicCapIcon,
-  ClockIcon,
-  DocumentTextIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, TrashIcon, BookOpenIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
 interface Course {
@@ -64,7 +56,7 @@ interface CourseEditModalProps {
   onClose: () => void;
   course?: Course;
   onSave: (courseData: Course) => void;
-  academic_programss: any[];
+  academic_programs?: any[];
 }
 
 const courseStatuses = [
@@ -168,7 +160,7 @@ export default function CourseEditModal({
   onClose,
   course,
   onSave,
-  academic_programss,
+  academic_programs = [],
 }: CourseEditModalProps) {
   const [formData, setFormData] = useState<Course>({
     code: "",
@@ -236,7 +228,7 @@ export default function CourseEditModal({
         title: "",
         description: "",
         credits: 15,
-        programId: academic_programss[0]?.id || "",
+        programId: academic_programs?.[0]?.id || "",
         year: 1,
         semester: "Fall",
         objectives: [],
@@ -258,11 +250,12 @@ export default function CourseEditModal({
         skillsDelivered: [],
       });
     }
-  }, [course, academic_programss]);
+  }, [course, academic_programs || []]);
 
   const handleSubmit = async () => {
     if (!formData.title || !formData.code) {
       alert("Title and code are required");
+
       return;
     }
 
@@ -284,6 +277,7 @@ export default function CourseEditModal({
     const prefix = words[0].substring(0, 3).toUpperCase();
     const year = formData.year;
     const number = Math.floor(Math.random() * 900) + 100;
+
     return `${prefix}${year}${number}`;
   };
 
@@ -333,7 +327,7 @@ export default function CourseEditModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="5xl" scrollBehavior="inside">
+    <Modal isOpen={isOpen} scrollBehavior="inside" size="5xl" onClose={onClose}>
       <ModalContent>
         <ModalHeader>
           <div className="flex items-center gap-3">
@@ -355,30 +349,30 @@ export default function CourseEditModal({
 
         <ModalBody className="px-6">
           <Tabs
+            className="w-full"
             selectedKey={activeTab}
             onSelectionChange={(key) => setActiveTab(key as string)}
-            className="w-full"
           >
             <Tab key="basic" title="Basic Info">
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <Input
+                    isRequired
                     label="Course Title"
                     placeholder="Introduction to International Relations"
                     value={formData.title}
                     onChange={(e) => handleTitleChange(e.target.value)}
-                    isRequired
                   />
 
                   <Input
+                    isRequired
+                    description="Unique identifier for the course"
                     label="Course Code"
                     placeholder="IR101"
                     value={formData.code}
                     onChange={(e) =>
                       setFormData((prev) => ({ ...prev, code: e.target.value }))
                     }
-                    description="Unique identifier for the course"
-                    isRequired
                   />
                 </div>
 
@@ -387,7 +381,9 @@ export default function CourseEditModal({
                     Description
                   </label>
                   <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Course description and overview"
+                    rows={4}
                     value={formData.description}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -395,8 +391,6 @@ export default function CourseEditModal({
                         description: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows={4}
                   />
                 </div>
 
@@ -416,7 +410,7 @@ export default function CourseEditModal({
                       }
                     >
                       <option value="">Select Program</option>
-                      {academic_programss.map((program) => (
+                      {academic_programs?.map((program: any) => (
                         <option key={program.id} value={program.id}>
                           {program.name}
                         </option>
@@ -426,8 +420,8 @@ export default function CourseEditModal({
 
                   <Input
                     label="Credits"
-                    type="number"
                     placeholder="15"
+                    type="number"
                     value={formData.credits.toString()}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -589,11 +583,11 @@ export default function CourseEditModal({
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
-                        type="text"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Add learning objective..."
+                        type="text"
                         value={newObjective}
                         onChange={(e) => setNewObjective(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onKeyPress={(e) =>
                           e.key === "Enter" &&
                           addArrayItem(
@@ -604,8 +598,8 @@ export default function CourseEditModal({
                         }
                       />
                       <Button
-                        size="sm"
                         color="primary"
+                        size="sm"
                         onPress={() =>
                           addArrayItem(
                             "objectives",
@@ -640,19 +634,19 @@ export default function CourseEditModal({
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
-                        type="text"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Add topic..."
+                        type="text"
                         value={newTopic}
                         onChange={(e) => setNewTopic(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onKeyPress={(e) =>
                           e.key === "Enter" &&
                           addArrayItem("topics", newTopic, setNewTopic)
                         }
                       />
                       <Button
-                        size="sm"
                         color="primary"
+                        size="sm"
                         onPress={() =>
                           addArrayItem("topics", newTopic, setNewTopic)
                         }
@@ -683,11 +677,11 @@ export default function CourseEditModal({
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
-                        type="text"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Add prerequisite..."
+                        type="text"
                         value={newPrerequisite}
                         onChange={(e) => setNewPrerequisite(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onKeyPress={(e) =>
                           e.key === "Enter" &&
                           addArrayItem(
@@ -698,8 +692,8 @@ export default function CourseEditModal({
                         }
                       />
                       <Button
-                        size="sm"
                         color="primary"
+                        size="sm"
                         onPress={() =>
                           addArrayItem(
                             "prerequisites",
@@ -768,15 +762,15 @@ export default function CourseEditModal({
                           ]?.map((skill) => (
                             <button
                               key={skill}
-                              onClick={() => addSkill(skill)}
-                              disabled={formData.skillsDelivered?.includes(
-                                skill,
-                              )}
                               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                                 formData.skillsDelivered?.includes(skill)
                                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                   : "bg-gray-50 hover:bg-gray-100 text-gray-700"
                               }`}
+                              disabled={formData.skillsDelivered?.includes(
+                                skill,
+                              )}
+                              onClick={() => addSkill(skill)}
                             >
                               {skill}
                             </button>
@@ -800,8 +794,8 @@ export default function CourseEditModal({
                                 >
                                   <span className="text-sm">{skill}</span>
                                   <button
-                                    onClick={() => removeSkill(skill)}
                                     className="text-red-500 hover:text-red-700"
+                                    onClick={() => removeSkill(skill)}
                                   >
                                     <TrashIcon className="w-4 h-4" />
                                   </button>
@@ -850,7 +844,9 @@ export default function CourseEditModal({
                     Instructor Bio
                   </label>
                   <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Brief instructor biography and qualifications"
+                    rows={3}
                     value={formData.instructorBio}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -858,8 +854,6 @@ export default function CourseEditModal({
                         instructorBio: e.target.value,
                       }))
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    rows={3}
                   />
                 </div>
 
@@ -883,19 +877,19 @@ export default function CourseEditModal({
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
-                        type="text"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Add textbook..."
+                        type="text"
                         value={newTextbook}
                         onChange={(e) => setNewTextbook(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onKeyPress={(e) =>
                           e.key === "Enter" &&
                           addArrayItem("textbooks", newTextbook, setNewTextbook)
                         }
                       />
                       <Button
-                        size="sm"
                         color="primary"
+                        size="sm"
                         onPress={() =>
                           addArrayItem("textbooks", newTextbook, setNewTextbook)
                         }
@@ -911,8 +905,8 @@ export default function CourseEditModal({
                         >
                           <span className="text-sm">{textbook}</span>
                           <button
-                            onClick={() => removeArrayItem("textbooks", index)}
                             className="text-red-500 hover:text-red-700"
+                            onClick={() => removeArrayItem("textbooks", index)}
                           >
                             <TrashIcon className="w-4 h-4" />
                           </button>
@@ -930,19 +924,19 @@ export default function CourseEditModal({
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <input
-                        type="text"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Add resource..."
+                        type="text"
                         value={newResource}
                         onChange={(e) => setNewResource(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         onKeyPress={(e) =>
                           e.key === "Enter" &&
                           addArrayItem("resources", newResource, setNewResource)
                         }
                       />
                       <Button
-                        size="sm"
                         color="primary"
+                        size="sm"
                         onPress={() =>
                           addArrayItem("resources", newResource, setNewResource)
                         }
@@ -958,8 +952,8 @@ export default function CourseEditModal({
                         >
                           <span className="text-sm">{resource}</span>
                           <button
-                            onClick={() => removeArrayItem("resources", index)}
                             className="text-red-500 hover:text-red-700"
+                            onClick={() => removeArrayItem("resources", index)}
                           >
                             <TrashIcon className="w-4 h-4" />
                           </button>
@@ -977,7 +971,7 @@ export default function CourseEditModal({
           <Button variant="flat" onPress={onClose}>
             Cancel
           </Button>
-          <Button color="primary" onPress={handleSubmit} isLoading={loading}>
+          <Button color="primary" isLoading={loading} onPress={handleSubmit}>
             {course ? "Update Course" : "Create Course"}
           </Button>
         </ModalFooter>

@@ -178,6 +178,7 @@ export default function SectionContentEditModal({
     setLoading(true);
     try {
       const response = await fetch("/api/site-settings");
+
       if (response.ok) {
         const settings = await response.json();
 
@@ -257,14 +258,14 @@ export default function SectionContentEditModal({
 
   return (
     <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="2xl"
-      scrollBehavior="inside"
       classNames={{
         base: "max-h-[90vh]",
         body: "py-6",
       }}
+      isOpen={isOpen}
+      scrollBehavior="inside"
+      size="2xl"
+      onClose={onClose}
     >
       <ModalContent>
         {(onCloseModal) => (
@@ -278,7 +279,7 @@ export default function SectionContentEditModal({
             <ModalBody>
               {loading ? (
                 <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -289,13 +290,13 @@ export default function SectionContentEditModal({
                       </label>
                       {field.type === "textarea" ? (
                         <Textarea
+                          maxRows={6}
+                          minRows={3}
                           placeholder={field.placeholder}
                           value={content[field.key] || ""}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             handleInputChange(field.key, e.target.value)
                           }
-                          minRows={3}
-                          maxRows={6}
                         />
                       ) : (
                         <Input
@@ -329,9 +330,9 @@ export default function SectionContentEditModal({
               </Button>
               <Button
                 color="primary"
-                onPress={handleSave}
-                isLoading={saving}
                 isDisabled={loading || fields.length === 0}
+                isLoading={saving}
+                onPress={handleSave}
               >
                 {saving ? "Saving..." : "Save Changes"}
               </Button>

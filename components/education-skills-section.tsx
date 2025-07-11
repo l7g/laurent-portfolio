@@ -9,7 +9,6 @@ import Link from "next/link";
 import {
   CodeBracketIcon,
   CircleStackIcon,
-  PaintBrushIcon,
   ServerIcon,
   CloudIcon,
   CommandLineIcon,
@@ -33,7 +32,11 @@ import {
   SiTailwindcss,
   SiMysql,
 } from "react-icons/si";
+
+import LoadingSkeleton from "./loading-skeleton";
 import CompactAcademicSkills from "./compact-academic-skills";
+
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface SkillItem {
   name: string;
@@ -91,11 +94,26 @@ const EducationSkillsSection = ({
   showCertifications = true,
   layout = "combined",
 }: EducationSkillsSectionProps) => {
+  const { isEducationVisible } = useEducationVisibility();
   const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [academic_programs, setacademic_programs] =
     useState<academic_programs | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Override education-related props based on visibility toggle
+  const effectiveShowAcademicProgress =
+    isEducationVisible && showAcademicProgress;
+  const effectiveShowCertifications = isEducationVisible && showCertifications;
+
+  // Update title and description when education is hidden
+  const effectiveTitle = isEducationVisible ? title : "Technical Skills";
+  const effectiveSubtitle = isEducationVisible
+    ? subtitle
+    : "Technical Expertise";
+  const effectiveDescription = isEducationVisible
+    ? description
+    : "Technical skills and proficiency across various technologies and tools.";
 
   // Helper function to get color for category
   const getColorForCategory = (categoryTitle: string) => {
@@ -110,6 +128,7 @@ const EducationSkillsSection = ({
       "Analytical Skills": "warning",
       Other: "default",
     };
+
     return colorMap[categoryTitle] || "primary";
   };
 
@@ -141,7 +160,9 @@ const EducationSkillsSection = ({
   const isAcademicSkill = (categoryTitle: string) => {
     return (
       categoryTitle === "International Relations" ||
-      categoryTitle === "Academic Skills"
+      categoryTitle === "Academic Skills" ||
+      categoryTitle === "Analytical Skills" ||
+      categoryTitle === "Communication Skills"
     );
   };
 
@@ -155,6 +176,7 @@ const EducationSkillsSection = ({
       "Academic Skills": <AcademicCapIcon className="w-6 h-6" />,
       "International Relations": <GlobeAltIcon className="w-6 h-6" />,
     };
+
     return iconMap[categoryTitle] || <CogIcon className="w-6 h-6" />;
   };
 
@@ -215,6 +237,7 @@ const EducationSkillsSection = ({
         color: "#E10098",
       },
     };
+
     return iconMap[techName] || { icon: <CogIcon className="w-8 h-8" /> };
   };
 
@@ -267,8 +290,13 @@ const EducationSkillsSection = ({
             const displayCategory =
               categoryMapping[skill.category] || skill.category;
 
-            // Skip academic skills since we show them separately
-            if (isAcademicSkill(displayCategory)) {
+            // Skip academic skills if education is not visible
+            if (skill.category === "ACADEMIC" && !isEducationVisible) {
+              return;
+            }
+
+            // Skip academic skills since we show them separately (only when education is visible)
+            if (isAcademicSkill(displayCategory) && isEducationVisible) {
               return;
             }
 
@@ -288,6 +316,7 @@ const EducationSkillsSection = ({
             // Add to technologies list if high level and not academic
             if (skill.level >= 80 && skill.category !== "ACADEMIC") {
               const techIconData = getTechIcon(skill.name);
+
               techList.push({
                 name: skill.name,
                 icon: techIconData.icon,
@@ -305,8 +334,13 @@ const EducationSkillsSection = ({
               const skillData = skill_progressionsData[skillName];
               const categoryName = skillData.category;
 
-              // Skip academic skills since we show them separately
-              if (isAcademicSkill(categoryName)) {
+              // Skip academic skills if education is not visible
+              if (isAcademicSkill(categoryName) && !isEducationVisible) {
+                return;
+              }
+
+              // Skip academic skills since we show them separately (only when education is visible)
+              if (isAcademicSkill(categoryName) && isEducationVisible) {
                 return;
               }
 
@@ -354,6 +388,7 @@ const EducationSkillsSection = ({
 
         if (programResponse.ok) {
           const programData = await programResponse.json();
+
           setacademic_programs(programData[0] || null);
         }
       } catch (error) {
@@ -367,13 +402,7 @@ const EducationSkillsSection = ({
   }, []);
 
   if (loading) {
-    return (
-      <section className="py-20 bg-default-50/50" id="education-skills">
-        <div className="container mx-auto px-6 text-center">
-          <div className="animate-pulse">Loading education & skills...</div>
-        </div>
-      </section>
-    );
+    return <LoadingSkeleton className="bg-default-50/50" type="education" />;
   }
 
   return (
@@ -387,18 +416,18 @@ const EducationSkillsSection = ({
           whileInView={{ opacity: 1, y: 0 }}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            {title.split(" ")[0]}{" "}
+            {effectiveTitle.split(" ")[0]}{" "}
             <span className="text-primary">
-              {title.split(" ").slice(1).join(" ")}
+              {effectiveTitle.split(" ").slice(1).join(" ")}
             </span>
           </h2>
           <p className="text-xl text-default-600 max-w-3xl mx-auto mb-8">
-            {description}
+            {effectiveDescription}
           </p>
         </motion.div>
 
         {/* Academic Progress Section */}
-        {showAcademicProgress && academic_programs && (
+        {effectiveShowAcademicProgress && academic_programs && (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -406,7 +435,7 @@ const EducationSkillsSection = ({
             viewport={{ once: true }}
             whileInView={{ opacity: 1, y: 0 }}
           >
-            <Link href="/degree" className="block">
+            <Link className="block" href="/degree">
               <Card className="mb-8 hover:shadow-lg transition-shadow cursor-pointer group">
                 <CardBody className="p-8">
                   <div className="flex items-start gap-6">
@@ -419,7 +448,7 @@ const EducationSkillsSection = ({
                           <h3 className="text-2xl font-bold group-hover:text-primary transition-colors">
                             {academic_programs.degree}
                           </h3>
-                          <Chip color="success" variant="flat" size="sm">
+                          <Chip color="success" size="sm" variant="flat">
                             Year {getCurrentAcademicYear()}
                           </Chip>
                         </div>
@@ -465,13 +494,13 @@ const EducationSkillsSection = ({
                           </span>
                         </div>
                         <Progress
+                          className="h-3"
                           color="success"
                           value={
                             (getCurrentAcademicYear() /
                               academic_programs.totalYears) *
                             100
                           }
-                          className="h-3"
                         />
                       </div>
 
@@ -501,7 +530,7 @@ const EducationSkillsSection = ({
         )}
 
         {/* Academic Skills - Most Relevant */}
-        {showAcademicProgress && (
+        {effectiveShowAcademicProgress && (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -510,10 +539,10 @@ const EducationSkillsSection = ({
             whileInView={{ opacity: 1, y: 0 }}
           >
             <CompactAcademicSkills
+              description="Key skills being developed through coursework, prioritized by frequency across courses"
               maxSkills={6}
               showViewAllLink={true}
               title="Most Relevant Academic Skills"
-              description="Key skills being developed through coursework, prioritized by frequency across courses"
             />
           </motion.div>
         )}

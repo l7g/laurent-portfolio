@@ -1,5 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -10,6 +11,7 @@ export async function GET() {
 
     // Group by name to find duplicates
     const sectionsByName: { [key: string]: any[] } = {};
+
     sections.forEach((section) => {
       if (!sectionsByName[section.name]) {
         sectionsByName[section.name] = [];
@@ -23,6 +25,7 @@ export async function GET() {
 
     Object.keys(sectionsByName).forEach((name) => {
       const sectionsWithName = sectionsByName[name];
+
       if (sectionsWithName.length > 1) {
         duplicates[name] = sectionsWithName;
       } else {
@@ -52,6 +55,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error analyzing sections:", error);
+
     return NextResponse.json(
       {
         error: "Failed to analyze sections",

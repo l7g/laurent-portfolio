@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -96,6 +97,7 @@ export async function GET(request: NextRequest) {
           ? post.excerpt.split(/\s+/).length
           : 50;
         const estimatedWords = excerptWords * 8; // Estimate full content is 8x the excerpt length
+
         return total + Math.ceil(estimatedWords / wordsPerMinute);
       }, 0),
       // Transform _count to use cleaner property names
@@ -117,6 +119,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching blog series:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch blog series" },
       { status: 500 },

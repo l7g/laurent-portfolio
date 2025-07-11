@@ -1,13 +1,33 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+
 import { prisma } from "@/lib/prisma";
 import BlogPostContent from "@/components/blog/blog-post-content";
 
-// Force dynamic rendering - don't pre-render at build time
-export const dynamic = "force-dynamic";
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+// Generate static paths for all published blog posts
+export async function generateStaticParams() {
+  try {
+    const posts = await prisma.blog_posts.findMany({
+      where: {
+        status: "PUBLISHED",
+      },
+      select: { slug: true },
+    });
+
+    return posts.map((post) => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params for blog posts:", error);
+
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -78,6 +98,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   } catch (error) {
     console.error("Error generating metadata:", error);
+
     return {
       title: "Blog Post",
       description: "Read our latest blog post.",
@@ -87,5 +108,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
+
   return <BlogPostContent slug={slug} />;
 }

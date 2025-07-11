@@ -19,7 +19,6 @@ import {
   PlusIcon,
   PencilIcon,
   TrashIcon,
-  EyeIcon,
   MagnifyingGlassIcon,
   BookOpenIcon,
   ArrowLeftIcon,
@@ -28,9 +27,10 @@ import {
   AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+
+import { title } from "@/components/primitives";
 
 interface BlogSeries {
   id: string;
@@ -125,8 +125,10 @@ export default function SeriesManagementPage() {
     try {
       setLoading(true);
       const response = await fetch("/api/admin/blog/series");
+
       if (response.ok) {
         const data = await response.json();
+
         setSeries(data);
       }
     } catch (error) {
@@ -166,6 +168,7 @@ export default function SeriesManagementPage() {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
+
       setFormData((prev) => ({ ...prev, slug }));
     }
   }, [formData.title, editingSeries]);
@@ -174,6 +177,7 @@ export default function SeriesManagementPage() {
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
     router.push("/admin/login");
+
     return null;
   }
 
@@ -226,6 +230,7 @@ export default function SeriesManagementPage() {
   const handleSave = async () => {
     if (!formData.title || !formData.slug) {
       alert("Please fill in title and slug");
+
       return;
     }
 
@@ -256,6 +261,7 @@ export default function SeriesManagementPage() {
         resetForm();
       } else {
         const error = await response.json();
+
         alert(error.error || "Failed to save series");
       }
     } catch (error) {
@@ -276,6 +282,7 @@ export default function SeriesManagementPage() {
         const response = await fetch(`/api/admin/blog/series/${id}`, {
           method: "DELETE",
         });
+
         if (response.ok) {
           setSeries(series.filter((s) => s.id !== id));
         }
@@ -304,10 +311,10 @@ export default function SeriesManagementPage() {
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-default-300 rounded w-1/4"></div>
-            <div className="h-12 bg-default-300 rounded"></div>
+            <div className="h-8 bg-default-300 rounded w-1/4" />
+            <div className="h-12 bg-default-300 rounded" />
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-default-300 rounded"></div>
+              <div key={i} className="h-32 bg-default-300 rounded" />
             ))}
           </div>
         </div>
@@ -320,14 +327,14 @@ export default function SeriesManagementPage() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button as={Link} href="/admin/blog" variant="light" isIconOnly>
+              <Button isIconOnly as={Link} href="/admin/blog" variant="light">
                 <ArrowLeftIcon className="w-5 h-5" />
               </Button>
               <div>
@@ -352,26 +359,26 @@ export default function SeriesManagementPage() {
 
         {/* Search */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
           <Input
+            className="max-w-sm"
             placeholder="Search series..."
+            startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            startContent={<MagnifyingGlassIcon className="w-4 h-4" />}
-            className="max-w-sm"
           />
         </motion.div>
 
         {/* Series Grid */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
           {filteredSeries.map((seriesItem) => (
             <Card
@@ -398,19 +405,19 @@ export default function SeriesManagementPage() {
                   </div>
                   <div className="flex gap-1">
                     <Button
+                      isIconOnly
                       size="sm"
                       variant="light"
-                      isIconOnly
                       onClick={() => handleEdit(seriesItem)}
                     >
                       <PencilIcon className="w-4 h-4" />
                     </Button>
                     <Button
+                      isIconOnly
+                      color="danger"
                       size="sm"
                       variant="light"
-                      isIconOnly
                       onClick={() => handleDelete(seriesItem.id)}
-                      color="danger"
                     >
                       <TrashIcon className="w-4 h-4" />
                     </Button>
@@ -442,13 +449,13 @@ export default function SeriesManagementPage() {
                     {seriesItem.difficulty && (
                       <Chip
                         size="sm"
-                        variant="flat"
                         style={{
                           backgroundColor: `${difficultyOptions.find((d) => d.value === seriesItem.difficulty)?.color}20`,
                           color: difficultyOptions.find(
                             (d) => d.value === seriesItem.difficulty,
                           )?.color,
                         }}
+                        variant="flat"
                       >
                         <AcademicCapIcon className="w-3 h-3 mr-1" />
                         {seriesItem.difficulty}
@@ -486,9 +493,9 @@ export default function SeriesManagementPage() {
       {/* Create/Edit Modal */}
       <Modal
         isOpen={isOpen}
-        onClose={onClose}
-        size="3xl"
         scrollBehavior="inside"
+        size="3xl"
+        onClose={onClose}
       >
         <ModalContent>
           {(onClose) => (
@@ -500,33 +507,33 @@ export default function SeriesManagementPage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
+                      isRequired
                       label="Series Title"
                       placeholder="Enter series title"
                       value={formData.title}
                       onChange={(e) =>
                         handleInputChange("title", e.target.value)
                       }
-                      isRequired
                     />
                     <Input
+                      isRequired
                       label="URL Slug"
                       placeholder="series-slug"
                       value={formData.slug}
                       onChange={(e) =>
                         handleInputChange("slug", e.target.value)
                       }
-                      isRequired
                     />
                   </div>
 
                   <Textarea
                     label="Description"
+                    minRows={3}
                     placeholder="Brief description of the series"
                     value={formData.description}
                     onChange={(e) =>
                       handleInputChange("description", e.target.value)
                     }
-                    minRows={3}
                   />
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -562,11 +569,11 @@ export default function SeriesManagementPage() {
                         Difficulty
                       </label>
                       <select
+                        className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
                         value={formData.difficulty}
                         onChange={(e) =>
                           handleInputChange("difficulty", e.target.value)
                         }
-                        className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
                       >
                         {difficultyOptions.map((option) => (
                           <option key={option.value} value={option.value}>
@@ -580,8 +587,8 @@ export default function SeriesManagementPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                       label="Estimated Time (minutes)"
-                      type="number"
                       placeholder="60"
+                      type="number"
                       value={formData.estimatedTime}
                       onChange={(e) =>
                         handleInputChange("estimatedTime", e.target.value)
@@ -616,15 +623,15 @@ export default function SeriesManagementPage() {
                     <div className="flex gap-2">
                       <Input
                         placeholder="Add tag"
+                        startContent={<TagIcon className="w-4 h-4" />}
                         value={tagInput}
                         onChange={(e) => setTagInput(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        startContent={<TagIcon className="w-4 h-4" />}
                       />
                       <Button
+                        isDisabled={!tagInput.trim()}
                         variant="bordered"
                         onClick={handleAddTag}
-                        isDisabled={!tagInput.trim()}
                       >
                         Add
                       </Button>
@@ -643,12 +650,12 @@ export default function SeriesManagementPage() {
                     />
                     <Textarea
                       label="Meta Description"
+                      minRows={2}
                       placeholder="SEO description for search engines"
                       value={formData.metaDescription}
                       onChange={(e) =>
                         handleInputChange("metaDescription", e.target.value)
                       }
-                      minRows={2}
                     />
                   </div>
                 </div>
@@ -656,13 +663,13 @@ export default function SeriesManagementPage() {
               <ModalFooter>
                 <Button
                   color="danger"
+                  isDisabled={saving}
                   variant="light"
                   onPress={onClose}
-                  isDisabled={saving}
                 >
                   Cancel
                 </Button>
-                <Button color="primary" onPress={handleSave} isLoading={saving}>
+                <Button color="primary" isLoading={saving} onPress={handleSave}>
                   {editingSeries ? "Update Series" : "Create Series"}
                 </Button>
               </ModalFooter>

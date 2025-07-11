@@ -33,8 +33,10 @@ const HeroSection = () => {
             "Cache-Control": "no-cache",
           },
         });
+
         if (response.ok) {
           const data = await response.json();
+
           setSettings(data.data || {});
         }
       } catch (error) {
@@ -94,6 +96,7 @@ const HeroSection = () => {
           </span>
         );
       }
+
       return part;
     });
   };

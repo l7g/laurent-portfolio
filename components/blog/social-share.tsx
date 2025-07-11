@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@heroui/button";
 import { Card, CardBody } from "@heroui/card";
-import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
 import {
   ShareIcon,
@@ -107,10 +106,10 @@ export default function SocialShare({
   return (
     <div className="relative">
       <Button
-        variant="bordered"
-        startContent={<ShareIcon className="w-4 h-4" />}
-        onClick={handleNativeShare}
         className="gap-2"
+        startContent={<ShareIcon className="w-4 h-4" />}
+        variant="bordered"
+        onClick={handleNativeShare}
       >
         Share
       </Button>
@@ -118,11 +117,11 @@ export default function SocialShare({
       {/* Share Options */}
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.95 }}
-          transition={{ duration: 0.2 }}
           className="absolute top-full left-0 mt-2 z-50"
+          exit={{ opacity: 0, y: -10, scale: 0.95 }}
+          initial={{ opacity: 0, y: -10, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
         >
           <Card className="min-w-80">
             <CardBody className="p-4">
@@ -143,9 +142,9 @@ export default function SocialShare({
                   {shareLinks.map((link) => (
                     <Button
                       key={link.name}
-                      variant="flat"
-                      size="sm"
                       className="justify-start gap-2"
+                      size="sm"
+                      variant="flat"
                       onClick={() => {
                         window.open(link.url, "_blank", "noopener,noreferrer");
                         setIsOpen(false);
@@ -160,10 +159,8 @@ export default function SocialShare({
                 {/* Copy Link */}
                 <div className="border-t pt-3">
                   <Button
-                    variant="flat"
-                    size="sm"
                     className="w-full justify-start gap-2"
-                    onClick={handleCopyLink}
+                    size="sm"
                     startContent={
                       copied ? (
                         <CheckIcon className="w-4 h-4 text-success" />
@@ -171,6 +168,8 @@ export default function SocialShare({
                         <DocumentDuplicateIcon className="w-4 h-4" />
                       )
                     }
+                    variant="flat"
+                    onClick={handleCopyLink}
                   >
                     {copied ? "Copied!" : "Copy link"}
                   </Button>

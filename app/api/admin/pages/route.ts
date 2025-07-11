@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
+
+import { NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -11,6 +13,7 @@ export async function GET() {
     return NextResponse.json(pages);
   } catch (error) {
     console.error("Error fetching pages:", error);
+
     return NextResponse.json(
       {
         error: "Failed to fetch pages",
@@ -51,6 +54,7 @@ export async function POST(request: Request) {
     return NextResponse.json(page);
   } catch (error) {
     console.error("Error creating page:", error);
+
     return NextResponse.json(
       {
         error: "Failed to create page",

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 // Get graduation tracking info
@@ -37,6 +38,7 @@ export async function GET() {
       : null;
 
     let graduationStatus = "in_progress";
+
     if (actualGraduation && actualGraduation <= now) {
       graduationStatus = "graduated";
     } else if (now > expectedEnd) {
@@ -51,6 +53,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error fetching graduation info:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch graduation info" },
       { status: 500 },
@@ -115,6 +118,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error updating graduation tracking:", error);
+
     return NextResponse.json(
       { error: "Failed to update graduation tracking" },
       { status: 500 },

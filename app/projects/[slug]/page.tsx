@@ -1,18 +1,36 @@
 import { notFound } from "next/navigation";
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
-import { Card, CardBody, CardHeader } from "@heroui/card";
+import { Card, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import {
   ArrowLeftIcon,
   ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
+
 import { GithubIcon } from "@/components/icons";
-import { motion } from "framer-motion";
 import { prisma } from "@/lib/prisma";
 
-// Force dynamic rendering - don't pre-render at build time
-export const dynamic = "force-dynamic";
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour
+
+// Generate static paths for all active projects
+export async function generateStaticParams() {
+  try {
+    const projects = await prisma.projects.findMany({
+      where: { isActive: true },
+      select: { slug: true },
+    });
+
+    return projects.map((project) => ({
+      slug: project.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params for projects:", error);
+
+    return [];
+  }
+}
 
 interface ProjectPageProps {
   params: Promise<{
@@ -33,6 +51,7 @@ async function getProject(slug: string) {
     return project;
   } catch (error) {
     console.error("Error fetching project:", error);
+
     return null;
   }
 }
@@ -53,8 +72,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <Button
             as={Link}
             href="/projects"
-            variant="ghost"
             startContent={<ArrowLeftIcon className="w-4 h-4" />}
+            variant="ghost"
           >
             Back to Projects
           </Button>
@@ -105,26 +124,26 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <div className="flex flex-wrap gap-4 mb-8">
               {project.liveUrl && project.liveUrl !== "#" && (
                 <Button
+                  isExternal
                   as={Link}
-                  href={project.liveUrl}
                   color="primary"
+                  href={project.liveUrl}
                   size="lg"
                   startContent={
                     <ArrowTopRightOnSquareIcon className="w-5 h-5" />
                   }
-                  isExternal
                 >
                   View Live Demo
                 </Button>
               )}
               {project.githubUrl && project.githubUrl !== "#" && (
                 <Button
+                  isExternal
                   as={Link}
                   href={project.githubUrl}
-                  variant="bordered"
                   size="lg"
                   startContent={<GithubIcon className="w-5 h-5" />}
-                  isExternal
+                  variant="bordered"
                 >
                   View Code
                 </Button>
@@ -134,7 +153,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             {/* Technologies */}
             <div className="flex flex-wrap gap-2">
               {project.technologies.map((tech) => (
-                <Chip key={tech} color="primary" variant="flat" size="sm">
+                <Chip key={tech} color="primary" size="sm" variant="flat">
                   {tech}
                 </Chip>
               ))}
@@ -151,9 +170,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <Card className="overflow-hidden">
                 <CardHeader className="p-0">
                   <img
-                    src={project.image}
                     alt={project.title}
                     className="w-full h-96 object-cover"
+                    src={project.image}
                   />
                 </CardHeader>
               </Card>
@@ -219,8 +238,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                         <Chip
                           key={tech}
                           color="default"
-                          variant="flat"
                           size="sm"
+                          variant="flat"
                         >
                           {tech}
                         </Chip>
@@ -245,7 +264,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               Need custom development work or have a project in mind? Let's
               discuss how I can help bring your ideas to life.
             </p>
-            <Button as={Link} href="/#contact" color="primary" size="lg">
+            <Button as={Link} color="primary" href="/contact" size="lg">
               Get In Touch
             </Button>
           </div>

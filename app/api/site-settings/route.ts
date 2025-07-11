@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
+
+import { NextRequest, NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -28,6 +30,7 @@ export async function GET() {
         }
 
         acc[setting.key] = value;
+
         return acc;
       },
       {} as Record<string, any>,
@@ -36,6 +39,7 @@ export async function GET() {
     return NextResponse.json(settingsObject);
   } catch (error) {
     console.error("Failed to fetch site settings:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch site settings" },
       { status: 500 },
@@ -80,6 +84,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json(setting);
   } catch (error) {
     console.error("Failed to update site setting:", error);
+
     return NextResponse.json(
       { error: "Failed to update site setting" },
       { status: 500 },

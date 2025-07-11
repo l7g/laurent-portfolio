@@ -11,7 +11,6 @@ import {
   CircleStackIcon,
   PaintBrushIcon,
   ServerIcon,
-  CloudIcon,
   CommandLineIcon,
   CogIcon,
   GlobeAltIcon,
@@ -30,7 +29,9 @@ import {
   SiTailwindcss,
   SiMysql,
 } from "react-icons/si";
+
 import { title } from "@/components/primitives";
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface SkillItem {
   id: string;
@@ -96,6 +97,11 @@ const categoryConfig: Record<
     icon: PaintBrushIcon,
     color: "danger",
   },
+  ACADEMIC: {
+    title: "Academic Skills",
+    icon: GlobeAltIcon,
+    color: "default",
+  },
   OTHER: {
     title: "Other Technologies",
     icon: CogIcon,
@@ -104,6 +110,7 @@ const categoryConfig: Record<
 };
 
 export default function SkillsPage() {
+  const { isEducationVisible } = useEducationVisibility();
   const [skills, setSkills] = useState<SkillItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -115,10 +122,12 @@ export default function SkillsPage() {
         setLoading(true);
         setError(null);
         const response = await fetch("/api/skills");
+
         if (!response.ok) {
           throw new Error(`Failed to fetch skills: ${response.status}`);
         }
         const data = await response.json();
+
         console.log("Fetched skills:", data);
         setSkills(data.filter((skill: SkillItem) => skill.isActive));
       } catch (err) {
@@ -133,14 +142,24 @@ export default function SkillsPage() {
   }, []);
 
   const groupSkillsByCategory = (skills: SkillItem[]): SkillCategory[] => {
-    const grouped = skills.reduce((acc: Record<string, SkillItem[]>, skill) => {
-      const category = skill.category;
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(skill);
-      return acc;
-    }, {});
+    // Filter out academic skills if education is not visible
+    const filteredSkills = isEducationVisible
+      ? skills
+      : skills.filter((skill) => skill.category !== "ACADEMIC");
+
+    const grouped = filteredSkills.reduce(
+      (acc: Record<string, SkillItem[]>, skill) => {
+        const category = skill.category;
+
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(skill);
+
+        return acc;
+      },
+      {},
+    );
 
     return Object.entries(grouped).map(([category, skills]) => ({
       title: categoryConfig[category]?.title || category,
@@ -156,12 +175,14 @@ export default function SkillsPage() {
     if (level >= 90) return "success";
     if (level >= 80) return "primary";
     if (level >= 70) return "warning";
+
     return "default";
   };
 
   const getSkillIcon = (iconName?: string) => {
     if (!iconName) return null;
     const IconComponent = iconMap[iconName];
+
     return IconComponent ? <IconComponent className="w-5 h-5" /> : null;
   };
 
@@ -186,8 +207,8 @@ export default function SkillsPage() {
             <CardBody className="text-center">
               <p className="text-danger mb-4">Error loading skills: {error}</p>
               <button
-                onClick={() => window.location.reload()}
                 className="text-primary hover:underline"
+                onClick={() => window.location.reload()}
               >
                 Try again
               </button>
@@ -221,10 +242,10 @@ export default function SkillsPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5 }}
         >
           <h1 className={title({ size: "lg" })}>Technical Skills</h1>
           <p className="text-lg text-default-600 mt-4 max-w-2xl mx-auto">
@@ -235,16 +256,16 @@ export default function SkillsPage() {
 
         {/* Category Filter */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="flex flex-wrap gap-2 justify-center">
             <Chip
-              variant={selectedCategory === null ? "solid" : "flat"}
-              color="primary"
               className="cursor-pointer"
+              color="primary"
+              variant={selectedCategory === null ? "solid" : "flat"}
               onClick={() => setSelectedCategory(null)}
             >
               All Skills
@@ -252,9 +273,9 @@ export default function SkillsPage() {
             {skillCategories.map((category) => (
               <Chip
                 key={category.title}
-                variant={selectedCategory === category.title ? "solid" : "flat"}
-                color={category.color as any}
                 className="cursor-pointer"
+                color={category.color as any}
+                variant={selectedCategory === category.title ? "solid" : "flat"}
                 onClick={() => setSelectedCategory(category.title)}
               >
                 {category.title}
@@ -274,10 +295,10 @@ export default function SkillsPage() {
             .map((category, categoryIndex) => (
               <motion.div
                 key={category.title}
-                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
                 className="h-full"
+                initial={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
               >
                 <Card className="h-full bg-content1/50 backdrop-blur-sm border-1 border-default-200 hover:border-default-300 transition-all duration-300 hover:shadow-lg">
                   <CardHeader className="pb-2">
@@ -300,13 +321,13 @@ export default function SkillsPage() {
                       {category.skills.map((skill, skillIndex) => (
                         <motion.div
                           key={skill.id}
-                          initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
+                          className="space-y-2"
+                          initial={{ opacity: 0, x: -20 }}
                           transition={{
                             duration: 0.3,
                             delay: categoryIndex * 0.1 + skillIndex * 0.05,
                           }}
-                          className="space-y-2"
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -320,10 +341,10 @@ export default function SkillsPage() {
                             </span>
                           </div>
                           <Progress
-                            value={skill.level}
-                            color={getSkillColor(skill.level)}
                             className="max-w-full"
+                            color={getSkillColor(skill.level)}
                             size="sm"
+                            value={skill.level}
                           />
                         </motion.div>
                       ))}
@@ -336,10 +357,10 @@ export default function SkillsPage() {
 
         {/* Skills Summary */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
           className="mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
           <Card className="bg-content1/50 backdrop-blur-sm border-1 border-default-200">
             <CardBody className="p-6">

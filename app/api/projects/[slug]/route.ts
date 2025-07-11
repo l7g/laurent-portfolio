@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -7,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 function isUUID(str: string): boolean {
   const uuidRegex =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
   return uuidRegex.test(str);
 }
 
@@ -34,6 +36,7 @@ export async function GET(
     return NextResponse.json(project);
   } catch (error) {
     console.error("Error fetching project:", error);
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
@@ -48,6 +51,7 @@ export async function PATCH(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -69,6 +73,7 @@ export async function PATCH(
     return NextResponse.json(project);
   } catch (error) {
     console.error("Failed to update project:", error);
+
     return NextResponse.json(
       { error: "Failed to update project" },
       { status: 500 },
@@ -83,6 +88,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -97,6 +103,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to delete project:", error);
+
     return NextResponse.json(
       { error: "Failed to delete project" },
       { status: 500 },

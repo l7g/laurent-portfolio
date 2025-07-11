@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
+
+import { NextRequest, NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -41,6 +43,7 @@ export async function GET() {
     return NextResponse.json(skills);
   } catch (error) {
     console.error("Error fetching academic skills:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch academic skills" },
       { status: 500 },
@@ -82,6 +85,7 @@ export async function POST(request: NextRequest) {
           lastUpdated: new Date(),
         },
       });
+
       return NextResponse.json(updated);
     } else {
       const created = await prisma.skill_progressions.create({
@@ -95,10 +99,12 @@ export async function POST(request: NextRequest) {
           isAcademicSkill: true,
         },
       });
+
       return NextResponse.json(created);
     }
   } catch (error) {
     console.error("Error updating skill progression:", error);
+
     return NextResponse.json(
       { error: "Failed to update skill progression" },
       { status: 500 },

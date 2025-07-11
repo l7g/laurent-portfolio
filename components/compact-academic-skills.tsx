@@ -51,8 +51,10 @@ const CompactAcademicSkills = ({
   const fetchRelevantSkills = async () => {
     try {
       const response = await fetch("/api/academic/most-relevant-skills");
+
       if (response.ok) {
         const data = await response.json();
+
         setSkills(data.mostRelevantSkills.slice(0, maxSkills));
       }
     } catch (error) {
@@ -72,6 +74,7 @@ const CompactAcademicSkills = ({
     const month = now.getMonth();
 
     let academicYear = currentYear - 2025;
+
     if (month < 7) academicYear -= 1;
 
     return Math.max(0, academicYear) + 1;
@@ -81,6 +84,7 @@ const CompactAcademicSkills = ({
     if (frequency >= 4) return "success";
     if (frequency >= 3) return "primary";
     if (frequency >= 2) return "warning";
+
     return "default";
   };
 
@@ -88,6 +92,7 @@ const CompactAcademicSkills = ({
     if (frequency >= 4) return "Highly relevant";
     if (frequency >= 3) return "Very relevant";
     if (frequency >= 2) return "Relevant";
+
     return "Emerging";
   };
 
@@ -95,11 +100,11 @@ const CompactAcademicSkills = ({
     return (
       <div className="w-full py-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-default-300 rounded w-1/2"></div>
-          <div className="h-4 bg-default-300 rounded w-3/4"></div>
+          <div className="h-6 bg-default-300 rounded w-1/2" />
+          <div className="h-4 bg-default-300 rounded w-3/4" />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-32 bg-default-200 rounded-lg"></div>
+              <div key={i} className="h-32 bg-default-200 rounded-lg" />
             ))}
           </div>
         </div>
@@ -130,10 +135,10 @@ const CompactAcademicSkills = ({
         {showViewAllLink && (
           <Link href="/degree?tab=academic-skills">
             <Button
-              variant="light"
               color="primary"
-              size="sm"
               endContent={<ArrowRightIcon className="w-4 h-4" />}
+              size="sm"
+              variant="light"
             >
               View All Skills
             </Button>
@@ -146,8 +151,8 @@ const CompactAcademicSkills = ({
         {skills.map((skill, index) => (
           <motion.div
             key={skill.id}
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
             <Card className="h-full hover:shadow-lg transition-shadow duration-300">
@@ -161,10 +166,10 @@ const CompactAcademicSkills = ({
                   </div>
                   <div className="flex items-center gap-2">
                     <Chip
-                      size="sm"
-                      variant="flat"
                       color={getSkillRelevanceColor(skill.frequency)}
+                      size="sm"
                       startContent={<StarIcon className="w-3 h-3" />}
+                      variant="flat"
                     >
                       {skill.frequency}
                     </Chip>
@@ -184,10 +189,10 @@ const CompactAcademicSkills = ({
                     </span>
                   </div>
                   <Progress
-                    value={skill.currentLevel || skill.level}
+                    className="mb-1"
                     color={getSkillRelevanceColor(skill.frequency)}
                     size="sm"
-                    className="mb-1"
+                    value={skill.currentLevel || skill.level}
                   />
                   <div className="flex justify-between items-center text-xs text-default-500">
                     <span>Target: {skill.targetLevel}%</span>
@@ -202,9 +207,9 @@ const CompactAcademicSkills = ({
                     <span>{skill.courses.length} courses</span>
                   </div>
                   <Chip
+                    color={getSkillRelevanceColor(skill.frequency)}
                     size="sm"
                     variant="flat"
-                    color={getSkillRelevanceColor(skill.frequency)}
                   >
                     {getSkillRelevanceText(skill.frequency)}
                   </Chip>

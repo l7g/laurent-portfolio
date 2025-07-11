@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -10,6 +11,7 @@ export async function PATCH(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -28,6 +30,7 @@ export async function PATCH(
     return NextResponse.json(contact);
   } catch (error) {
     console.error("Failed to update contact:", error);
+
     return NextResponse.json(
       { error: "Failed to update contact" },
       { status: 500 },
@@ -42,6 +45,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -55,6 +59,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to delete contact:", error);
+
     return NextResponse.json(
       { error: "Failed to delete contact" },
       { status: 500 },

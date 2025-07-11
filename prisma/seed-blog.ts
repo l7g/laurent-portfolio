@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
+
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -55,6 +55,7 @@ async function main() {
 
   if (!adminUser) {
     console.log("❌ No admin user found. Please create an admin user first.");
+
     return;
   }
 

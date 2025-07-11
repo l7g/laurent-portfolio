@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -63,6 +64,7 @@ export async function GET(
     return NextResponse.json(post);
   } catch (error) {
     console.error("Error fetching post:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch post" },
       { status: 500 },
@@ -142,6 +144,7 @@ export async function PATCH(
     return NextResponse.json(post);
   } catch (error) {
     console.error("Error updating post:", error);
+
     return NextResponse.json(
       { error: "Failed to update post" },
       { status: 500 },
@@ -275,6 +278,7 @@ export async function PUT(
     return NextResponse.json(post);
   } catch (error) {
     console.error("Error updating blog post:", error);
+
     return NextResponse.json(
       { error: "Failed to update blog post" },
       { status: 500 },
@@ -307,6 +311,7 @@ export async function DELETE(
     return NextResponse.json({ message: "Post deleted successfully" });
   } catch (error) {
     console.error("Error deleting post:", error);
+
     return NextResponse.json(
       { error: "Failed to delete post" },
       { status: 500 },

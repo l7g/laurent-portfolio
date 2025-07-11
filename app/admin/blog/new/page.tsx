@@ -14,15 +14,20 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
+
+import { title } from "@/components/primitives";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import CategorySelector from "@/components/admin/category-selector";
+import SeriesSelector from "@/components/admin/series-selector";
 
 interface BlogCategory {
   id: string;
   name: string;
+  slug: string;
   color: string;
   icon: string;
+  description?: string;
 }
 
 interface BlogSeries {
@@ -31,7 +36,7 @@ interface BlogSeries {
   slug: string;
   description?: string;
   color: string;
-  icon?: string;
+  icon: string;
   difficulty?: string;
   _count: {
     blog_posts: number;
@@ -84,15 +89,77 @@ export default function NewBlogPostPage() {
 
       if (categoriesResponse.ok) {
         const categoriesData = await categoriesResponse.json();
+
         setCategories(categoriesData);
       }
 
       if (seriesResponse.ok) {
         const seriesData = await seriesResponse.json();
+
         setSeries(seriesData);
       }
     } catch (error) {
       console.error("Failed to fetch categories and series:", error);
+    }
+  };
+
+  const createNewCategory = async (categoryData: Omit<BlogCategory, "id">) => {
+    try {
+      const response = await fetch("/api/admin/blog/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...categoryData,
+          isActive: true,
+        }),
+      });
+
+      if (response.ok) {
+        const newCategory = await response.json();
+
+        setCategories((prev) => [...prev, newCategory]);
+
+        return newCategory;
+      } else {
+        throw new Error("Failed to create category");
+      }
+    } catch (error) {
+      console.error("Error creating category:", error);
+      throw error;
+    }
+  };
+
+  const createNewSeries = async (
+    seriesData: Omit<BlogSeries, "id" | "_count">,
+  ) => {
+    try {
+      const response = await fetch("/api/admin/blog/series", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...seriesData,
+          isActive: true,
+          tags: [],
+        }),
+      });
+
+      if (response.ok) {
+        const newSeries = await response.json();
+        const seriesWithCount = { ...newSeries, _count: { blog_posts: 0 } };
+
+        setSeries((prev) => [...prev, seriesWithCount]);
+
+        return seriesWithCount;
+      } else {
+        throw new Error("Failed to create series");
+      }
+    } catch (error) {
+      console.error("Error creating series:", error);
+      throw error;
     }
   };
 
@@ -108,6 +175,7 @@ export default function NewBlogPostPage() {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
+
       setPostData((prev) => ({ ...prev, slug }));
     }
   }, [postData.title]);
@@ -116,6 +184,7 @@ export default function NewBlogPostPage() {
   useEffect(() => {
     if (postData.seriesId) {
       const selectedSeries = series.find((s) => s.id === postData.seriesId);
+
       if (selectedSeries && postData.seriesOrder === 1) {
         // Set the next order number in the series
         setPostData((prev) => ({
@@ -130,6 +199,7 @@ export default function NewBlogPostPage() {
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
     router.push("/admin/login");
+
     return null;
   }
 
@@ -168,9 +238,9 @@ export default function NewBlogPostPage() {
   const handleSave = async (status: "DRAFT" | "PUBLISHED") => {
     if (!postData.title || !postData.content || !postData.categoryId) {
       alert("Please fill in title, content, and category");
+
       return;
     }
-
     setSaving(true);
     try {
       const response = await fetch("/api/admin/blog/posts", {
@@ -186,9 +256,11 @@ export default function NewBlogPostPage() {
 
       if (response.ok) {
         const data = await response.json();
+
         router.push(`/admin/blog`);
       } else {
         const error = await response.json();
+
         alert(error.error || "Failed to save post");
       }
     } catch (error) {
@@ -204,18 +276,18 @@ export default function NewBlogPostPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/admin/blog">
                 <Button
-                  variant="light"
-                  startContent={<ArrowLeftIcon className="w-4 h-4" />}
                   className="text-default-600 hover:text-default-900"
+                  startContent={<ArrowLeftIcon className="w-4 h-4" />}
+                  variant="light"
                 >
                   Back to Blog
                 </Button>
@@ -229,18 +301,18 @@ export default function NewBlogPostPage() {
             </div>
             <div className="flex gap-2">
               <Button
-                variant="bordered"
-                onClick={() => handleSave("DRAFT")}
                 disabled={saving}
                 startContent={<CloudArrowUpIcon className="w-4 h-4" />}
+                variant="bordered"
+                onClick={() => handleSave("DRAFT")}
               >
                 {saving ? "Saving..." : "Save Draft"}
               </Button>
               <Button
                 color="primary"
-                onClick={() => handleSave("PUBLISHED")}
                 disabled={saving}
                 startContent={<EyeIcon className="w-4 h-4" />}
+                onClick={() => handleSave("PUBLISHED")}
               >
                 {saving ? "Publishing..." : "Publish"}
               </Button>
@@ -253,8 +325,8 @@ export default function NewBlogPostPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Title */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <Card>
@@ -263,11 +335,11 @@ export default function NewBlogPostPage() {
                 </CardHeader>
                 <CardBody>
                   <Input
+                    className="text-xl"
                     placeholder="Enter your post title..."
+                    size="lg"
                     value={postData.title}
                     onChange={(e) => handleInputChange("title", e.target.value)}
-                    size="lg"
-                    className="text-xl"
                   />
                 </CardBody>
               </Card>
@@ -275,8 +347,8 @@ export default function NewBlogPostPage() {
 
             {/* Slug */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <Card>
@@ -285,10 +357,10 @@ export default function NewBlogPostPage() {
                 </CardHeader>
                 <CardBody>
                   <Input
+                    description="Used in the post URL. Auto-generated from title."
                     placeholder="post-url-slug"
                     value={postData.slug}
                     onChange={(e) => handleInputChange("slug", e.target.value)}
-                    description="Used in the post URL. Auto-generated from title."
                   />
                 </CardBody>
               </Card>
@@ -296,8 +368,8 @@ export default function NewBlogPostPage() {
 
             {/* Excerpt */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <Card>
@@ -306,13 +378,13 @@ export default function NewBlogPostPage() {
                 </CardHeader>
                 <CardBody>
                   <textarea
+                    className="w-full p-3 border border-default-200 rounded-lg resize-none"
                     placeholder="Brief description of your post..."
+                    rows={3}
                     value={postData.excerpt}
                     onChange={(e) =>
                       handleInputChange("excerpt", e.target.value)
                     }
-                    rows={3}
-                    className="w-full p-3 border border-default-200 rounded-lg resize-none"
                   />
                 </CardBody>
               </Card>
@@ -320,15 +392,15 @@ export default function NewBlogPostPage() {
 
             {/* Content Editor */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <RichTextEditor
+                minHeight="500px"
+                placeholder="Start writing your amazing post..."
                 value={postData.content}
                 onChange={(value) => handleInputChange("content", value)}
-                placeholder="Start writing your amazing post..."
-                minHeight="500px"
               />
             </motion.div>
           </div>
@@ -337,8 +409,8 @@ export default function NewBlogPostPage() {
           <div className="space-y-6">
             {/* Category */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
               <Card>
@@ -346,28 +418,22 @@ export default function NewBlogPostPage() {
                   <h3 className="text-lg font-semibold">Category</h3>
                 </CardHeader>
                 <CardBody>
-                  <select
+                  <CategorySelector
+                    categories={categories}
                     value={postData.categoryId}
-                    onChange={(e) =>
-                      handleInputChange("categoryId", e.target.value)
+                    onChange={(value: string) =>
+                      handleInputChange("categoryId", value)
                     }
-                    className="w-full p-3 border border-default-200 rounded-lg"
-                  >
-                    <option value="">Select a category</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.icon} {category.name}
-                      </option>
-                    ))}
-                  </select>
+                    onCreateCategory={createNewCategory}
+                  />
                 </CardBody>
               </Card>
             </motion.div>
 
             {/* Series */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.55 }}
             >
               <Card>
@@ -378,21 +444,14 @@ export default function NewBlogPostPage() {
                   </p>
                 </CardHeader>
                 <CardBody className="space-y-4">
-                  <select
+                  <SeriesSelector
+                    series={series}
                     value={postData.seriesId}
-                    onChange={(e) =>
-                      handleInputChange("seriesId", e.target.value)
+                    onChange={(value: string) =>
+                      handleInputChange("seriesId", value)
                     }
-                    className="w-full p-3 border border-default-200 rounded-lg"
-                  >
-                    <option value="">No series</option>
-                    {series.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.icon} {s.title} ({s._count.blog_posts} posts)
-                        {s.difficulty && ` - ${s.difficulty}`}
-                      </option>
-                    ))}
-                  </select>
+                    onCreateSeries={createNewSeries}
+                  />
 
                   {postData.seriesId && (
                     <div>
@@ -400,14 +459,14 @@ export default function NewBlogPostPage() {
                         Series Order
                       </label>
                       <Input
-                        type="number"
+                        description="Position of this post within the series"
                         min="1"
+                        placeholder="Order in series"
+                        type="number"
                         value={postData.seriesOrder.toString()}
                         onChange={(e) =>
                           handleInputChange("seriesOrder", e.target.value)
                         }
-                        placeholder="Order in series"
-                        description="Position of this post within the series"
                       />
                     </div>
                   )}
@@ -417,8 +476,8 @@ export default function NewBlogPostPage() {
 
             {/* Tags */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.6 }}
             >
               <Card>
@@ -430,15 +489,15 @@ export default function NewBlogPostPage() {
                     <div className="flex gap-2">
                       <Input
                         placeholder="Add a tag..."
+                        startContent={<TagIcon className="w-4 h-4" />}
                         value={tagInput}
                         onChange={(e) => setTagInput(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        startContent={<TagIcon className="w-4 h-4" />}
                       />
                       <Button
+                        disabled={!tagInput.trim()}
                         variant="bordered"
                         onClick={handleAddTag}
-                        disabled={!tagInput.trim()}
                       >
                         Add
                       </Button>
@@ -447,9 +506,9 @@ export default function NewBlogPostPage() {
                       {postData.tags.map((tag) => (
                         <Chip
                           key={tag}
+                          className="text-xs"
                           variant="flat"
                           onClose={() => handleRemoveTag(tag)}
-                          className="text-xs"
                         >
                           {tag}
                         </Chip>
@@ -462,8 +521,8 @@ export default function NewBlogPostPage() {
 
             {/* SEO */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.7 }}
             >
               <Card>
@@ -481,13 +540,13 @@ export default function NewBlogPostPage() {
                       }
                     />
                     <textarea
+                      className="w-full p-3 border border-default-200 rounded-lg resize-none"
                       placeholder="Meta description for search engines..."
+                      rows={3}
                       value={postData.metaDescription}
                       onChange={(e) =>
                         handleInputChange("metaDescription", e.target.value)
                       }
-                      rows={3}
-                      className="w-full p-3 border border-default-200 rounded-lg resize-none"
                     />
                   </div>
                 </CardBody>
@@ -496,8 +555,8 @@ export default function NewBlogPostPage() {
 
             {/* Status */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
               <Card>
@@ -506,11 +565,11 @@ export default function NewBlogPostPage() {
                 </CardHeader>
                 <CardBody>
                   <select
+                    className="w-full p-3 border border-default-200 rounded-lg"
                     value={postData.status}
                     onChange={(e) =>
                       handleInputChange("status", e.target.value as any)
                     }
-                    className="w-full p-3 border border-default-200 rounded-lg"
                   >
                     <option value="DRAFT">Draft</option>
                     <option value="PUBLISHED">Published</option>

@@ -9,6 +9,8 @@ import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
+import StructuredData from "@/components/structured-data";
+import CookieNotice from "@/components/cookie-notice";
 
 export const metadata: Metadata = {
   title: {
@@ -27,9 +29,21 @@ export const metadata: Metadata = {
     "Node.js",
     "Prisma",
     "PostgreSQL",
+    "Laurent Gagne",
+    "Software Engineer",
+    "Web Developer",
+    "Frontend",
+    "Backend",
   ],
-  authors: [{ name: "Laurent" }],
-  creator: "Laurent",
+  authors: [{ name: "Laurent Gagne", url: process.env.NEXT_PUBLIC_APP_URL }],
+  creator: "Laurent Gagne",
+  publisher: "Laurent Gagne",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://laurentgagne.com",
+  ),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -37,11 +51,31 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: siteConfig.name,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: [
@@ -70,13 +104,13 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <head />
       <body
+        suppressHydrationWarning
         className={clsx(
           "min-h-screen text-foreground bg-background font-sans antialiased",
           fontSans.variable,
         )}
-        suppressHydrationWarning
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class", defaultTheme: "light" }}>
           <div className="relative flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-grow">{children}</main>
@@ -115,7 +149,7 @@ export default function RootLayout({
                       </Link>
                       <Link
                         className="text-sm text-default-600 hover:text-primary block"
-                        href="#contact"
+                        href="/contact"
                       >
                         Contact
                       </Link>
@@ -149,14 +183,35 @@ export default function RootLayout({
                 </div>
                 <div className="border-t border-default-200 mt-8 pt-8 text-center">
                   <p className="text-sm text-default-600">
-                    Â© 2025 Laurent&apos;s Portfolio. Built with{" "}
-                    <span className="text-primary">HeroUI</span> and Next.js
+                    © 2025 Laurent&apos;s Portfolio. Built with Next.js
                   </p>
+                  <div className="flex justify-center space-x-4 mt-2">
+                    <Link
+                      className="text-xs text-default-500 hover:text-primary"
+                      href="/privacy"
+                    >
+                      Privacy Policy
+                    </Link>
+                    <Link
+                      className="text-xs text-default-500 hover:text-primary"
+                      href="/terms"
+                    >
+                      Terms of Service
+                    </Link>
+                    <Link
+                      className="text-xs text-default-500 hover:text-primary"
+                      href="/consent"
+                    >
+                      Cookie Preferences
+                    </Link>
+                  </div>
                 </div>
               </div>
             </footer>
           </div>
         </Providers>
+        <CookieNotice />
+        <StructuredData />
         <Analytics />
       </body>
     </html>

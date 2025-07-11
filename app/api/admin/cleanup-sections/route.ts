@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
+
+import { NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function POST() {
   try {
@@ -12,6 +14,7 @@ export async function POST() {
     });
 
     const sectionsByName: { [key: string]: any[] } = {};
+
     sections.forEach((section) => {
       if (!sectionsByName[section.name]) {
         sectionsByName[section.name] = [];
@@ -27,6 +30,7 @@ export async function POST() {
       if (sectionsWithName.length > 1) {
         // Keep the first one, delete the rest
         const [keep, ...toDelete] = sectionsWithName;
+
         keptSections.push(keep);
 
         for (const section of toDelete) {
@@ -47,6 +51,7 @@ export async function POST() {
     });
 
     let ctaCreated = false;
+
     if (!ctaSection) {
       const newCta = await prisma.portfolio_sections.create({
         data: {
@@ -85,8 +90,8 @@ export async function POST() {
             ],
             primaryButton: {
               text: "Start Your Project",
-              action: "scroll",
-              target: "#contact",
+              action: "link",
+              target: "/contact",
             },
             secondaryButton: {
               text: "Send Quick Email",
@@ -100,6 +105,7 @@ export async function POST() {
           },
         },
       });
+
       ctaCreated = true;
       console.log(`✅ Created projects-cta section: ${newCta.id}`);
     }
@@ -120,8 +126,10 @@ export async function POST() {
     };
 
     let updatedCount = 0;
+
     for (const section of finalSections) {
       const expectedOrder = sortOrderMap[section.name];
+
       if (expectedOrder && section.sortOrder !== expectedOrder) {
         await prisma.portfolio_sections.update({
           where: { id: section.id },
@@ -158,6 +166,7 @@ export async function POST() {
     });
   } catch (error) {
     console.error("Error in cleanup and setup:", error);
+
     return NextResponse.json(
       {
         error: "Failed to cleanup and setup database",

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -27,6 +28,7 @@ export async function GET() {
     return NextResponse.json(categories);
   } catch (error) {
     console.error("Error fetching categories:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch categories" },
       { status: 500 },
@@ -63,6 +65,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Calculate the next sortOrder by finding the maximum current sortOrder
+    const maxSortOrder = await prisma.blog_categories.aggregate({
+      _max: {
+        sortOrder: true,
+      },
+    });
+
+    const nextSortOrder = (maxSortOrder._max.sortOrder || 0) + 1;
+
     const category = await prisma.blog_categories.create({
       data: {
         id: crypto.randomUUID(),
@@ -73,6 +84,7 @@ export async function POST(request: NextRequest) {
         icon: icon || "📝",
         metaTitle,
         metaDescription,
+        sortOrder: nextSortOrder,
         updatedAt: new Date(),
       },
     });
@@ -80,6 +92,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(category);
   } catch (error) {
     console.error("Error creating category:", error);
+
     return NextResponse.json(
       { error: "Failed to create category" },
       { status: 500 },

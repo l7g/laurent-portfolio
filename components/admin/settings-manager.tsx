@@ -25,6 +25,7 @@ import {
   EyeIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+
 import { useApi } from "@/lib/use-api";
 
 interface Setting {
@@ -141,6 +142,18 @@ const PREDEFINED_SETTINGS = [
     placeholder: "5",
     defaultValue: "5",
   },
+  {
+    key: "show_education",
+    label: "Show Education Section",
+    description:
+      "Toggle visibility of education-related content and navigation",
+    type: "boolean",
+    isPublic: true,
+    category: "Site",
+    icon: InformationCircleIcon,
+    placeholder: "",
+    defaultValue: "true",
+  },
 ];
 
 export default function SettingsManager() {
@@ -179,6 +192,7 @@ export default function SettingsManager() {
 
       // Handle the double-wrapped response structure
       let settingsData = response.data;
+
       if (
         settingsData &&
         typeof settingsData === "object" &&
@@ -190,6 +204,7 @@ export default function SettingsManager() {
 
       if (settingsData) {
         const settingsArray = Array.isArray(settingsData) ? settingsData : [];
+
         setSettings(settingsArray);
       } else {
         setSettings([]);
@@ -210,6 +225,7 @@ export default function SettingsManager() {
     if (existingSetting) {
       // Open edit modal for existing setting
       openEditModal(existingSetting, predefinedSetting);
+
       return;
     }
 
@@ -253,6 +269,7 @@ export default function SettingsManager() {
 
       // Create FormData for file upload
       const formData = new FormData();
+
       formData.append("file", file);
       formData.append("folder", isImage ? "profile" : "documents");
       formData.append("type", isImage ? "image" : "document");
@@ -265,6 +282,7 @@ export default function SettingsManager() {
 
       if (!response.ok) {
         const errorData = await response.json();
+
         throw new Error(errorData.error || "Upload failed");
       }
 
@@ -323,6 +341,7 @@ export default function SettingsManager() {
     if (!confirm("Are you sure you want to delete this setting?")) return;
 
     const response = await api.settings.delete(key);
+
     if (response.data || !response.error) {
       await loadSettings();
     }
@@ -332,6 +351,7 @@ export default function SettingsManager() {
     if (!newSetting.key || !newSetting.value) return;
 
     const response = await api.settings.upsert(newSetting);
+
     if (response.data) {
       await loadSettings();
       setNewSetting({
@@ -365,6 +385,7 @@ export default function SettingsManager() {
       actionText = "Add Missing Settings";
     } else {
       alert("All predefined settings already exist! No action needed.");
+
       return;
     }
 
@@ -498,6 +519,7 @@ export default function SettingsManager() {
     // Add predefined settings (merge with existing data if available)
     PREDEFINED_SETTINGS.forEach((predefined) => {
       const existingSetting = settings.find((s) => s.key === predefined.key);
+
       allSettingsData.push({
         ...predefined,
         exists: !!existingSetting,
@@ -592,21 +614,21 @@ export default function SettingsManager() {
         </div>
         <div className="flex gap-3">
           <Button
+            className={buttonState.className}
             color={buttonState.color}
-            variant={buttonState.variant}
-            onPress={initializeAllSettings}
+            isDisabled={buttonState.disabled}
             size="sm"
             startContent={<buttonState.icon className="w-4 h-4" />}
-            className={buttonState.className}
-            isDisabled={buttonState.disabled}
+            variant={buttonState.variant}
+            onPress={initializeAllSettings}
           >
             {buttonState.text}
           </Button>
           <Button
             color="primary"
+            startContent={<PlusIcon className="w-4 h-4" />}
             variant="light"
             onPress={() => setShowAddForm(!showAddForm)}
-            startContent={<PlusIcon className="w-4 h-4" />}
           >
             Add Custom Setting
           </Button>
@@ -621,9 +643,9 @@ export default function SettingsManager() {
         {categories.map((category) => (
           <Chip
             key={category}
-            variant={selectedCategory === category ? "solid" : "bordered"}
-            color={selectedCategory === category ? "primary" : "default"}
             className="cursor-pointer"
+            color={selectedCategory === category ? "primary" : "default"}
+            variant={selectedCategory === category ? "solid" : "bordered"}
             onClick={() => setSelectedCategory(category)}
           >
             {category}
@@ -644,12 +666,12 @@ export default function SettingsManager() {
             customize your portfolio.
           </p>
           <Button
-            color={buttonState.color}
-            size="lg"
-            onPress={initializeAllSettings}
-            startContent={<buttonState.icon className="w-5 h-5" />}
-            isDisabled={buttonState.disabled}
             className={buttonState.className}
+            color={buttonState.color}
+            isDisabled={buttonState.disabled}
+            size="lg"
+            startContent={<buttonState.icon className="w-5 h-5" />}
+            onPress={initializeAllSettings}
           >
             {buttonState.text}
           </Button>
@@ -696,6 +718,7 @@ export default function SettingsManager() {
             <Textarea
               label="Description"
               placeholder="What is this setting for?"
+              rows={2}
               value={newSetting.description}
               onChange={(e) =>
                 setNewSetting((prev) => ({
@@ -703,7 +726,6 @@ export default function SettingsManager() {
                   description: e.target.value,
                 }))
               }
-              rows={2}
             />
             <Switch
               isSelected={newSetting.isPublic}
@@ -731,12 +753,10 @@ export default function SettingsManager() {
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 max-w-md">
               <Input
-                placeholder="Search portfolio settings..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                startContent={
-                  <InformationCircleIcon className="w-4 h-4 text-gray-400" />
-                }
+                classNames={{
+                  input: "text-sm",
+                  inputWrapper: "h-10",
+                }}
                 endContent={
                   searchTerm && (
                     <button
@@ -747,19 +767,21 @@ export default function SettingsManager() {
                     </button>
                   )
                 }
-                classNames={{
-                  input: "text-sm",
-                  inputWrapper: "h-10",
-                }}
+                placeholder="Search portfolio settings..."
+                startContent={
+                  <InformationCircleIcon className="w-4 h-4 text-gray-400" />
+                }
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="flex gap-2">
               {categories.map((category) => (
                 <Chip
                   key={category}
-                  variant={selectedCategory === category ? "solid" : "bordered"}
-                  color={selectedCategory === category ? "primary" : "default"}
                   className="cursor-pointer"
+                  color={selectedCategory === category ? "primary" : "default"}
+                  variant={selectedCategory === category ? "solid" : "bordered"}
                   onClick={() => setSelectedCategory(category)}
                 >
                   {category}
@@ -821,20 +843,20 @@ export default function SettingsManager() {
                             <div className="flex flex-col gap-1 flex-shrink-0">
                               {setting.exists && (
                                 <Chip
-                                  size="sm"
-                                  color={hasValue ? "success" : "warning"}
-                                  variant="flat"
                                   className="text-xs"
+                                  color={hasValue ? "success" : "warning"}
+                                  size="sm"
+                                  variant="flat"
                                 >
                                   {hasValue ? "Set" : "Empty"}
                                 </Chip>
                               )}
                               {setting.isCustom && (
                                 <Chip
-                                  size="sm"
-                                  color="secondary"
-                                  variant="flat"
                                   className="text-xs"
+                                  color="secondary"
+                                  size="sm"
+                                  variant="flat"
                                 >
                                   Custom
                                 </Chip>
@@ -867,17 +889,17 @@ export default function SettingsManager() {
                           <div className="flex items-center justify-between mt-auto flex-shrink-0">
                             <div className="flex items-center gap-2">
                               <Chip
+                                className="text-xs font-medium"
                                 size="sm"
                                 variant="bordered"
-                                className="text-xs font-medium"
                               >
                                 {setting.type}
                               </Chip>
                               <Chip
-                                size="sm"
-                                variant="bordered"
                                 className="text-xs font-medium"
                                 color="secondary"
+                                size="sm"
+                                variant="bordered"
                               >
                                 {setting.category}
                               </Chip>
@@ -885,9 +907,16 @@ export default function SettingsManager() {
 
                             <div className="flex items-center gap-1">
                               <Button
-                                size="sm"
-                                variant="light"
                                 color="primary"
+                                size="sm"
+                                startContent={
+                                  setting.exists ? (
+                                    <PencilIcon className="w-3 h-3" />
+                                  ) : (
+                                    <PlusIcon className="w-3 h-3" />
+                                  )
+                                }
+                                variant="light"
                                 onPress={() => {
                                   if (
                                     setting.exists &&
@@ -900,35 +929,29 @@ export default function SettingsManager() {
                                       PREDEFINED_SETTINGS.find(
                                         (p) => p.key === setting.key,
                                       );
+
                                     if (predefinedSetting) {
                                       handleQuickSetup(predefinedSetting);
                                     }
                                   }
                                 }}
-                                startContent={
-                                  setting.exists ? (
-                                    <PencilIcon className="w-3 h-3" />
-                                  ) : (
-                                    <PlusIcon className="w-3 h-3" />
-                                  )
-                                }
                               >
                                 {setting.exists ? "Edit" : "Setup"}
                               </Button>
 
                               {setting.exists && setting.existingSetting && (
                                 <Button
-                                  size="sm"
-                                  variant="light"
                                   color="danger"
+                                  size="sm"
+                                  startContent={
+                                    <TrashIcon className="w-3 h-3" />
+                                  }
+                                  variant="light"
                                   onPress={() => {
                                     handleDeleteSetting(
                                       setting.existingSetting!.id,
                                     );
                                   }}
-                                  startContent={
-                                    <TrashIcon className="w-3 h-3" />
-                                  }
                                 >
                                   Delete
                                 </Button>
@@ -956,13 +979,13 @@ export default function SettingsManager() {
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
+                    className="font-medium"
+                    disabled={currentPage === 1}
                     size="sm"
                     variant="bordered"
                     onPress={() =>
                       setCurrentPage((prev) => Math.max(1, prev - 1))
                     }
-                    disabled={currentPage === 1}
-                    className="font-medium"
                   >
                     ← Previous
                   </Button>
@@ -982,19 +1005,19 @@ export default function SettingsManager() {
                       return (
                         <Button
                           key={pageNumber}
-                          size="sm"
-                          variant={
-                            currentPage === pageNumber ? "solid" : "bordered"
-                          }
-                          color={
-                            currentPage === pageNumber ? "primary" : "default"
-                          }
-                          onPress={() => setCurrentPage(pageNumber)}
                           className={`min-w-[40px] font-medium ${
                             currentPage === pageNumber
                               ? "shadow-lg"
                               : "hover:shadow-md hover:border-primary-300"
                           }`}
+                          color={
+                            currentPage === pageNumber ? "primary" : "default"
+                          }
+                          size="sm"
+                          variant={
+                            currentPage === pageNumber ? "solid" : "bordered"
+                          }
+                          onPress={() => setCurrentPage(pageNumber)}
                         >
                           {pageNumber}
                         </Button>
@@ -1003,13 +1026,13 @@ export default function SettingsManager() {
                   </div>
 
                   <Button
+                    className="font-medium"
+                    disabled={currentPage === totalPages}
                     size="sm"
                     variant="bordered"
                     onPress={() =>
                       setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                     }
-                    disabled={currentPage === totalPages}
-                    className="font-medium"
                   >
                     Next →
                   </Button>
@@ -1023,9 +1046,9 @@ export default function SettingsManager() {
       {/* Enhanced Edit Modal */}
       <Modal
         isOpen={editModalOpen}
-        onClose={closeEditModal}
-        size="3xl"
         scrollBehavior="inside"
+        size="3xl"
+        onClose={closeEditModal}
       >
         <ModalContent>
           {editingSetting && (
@@ -1035,6 +1058,7 @@ export default function SettingsManager() {
                   const predefinedInfo = getPredefinedInfo(editingSetting.key);
                   const IconComponent =
                     predefinedInfo?.icon || InformationCircleIcon;
+
                   return (
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-blue-100 rounded-lg">
@@ -1090,10 +1114,10 @@ export default function SettingsManager() {
                                   )) && (
                                   <Button
                                     size="sm"
-                                    variant="light"
                                     startContent={
                                       <EyeIcon className="w-4 h-4" />
                                     }
+                                    variant="light"
                                     onPress={() =>
                                       window.open(editFormData.value, "_blank")
                                     }
@@ -1113,28 +1137,29 @@ export default function SettingsManager() {
                             </p>
                             <Button
                               color="primary"
-                              variant="bordered"
-                              onPress={triggerFileUpload}
                               isLoading={uploadingFile}
                               startContent={
                                 !uploadingFile && (
                                   <CloudArrowUpIcon className="w-4 h-4" />
                                 )
                               }
+                              variant="bordered"
+                              onPress={triggerFileUpload}
                             >
                               {uploadingFile ? "Uploading..." : "Choose File"}
                             </Button>
                             <input
                               ref={fileInputRef}
-                              type="file"
-                              className="hidden"
                               accept={
                                 predefinedInfo?.fileType === "image"
                                   ? "image/*"
                                   : ".pdf,.doc,.docx"
                               }
+                              className="hidden"
+                              type="file"
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
+
                                 if (file) handleFileUpload(file);
                               }}
                             />
@@ -1146,15 +1171,15 @@ export default function SettingsManager() {
                               Or enter URL manually:
                             </label>
                             <Input
+                              placeholder={
+                                predefinedInfo?.placeholder || "https://..."
+                              }
                               value={editFormData.value}
                               onChange={(e) =>
                                 setEditFormData((prev) => ({
                                   ...prev,
                                   value: e.target.value,
                                 }))
-                              }
-                              placeholder={
-                                predefinedInfo?.placeholder || "https://..."
                               }
                             />
                           </div>
@@ -1172,6 +1197,12 @@ export default function SettingsManager() {
                             URL
                           </label>
                           <Input
+                            placeholder={
+                              predefinedInfo?.placeholder || "https://..."
+                            }
+                            startContent={
+                              <LinkIcon className="w-4 h-4 text-gray-400" />
+                            }
                             value={editFormData.value}
                             onChange={(e) =>
                               setEditFormData((prev) => ({
@@ -1179,19 +1210,13 @@ export default function SettingsManager() {
                                 value: e.target.value,
                               }))
                             }
-                            placeholder={
-                              predefinedInfo?.placeholder || "https://..."
-                            }
-                            startContent={
-                              <LinkIcon className="w-4 h-4 text-gray-400" />
-                            }
                           />
                           {editFormData.value && (
                             <div className="mt-2">
                               <Button
                                 size="sm"
-                                variant="light"
                                 startContent={<EyeIcon className="w-4 h-4" />}
+                                variant="light"
                                 onPress={() =>
                                   window.open(editFormData.value, "_blank")
                                 }
@@ -1214,6 +1239,10 @@ export default function SettingsManager() {
                             Phone Number
                           </label>
                           <Input
+                            placeholder={
+                              predefinedInfo?.placeholder || "+1 (555) 123-4567"
+                            }
+                            type="tel"
                             value={editFormData.value}
                             onChange={(e) =>
                               setEditFormData((prev) => ({
@@ -1221,10 +1250,6 @@ export default function SettingsManager() {
                                 value: e.target.value,
                               }))
                             }
-                            placeholder={
-                              predefinedInfo?.placeholder || "+1 (555) 123-4567"
-                            }
-                            type="tel"
                           />
                         </div>
                       </div>
@@ -1240,6 +1265,11 @@ export default function SettingsManager() {
                             Content
                           </label>
                           <Textarea
+                            placeholder={
+                              predefinedInfo?.placeholder ||
+                              "Enter your content..."
+                            }
+                            rows={6}
                             value={editFormData.value}
                             onChange={(e) =>
                               setEditFormData((prev) => ({
@@ -1247,11 +1277,6 @@ export default function SettingsManager() {
                                 value: e.target.value,
                               }))
                             }
-                            placeholder={
-                              predefinedInfo?.placeholder ||
-                              "Enter your content..."
-                            }
-                            rows={6}
                           />
                           <p className="text-xs text-gray-500 mt-1">
                             Character count: {editFormData.value.length}
@@ -1275,13 +1300,13 @@ export default function SettingsManager() {
                           </div>
                           <Switch
                             isSelected={editFormData.value === "true"}
+                            size="lg"
                             onValueChange={(isSelected) =>
                               setEditFormData((prev) => ({
                                 ...prev,
                                 value: isSelected.toString(),
                               }))
                             }
-                            size="lg"
                           >
                             {editFormData.value === "true"
                               ? "Enabled"
@@ -1301,6 +1326,8 @@ export default function SettingsManager() {
                             Value
                           </label>
                           <Input
+                            placeholder={predefinedInfo?.placeholder || "0"}
+                            type="number"
                             value={editFormData.value}
                             onChange={(e) =>
                               setEditFormData((prev) => ({
@@ -1308,8 +1335,6 @@ export default function SettingsManager() {
                                 value: e.target.value,
                               }))
                             }
-                            placeholder={predefinedInfo?.placeholder || "0"}
-                            type="number"
                           />
                         </div>
                       </div>
@@ -1324,15 +1349,15 @@ export default function SettingsManager() {
                           Value
                         </label>
                         <Input
+                          placeholder={
+                            predefinedInfo?.placeholder || "Enter value..."
+                          }
                           value={editFormData.value}
                           onChange={(e) =>
                             setEditFormData((prev) => ({
                               ...prev,
                               value: e.target.value,
                             }))
-                          }
-                          placeholder={
-                            predefinedInfo?.placeholder || "Enter value..."
                           }
                         />
                       </div>
@@ -1346,6 +1371,8 @@ export default function SettingsManager() {
                     Description (Optional)
                   </label>
                   <Textarea
+                    placeholder="Add a custom description for this setting..."
+                    rows={2}
                     value={editFormData.description}
                     onChange={(e) =>
                       setEditFormData((prev) => ({
@@ -1353,8 +1380,6 @@ export default function SettingsManager() {
                         description: e.target.value,
                       }))
                     }
-                    placeholder="Add a custom description for this setting..."
-                    rows={2}
                   />
                 </div>
 
@@ -1417,8 +1442,8 @@ export default function SettingsManager() {
                 </Button>
                 <Button
                   color="primary"
-                  onPress={handleSaveSetting}
                   isLoading={uploadingFile}
+                  onPress={handleSaveSetting}
                 >
                   Save Changes
                 </Button>

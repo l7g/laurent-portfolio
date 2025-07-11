@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -9,6 +10,8 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
+    const session = await getServerSession(authOptions);
+    const isAdmin = session?.user?.role === "ADMIN";
 
     const post = await prisma.blog_posts.findUnique({
       where: { slug },
@@ -41,9 +44,15 @@ export async function GET(
       );
     }
 
+    // Check if post is published or user is admin
+    if (post.status !== "PUBLISHED" && !isAdmin) {
+      return NextResponse.json(
+        { error: "Blog post not found" },
+        { status: 404 },
+      );
+    }
+
     // Only increment view count in production and for non-admin users
-    const session = await getServerSession(authOptions);
-    const isAdmin = session?.user?.role === "ADMIN";
     const isDevelopment = process.env.NODE_ENV === "development";
 
     if (!isDevelopment && !isAdmin) {
@@ -81,6 +90,7 @@ export async function GET(
     return NextResponse.json(transformedPost);
   } catch (error) {
     console.error("Error fetching blog post:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch blog post" },
       { status: 500 },

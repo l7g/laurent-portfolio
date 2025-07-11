@@ -1,0 +1,35 @@
+# Global code owners
+
+* @l7g
+
+# Frontend components
+
+/components/ @l7g
+/app/ @l7g
+
+# API routes (critical)
+
+/app/api/ @l7g
+
+# Database and configuration (critical)
+
+/prisma/ @l7g
+/lib/ @l7g
+
+# Deployment scripts (critical)
+
+/scripts/ @l7g
+
+# Configuration files (critical)
+
+/.env.example @l7g
+/next.config.js @l7g
+/package.json @l7g
+/tailwind.config.js @l7g
+/tsconfig.json @l7g
+
+# Documentation
+
+/README.md @l7g
+/DEPLOYMENT.md @l7g
+/CONTRIBUTING.md @l7g

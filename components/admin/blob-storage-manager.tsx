@@ -54,8 +54,10 @@ export default function BlobStorageManager({
     setLoading(true);
     try {
       const response = await fetch("/api/blob-storage");
+
       if (response.ok) {
         const data = await response.json();
+
         setImages(data.images || []);
       }
     } catch (error) {
@@ -69,23 +71,27 @@ export default function BlobStorageManager({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
+
     if (!file) return;
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
       alert("Please select an image file");
+
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert("File size must be less than 5MB");
+
       return;
     }
 
     setUploading(true);
     try {
       const formData = new FormData();
+
       formData.append("file", file);
 
       const response = await fetch("/api/upload", {
@@ -95,12 +101,14 @@ export default function BlobStorageManager({
 
       if (response.ok) {
         const data = await response.json();
+
         // Refresh the image list
         await fetchBlobImages();
         // Auto-select the newly uploaded image
         setSelectedImage(data.url);
       } else {
         const error = await response.json();
+
         alert(`Upload failed: ${error.message}`);
       }
     } catch (error) {
@@ -131,6 +139,7 @@ export default function BlobStorageManager({
         }
       } else {
         const error = await response.json();
+
         alert(`Delete failed: ${error.message}`);
       }
     } catch (error) {
@@ -151,6 +160,7 @@ export default function BlobStorageManager({
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return "Unknown size";
     const mb = bytes / (1024 * 1024);
+
     return `${mb.toFixed(1)} MB`;
   };
 
@@ -164,14 +174,14 @@ export default function BlobStorageManager({
 
   return (
     <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="5xl"
-      scrollBehavior="inside"
       classNames={{
         body: "py-6",
         base: "bg-white dark:bg-gray-900",
       }}
+      isOpen={isOpen}
+      scrollBehavior="inside"
+      size="5xl"
+      onClose={onClose}
     >
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">
@@ -184,7 +194,7 @@ export default function BlobStorageManager({
           {/* Current Status */}
           <div className="mt-2">
             {currentImageUrl ? (
-              <Chip size="sm" color="success" variant="flat">
+              <Chip color="success" size="sm" variant="flat">
                 Current:{" "}
                 {currentImageUrl.includes("placeholder-")
                   ? "Placeholder Image"
@@ -193,7 +203,7 @@ export default function BlobStorageManager({
                     : "Local Image"}
               </Chip>
             ) : (
-              <Chip size="sm" color="default" variant="flat">
+              <Chip color="default" size="sm" variant="flat">
                 No Image Selected
               </Chip>
             )}
@@ -212,11 +222,11 @@ export default function BlobStorageManager({
             <CardBody>
               <div className="flex items-center gap-4">
                 <Input
-                  type="file"
                   accept="image/*"
-                  onChange={handleFileUpload}
-                  disabled={uploading}
                   className="flex-1"
+                  disabled={uploading}
+                  type="file"
+                  onChange={handleFileUpload}
                 />
                 {uploading && (
                   <Chip color="primary" variant="flat">
@@ -238,10 +248,10 @@ export default function BlobStorageManager({
                 Your Images ({images.length})
               </h3>
               <Button
+                isLoading={loading}
                 size="sm"
                 variant="flat"
                 onPress={fetchBlobImages}
-                isLoading={loading}
               >
                 Refresh
               </Button>
@@ -249,7 +259,7 @@ export default function BlobStorageManager({
 
             {loading ? (
               <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
               </div>
             ) : images.length === 0 ? (
               <Card>
@@ -266,9 +276,9 @@ export default function BlobStorageManager({
                 {images.map((image) => (
                   <Card
                     key={image.url}
-                    isPressable
                     isHoverable
-                    className={`relative transition-all duration-200 group ${
+                    isPressable
+                    className={`relative transition-all duration-200 group cursor-pointer ${
                       selectedImage === image.url
                         ? "ring-2 ring-primary bg-primary/5"
                         : ""
@@ -279,10 +289,10 @@ export default function BlobStorageManager({
                       {/* Image Preview */}
                       <div className="relative aspect-video bg-gray-100 overflow-hidden">
                         <img
-                          src={image.url}
                           alt={image.filename}
                           className="w-full h-full object-cover"
                           loading="lazy"
+                          src={image.url}
                         />
 
                         {/* Selection Indicator */}
@@ -295,9 +305,9 @@ export default function BlobStorageManager({
                                 viewBox="0 0 20 20"
                               >
                                 <path
-                                  fillRule="evenodd"
-                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                                   clipRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  fillRule="evenodd"
                                 />
                               </svg>
                             </div>
@@ -314,8 +324,8 @@ export default function BlobStorageManager({
                         >
                           <Button
                             isIconOnly
-                            size="sm"
                             color="danger"
+                            size="sm"
                             variant="flat"
                           >
                             <TrashIcon className="w-4 h-4" />
@@ -336,7 +346,7 @@ export default function BlobStorageManager({
                             {formatFileSize(image.size)}
                           </p>
                           {currentImageUrl === image.url && (
-                            <Chip size="sm" color="success" variant="flat">
+                            <Chip color="success" size="sm" variant="flat">
                               Current
                             </Chip>
                           )}
@@ -353,8 +363,8 @@ export default function BlobStorageManager({
           {deleteConfirm && (
             <Modal
               isOpen={!!deleteConfirm}
-              onClose={() => setDeleteConfirm(null)}
               size="sm"
+              onClose={() => setDeleteConfirm(null)}
             >
               <ModalContent>
                 <ModalHeader>Confirm Delete</ModalHeader>
@@ -400,8 +410,8 @@ export default function BlobStorageManager({
 
           <Button
             color="primary"
-            onPress={handleSelectAndClose}
             isDisabled={!selectedImage}
+            onPress={handleSelectAndClose}
           >
             Select Image
           </Button>

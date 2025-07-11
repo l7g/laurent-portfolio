@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
+
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -28,6 +29,7 @@ export async function GET(
     return NextResponse.json(program);
   } catch (error) {
     console.error("Failed to fetch program:", error);
+
     return NextResponse.json(
       { error: "Failed to fetch program" },
       { status: 500 },
@@ -42,6 +44,7 @@ export async function PATCH(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -57,6 +60,7 @@ export async function PATCH(
     return NextResponse.json(program);
   } catch (error) {
     console.error("Failed to update program:", error);
+
     return NextResponse.json(
       { error: "Failed to update program" },
       { status: 500 },
@@ -71,6 +75,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getServerSession(authOptions);
+
     if (!session?.user || session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -84,6 +89,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Failed to delete program:", error);
+
     return NextResponse.json(
       { error: "Failed to delete program" },
       { status: 500 },

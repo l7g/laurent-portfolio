@@ -15,7 +15,6 @@ import {
   UserIcon,
   EnvelopeIcon,
 } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 
 interface Comment {
   id: string;
@@ -58,8 +57,10 @@ export default function CommentsSystem({
     try {
       setLoading(true);
       const response = await fetch(`/api/blog/posts/${postId}/comments`);
+
       if (response.ok) {
         const data = await response.json();
+
         setComments(data);
       }
     } catch (error) {
@@ -78,6 +79,7 @@ export default function CommentsSystem({
       !newComment.email.trim()
     ) {
       alert("Please fill in all required fields");
+
       return;
     }
 
@@ -93,6 +95,7 @@ export default function CommentsSystem({
 
       if (response.ok) {
         const data = await response.json();
+
         setComments([data, ...comments]);
         setNewComment({
           content: "",
@@ -102,6 +105,7 @@ export default function CommentsSystem({
         });
       } else {
         const error = await response.json();
+
         alert(error.error || "Failed to submit comment");
       }
     } catch (error) {
@@ -120,6 +124,7 @@ export default function CommentsSystem({
 
       if (response.ok) {
         const data = await response.json();
+
         setComments(
           comments.map((comment) =>
             comment.id === commentId
@@ -161,8 +166,8 @@ export default function CommentsSystem({
     <div className="space-y-6">
       {/* Comments Header */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
       >
         <Card>
@@ -184,8 +189,8 @@ export default function CommentsSystem({
 
       {/* Comment Form */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         <Card>
@@ -193,11 +198,13 @@ export default function CommentsSystem({
             <h4 className="text-lg font-semibold">Leave a Comment</h4>
           </CardHeader>
           <CardBody>
-            <form onSubmit={handleSubmitComment} className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmitComment}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
+                  required
                   label="Name"
                   placeholder="Your name"
+                  startContent={<UserIcon className="w-4 h-4" />}
                   value={newComment.author}
                   onChange={(e) =>
                     setNewComment((prev) => ({
@@ -205,13 +212,14 @@ export default function CommentsSystem({
                       author: e.target.value,
                     }))
                   }
-                  startContent={<UserIcon className="w-4 h-4" />}
-                  required
                 />
                 <Input
+                  required
+                  description="Will not be published"
                   label="Email"
-                  type="email"
                   placeholder="your@email.com"
+                  startContent={<EnvelopeIcon className="w-4 h-4" />}
+                  type="email"
                   value={newComment.email}
                   onChange={(e) =>
                     setNewComment((prev) => ({
@@ -219,9 +227,6 @@ export default function CommentsSystem({
                       email: e.target.value,
                     }))
                   }
-                  startContent={<EnvelopeIcon className="w-4 h-4" />}
-                  description="Will not be published"
-                  required
                 />
               </div>
               <Input
@@ -236,7 +241,10 @@ export default function CommentsSystem({
                 }
               />
               <textarea
+                required
+                className="w-full p-3 border border-default-200 rounded-lg resize-none"
                 placeholder="Share your thoughts..."
+                rows={4}
                 value={newComment.content}
                 onChange={(e) =>
                   setNewComment((prev) => ({
@@ -244,19 +252,16 @@ export default function CommentsSystem({
                     content: e.target.value,
                   }))
                 }
-                rows={4}
-                className="w-full p-3 border border-default-200 rounded-lg resize-none"
-                required
               />
               <div className="flex items-center justify-between">
                 <p className="text-sm text-default-600">
-                  Comments are moderated and will appear after approval.
+                  Comments are reviewed for quality. Most appear immediately.
                 </p>
                 <Button
-                  type="submit"
                   color="primary"
                   disabled={submitting}
                   startContent={<ChatBubbleLeftIcon className="w-4 h-4" />}
+                  type="submit"
                 >
                   {submitting ? "Submitting..." : "Post Comment"}
                 </Button>
@@ -275,15 +280,15 @@ export default function CommentsSystem({
                 <CardBody className="p-4">
                   <div className="animate-pulse">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-default-300 rounded-full"></div>
+                      <div className="w-10 h-10 bg-default-300 rounded-full" />
                       <div className="flex-1">
-                        <div className="h-4 bg-default-300 rounded w-1/4 mb-2"></div>
-                        <div className="h-3 bg-default-300 rounded w-1/3"></div>
+                        <div className="h-4 bg-default-300 rounded w-1/4 mb-2" />
+                        <div className="h-3 bg-default-300 rounded w-1/3" />
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <div className="h-4 bg-default-300 rounded"></div>
-                      <div className="h-4 bg-default-300 rounded w-3/4"></div>
+                      <div className="h-4 bg-default-300 rounded" />
+                      <div className="h-4 bg-default-300 rounded w-3/4" />
                     </div>
                   </div>
                 </CardBody>
@@ -292,8 +297,8 @@ export default function CommentsSystem({
           </div>
         ) : comments.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <Card>
@@ -314,23 +319,23 @@ export default function CommentsSystem({
           comments.map((comment, index) => (
             <motion.div
               key={comment.id}
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.1 * index }}
             >
               <Card>
                 <CardBody className="p-4">
                   <div className="flex items-start gap-3">
                     <Avatar
+                      className="flex-shrink-0"
                       name={comment.author}
                       size="sm"
-                      className="flex-shrink-0"
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h5 className="font-semibold">{comment.author}</h5>
                         {!comment.isApproved && (
-                          <Chip size="sm" color="warning" variant="flat">
+                          <Chip color="warning" size="sm" variant="flat">
                             Pending approval
                           </Chip>
                         )}
@@ -344,20 +349,20 @@ export default function CommentsSystem({
                       </p>
                       <div className="flex items-center gap-4">
                         <Button
-                          size="sm"
-                          variant="light"
-                          startContent={<HeartIcon className="w-4 h-4" />}
-                          onClick={() => handleLikeComment(comment.id)}
                           className="text-default-600 hover:text-danger"
+                          size="sm"
+                          startContent={<HeartIcon className="w-4 h-4" />}
+                          variant="light"
+                          onClick={() => handleLikeComment(comment.id)}
                         >
                           {comment.likes || 0}
                         </Button>
                         <Button
-                          size="sm"
-                          variant="light"
-                          startContent={<FlagIcon className="w-4 h-4" />}
-                          onClick={() => handleReportComment(comment.id)}
                           className="text-default-600 hover:text-warning"
+                          size="sm"
+                          startContent={<FlagIcon className="w-4 h-4" />}
+                          variant="light"
+                          onClick={() => handleReportComment(comment.id)}
                         >
                           Report
                         </Button>

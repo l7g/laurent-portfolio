@@ -14,15 +14,21 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { title } from "@/components/primitives";
 import { useSession } from "next-auth/react";
+
+import { title } from "@/components/primitives";
 import RichTextEditor from "@/components/admin/rich-text-editor";
+import CategorySelector from "@/components/admin/category-selector";
+import SeriesSelector from "@/components/admin/series-selector";
+import RelatedArticlesManager from "@/components/admin/related-articles-manager";
 
 interface BlogCategory {
   id: string;
   name: string;
+  slug: string;
   color: string;
   icon: string;
+  description?: string;
 }
 
 interface BlogSeries {
@@ -31,7 +37,7 @@ interface BlogSeries {
   slug: string;
   description?: string;
   color: string;
-  icon?: string;
+  icon: string;
   difficulty?: string;
   _count: {
     blog_posts: number;
@@ -71,12 +77,27 @@ interface BlogPost {
   series?: BlogSeries;
 }
 
-export default async function EditBlogPostPage({
+export default function EditBlogPostPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(
+    null,
+  );
+
+  useEffect(() => {
+    params.then(setResolvedParams);
+  }, [params]);
+
+  if (!resolvedParams) {
+    return <div>Loading...</div>;
+  }
+
+  return <EditBlogPostClient id={resolvedParams.id} />;
+}
+
+function EditBlogPostClient({ id }: { id: string }) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [categories, setCategories] = useState<BlogCategory[]>([]);
@@ -100,6 +121,68 @@ export default async function EditBlogPostPage({
   });
 
   // Define functions before hooks that use them
+  const createNewCategory = async (categoryData: Omit<BlogCategory, "id">) => {
+    try {
+      const response = await fetch("/api/admin/blog/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...categoryData,
+          isActive: true,
+          sortOrder: categories.length,
+        }),
+      });
+
+      if (response.ok) {
+        const newCategory = await response.json();
+
+        setCategories((prev) => [...prev, newCategory]);
+
+        return newCategory;
+      } else {
+        throw new Error("Failed to create category");
+      }
+    } catch (error) {
+      console.error("Error creating category:", error);
+      throw error;
+    }
+  };
+
+  const createNewSeries = async (
+    seriesData: Omit<BlogSeries, "id" | "_count">,
+  ) => {
+    try {
+      const response = await fetch("/api/admin/blog/series", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...seriesData,
+          isActive: true,
+          sortOrder: series.length,
+          tags: [],
+        }),
+      });
+
+      if (response.ok) {
+        const newSeries = await response.json();
+        const seriesWithCount = { ...newSeries, _count: { blog_posts: 0 } };
+
+        setSeries((prev) => [...prev, seriesWithCount]);
+
+        return seriesWithCount;
+      } else {
+        throw new Error("Failed to create series");
+      }
+    } catch (error) {
+      console.error("Error creating series:", error);
+      throw error;
+    }
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -149,13 +232,16 @@ export default async function EditBlogPostPage({
 
   // All hooks must be at the top level
   useEffect(() => {
-    fetchData();
+    if (id) {
+      fetchData();
+    }
   }, [id]);
 
   // Handle authentication after all hooks
   if (status === "loading") return <div>Loading...</div>;
   if (!session || session.user?.role !== "ADMIN") {
     router.push("/admin/login");
+
     return null;
   }
 
@@ -194,6 +280,7 @@ export default async function EditBlogPostPage({
   const handleSave = async (status: "DRAFT" | "PUBLISHED" | "ARCHIVED") => {
     if (!postData.title || !postData.content || !postData.categoryId) {
       alert("Please fill in title, content, and category");
+
       return;
     }
 
@@ -212,9 +299,11 @@ export default async function EditBlogPostPage({
 
       if (response.ok) {
         const data = await response.json();
+
         router.push(`/admin/blog`);
       } else {
         const error = await response.json();
+
         alert(error.error || "Failed to save post");
       }
     } catch (error) {
@@ -230,9 +319,9 @@ export default async function EditBlogPostPage({
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-default-300 rounded w-1/4"></div>
-            <div className="h-32 bg-default-300 rounded"></div>
-            <div className="h-96 bg-default-300 rounded"></div>
+            <div className="h-8 bg-default-300 rounded w-1/4" />
+            <div className="h-32 bg-default-300 rounded" />
+            <div className="h-96 bg-default-300 rounded" />
           </div>
         </div>
       </div>
@@ -245,7 +334,7 @@ export default async function EditBlogPostPage({
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-12">
             <p className="text-default-600">Post not found</p>
-            <Button as={Link} href="/admin/blog" className="mt-4">
+            <Button as={Link} className="mt-4" href="/admin/blog">
               Back to Blog
             </Button>
           </div>
@@ -259,14 +348,14 @@ export default async function EditBlogPostPage({
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button as={Link} href="/admin/blog" variant="light" isIconOnly>
+              <Button isIconOnly as={Link} href="/admin/blog" variant="light">
                 <ArrowLeftIcon className="w-5 h-5" />
               </Button>
               <div>
@@ -280,23 +369,23 @@ export default async function EditBlogPostPage({
               <Button
                 as={Link}
                 href={`/blog/${post.slug}`}
-                variant="bordered"
                 startContent={<EyeIcon className="w-4 h-4" />}
+                variant="bordered"
               >
                 Preview
               </Button>
               <Button
+                isLoading={saving}
                 variant="bordered"
                 onClick={() => handleSave("DRAFT")}
-                isLoading={saving}
               >
                 Save Draft
               </Button>
               <Button
                 color="primary"
-                onClick={() => handleSave("PUBLISHED")}
                 isLoading={saving}
                 startContent={<CloudArrowUpIcon className="w-4 h-4" />}
+                onClick={() => handleSave("PUBLISHED")}
               >
                 {post.status === "PUBLISHED" ? "Update" : "Publish"}
               </Button>
@@ -309,8 +398,8 @@ export default async function EditBlogPostPage({
           <div className="lg:col-span-2 space-y-6">
             {/* Title & Content */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <Card>
@@ -319,18 +408,18 @@ export default async function EditBlogPostPage({
                 </CardHeader>
                 <CardBody className="space-y-4">
                   <Input
+                    isRequired
                     label="Title"
                     placeholder="Enter post title"
                     value={postData.title}
                     onChange={(e) => handleInputChange("title", e.target.value)}
-                    isRequired
                   />
                   <Input
+                    isRequired
                     label="URL Slug"
                     placeholder="post-url-slug"
                     value={postData.slug}
                     onChange={(e) => handleInputChange("slug", e.target.value)}
-                    isRequired
                   />
                   <Input
                     label="Excerpt"
@@ -345,9 +434,9 @@ export default async function EditBlogPostPage({
                       Content
                     </label>
                     <RichTextEditor
+                      placeholder="Write your post content here..."
                       value={postData.content}
                       onChange={(value) => handleInputChange("content", value)}
-                      placeholder="Write your post content here..."
                     />
                   </div>
                 </CardBody>
@@ -356,8 +445,8 @@ export default async function EditBlogPostPage({
 
             {/* SEO Settings */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <Card>
@@ -388,10 +477,10 @@ export default async function EditBlogPostPage({
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Settings */}
+            {/* Status Settings */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <Card>
@@ -404,6 +493,7 @@ export default async function EditBlogPostPage({
                       Status
                     </label>
                     <select
+                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
                       value={postData.status}
                       onChange={(e) =>
                         handleInputChange(
@@ -411,65 +501,74 @@ export default async function EditBlogPostPage({
                           e.target.value as "DRAFT" | "PUBLISHED" | "ARCHIVED",
                         )
                       }
-                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
                     >
                       <option value="DRAFT">Draft</option>
                       <option value="PUBLISHED">Published</option>
                       <option value="ARCHIVED">Archived</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Category
-                    </label>
-                    <select
-                      value={postData.categoryId}
-                      onChange={(e) =>
-                        handleInputChange("categoryId", e.target.value)
-                      }
-                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
-                      required
-                    >
-                      <option value="">Select a category</option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.icon} {category.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Series (Optional)
-                    </label>
-                    <select
-                      value={postData.seriesId}
-                      onChange={(e) =>
-                        handleInputChange("seriesId", e.target.value)
-                      }
-                      className="w-full px-3 py-2 bg-default-100 border border-default-200 rounded-lg"
-                    >
-                      <option value="">No series</option>
-                      {series.map((seriesItem) => (
-                        <option key={seriesItem.id} value={seriesItem.id}>
-                          {seriesItem.icon} {seriesItem.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+
+            {/* Category */}
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Category</h3>
+                </CardHeader>
+                <CardBody>
+                  <CategorySelector
+                    categories={categories}
+                    value={postData.categoryId}
+                    onChange={(value: string) =>
+                      handleInputChange("categoryId", value)
+                    }
+                    onCreateCategory={createNewCategory}
+                  />
+                </CardBody>
+              </Card>
+            </motion.div>
+
+            {/* Series */}
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <Card>
+                <CardHeader>
+                  <h3 className="text-lg font-semibold">Series (Optional)</h3>
+                  <p className="text-sm text-default-600">
+                    Add this post to a series for organized content
+                  </p>
+                </CardHeader>
+                <CardBody className="space-y-4">
+                  <SeriesSelector
+                    series={series}
+                    value={postData.seriesId}
+                    onChange={(value: string) =>
+                      handleInputChange("seriesId", value)
+                    }
+                    onCreateSeries={createNewSeries}
+                  />
                   {postData.seriesId && (
                     <div>
                       <label className="block text-sm font-medium mb-2">
                         Series Order
                       </label>
                       <Input
-                        type="number"
+                        min="1"
                         placeholder="1"
+                        type="number"
                         value={postData.seriesOrder.toString()}
                         onChange={(e) =>
                           handleInputChange("seriesOrder", e.target.value)
                         }
-                        min="1"
                       />
                     </div>
                   )}
@@ -479,8 +578,8 @@ export default async function EditBlogPostPage({
 
             {/* Tags */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Card>
@@ -503,21 +602,33 @@ export default async function EditBlogPostPage({
                   <div className="flex gap-2">
                     <Input
                       placeholder="Add tag"
+                      startContent={<TagIcon className="w-4 h-4" />}
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      startContent={<TagIcon className="w-4 h-4" />}
                     />
                     <Button
+                      isDisabled={!tagInput.trim()}
                       variant="bordered"
                       onClick={handleAddTag}
-                      isDisabled={!tagInput.trim()}
                     >
                       Add
                     </Button>
                   </div>
                 </CardBody>
               </Card>
+            </motion.div>
+
+            {/* Related Articles */}
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <RelatedArticlesManager
+                postSlug={postData.slug}
+                postTitle={postData.title}
+              />
             </motion.div>
           </div>
         </div>

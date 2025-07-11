@@ -15,8 +15,7 @@ import {
   TrashIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import { getProjectImageUrl } from "@/lib/blob-storage";
-import { useApi } from "@/lib/use-api";
+
 import ProjectEditModal from "./project-edit-modal";
 import SectionContentEditModal from "./section-content-edit-modal";
 import PageEditModal from "./page-edit-modal";
@@ -24,6 +23,9 @@ import SettingsManager from "./settings-manager";
 import CourseManagement from "./course-management";
 import CourseProgressTracker from "./course-progress-tracker";
 import GraduationTracker from "./graduation-tracker";
+
+import { useApi } from "@/lib/use-api";
+import { getProjectImageUrl } from "@/lib/blob-storage";
 
 interface AdminDashboardProps {
   contacts: any[];
@@ -74,6 +76,7 @@ export default function AdminDashboard({
   // Refresh data functions
   const refreshProjects = async () => {
     const response = await api.projects.getAll();
+
     if (response.data) {
       setProjects(response.data);
     }
@@ -81,6 +84,7 @@ export default function AdminDashboard({
 
   const refreshSkills = async () => {
     const response = await api.skills.getAll();
+
     if (response.data) {
       setSkills(response.data);
     }
@@ -88,6 +92,7 @@ export default function AdminDashboard({
 
   const refreshSections = async () => {
     const response = await api.sections.getAll();
+
     if (response.data) {
       setSections(response.data);
     }
@@ -96,8 +101,10 @@ export default function AdminDashboard({
   const refreshPages = async () => {
     try {
       const response = await fetch("/api/admin/pages");
+
       if (response.ok) {
         const pagesData = await response.json();
+
         setPages(pagesData);
       }
     } catch (error) {
@@ -134,6 +141,7 @@ export default function AdminDashboard({
         const response = await fetch(`/api/admin/pages/${pageId}`, {
           method: "DELETE",
         });
+
         if (response.ok) {
           await refreshPages();
         } else {
@@ -170,6 +178,7 @@ export default function AdminDashboard({
         );
       } else {
         const errorData = await response.json();
+
         alert(`Failed to save page: ${errorData.error}`);
       }
     } catch (error) {
@@ -550,18 +559,18 @@ export default function AdminDashboard({
                       </div>
                       <div className="flex items-center gap-2">
                         <Button
-                          size="sm"
-                          variant="flat"
-                          startContent={<EyeIcon className="w-4 h-4" />}
-                          onPress={() => window.open(`/${page.slug}`, "_blank")}
                           isDisabled={!page.isPublished}
+                          size="sm"
+                          startContent={<EyeIcon className="w-4 h-4" />}
+                          variant="flat"
+                          onPress={() => window.open(`/${page.slug}`, "_blank")}
                         >
                           View
                         </Button>
                         <Button
                           size="sm"
-                          variant="flat"
                           startContent={<PencilIcon className="w-4 h-4" />}
+                          variant="flat"
                           onPress={() => {
                             setSelectedPage(page);
                             onPageModalOpen();
@@ -570,10 +579,10 @@ export default function AdminDashboard({
                           Edit
                         </Button>
                         <Button
-                          size="sm"
                           color="danger"
-                          variant="flat"
+                          size="sm"
                           startContent={<TrashIcon className="w-4 h-4" />}
+                          variant="flat"
                           onPress={() => handleDeletePage(page.id)}
                         >
                           Delete
@@ -621,17 +630,17 @@ export default function AdminDashboard({
                         <div className="flex items-center gap-2 mb-2">
                           <h4 className="font-medium">{project.title}</h4>
                           {project.flagship && (
-                            <Chip size="sm" color="warning" variant="flat">
+                            <Chip color="warning" size="sm" variant="flat">
                               Flagship
                             </Chip>
                           )}
                           {project.featured && (
-                            <Chip size="sm" color="primary" variant="flat">
+                            <Chip color="primary" size="sm" variant="flat">
                               Featured
                             </Chip>
                           )}
                           {!project.isActive && (
-                            <Chip size="sm" color="danger" variant="flat">
+                            <Chip color="danger" size="sm" variant="flat">
                               Inactive
                             </Chip>
                           )}
@@ -658,9 +667,9 @@ export default function AdminDashboard({
                       {/* Project Image Preview */}
                       <div className="w-24 h-18 flex-shrink-0 mx-4">
                         <img
-                          src={getProjectImageUrl(project.image, "default")}
                           alt={project.title}
                           className="w-full h-full object-cover rounded-lg border"
+                          src={getProjectImageUrl(project.image, "default")}
                         />
                       </div>
 
@@ -676,8 +685,8 @@ export default function AdminDashboard({
                         </Button>
                         <Button
                           isIconOnly
-                          size="sm"
                           color="danger"
+                          size="sm"
                           variant="flat"
                           onPress={() => handleDeleteProject(project.id)}
                         >
@@ -808,8 +817,8 @@ export default function AdminDashboard({
                 <div className="flex items-center justify-between w-full">
                   <h3 className="text-lg font-semibold">Recent Blog Posts</h3>
                   <Button
-                    variant="flat"
                     size="sm"
+                    variant="flat"
                     onPress={() => window.open("/admin/blog/new", "_blank")}
                   >
                     New Post
@@ -829,24 +838,24 @@ export default function AdminDashboard({
                             {post.title}
                           </h4>
                           <Chip
-                            size="sm"
-                            variant="flat"
                             color={
                               post.status === "PUBLISHED"
                                 ? "success"
                                 : "warning"
                             }
+                            size="sm"
+                            variant="flat"
                           >
                             {post.status}
                           </Chip>
                           {post.blog_categories && (
                             <Chip
                               size="sm"
-                              variant="flat"
                               style={{
                                 backgroundColor: `${post.blog_categories.color}20`,
                                 color: post.blog_categories.color,
                               }}
+                              variant="flat"
                             >
                               {post.blog_categories.name}
                             </Chip>
@@ -866,8 +875,8 @@ export default function AdminDashboard({
                       <div className="flex items-center gap-2">
                         <Button
                           size="sm"
-                          variant="flat"
                           startContent={<EyeIcon className="w-4 h-4" />}
+                          variant="flat"
                           onPress={() =>
                             window.open(`/blog/${post.slug}`, "_blank")
                           }
@@ -876,8 +885,8 @@ export default function AdminDashboard({
                         </Button>
                         <Button
                           size="sm"
-                          variant="flat"
                           startContent={<PencilIcon className="w-4 h-4" />}
+                          variant="flat"
                           onPress={() =>
                             window.open(`/admin/blog?edit=${post.id}`, "_blank")
                           }
@@ -902,24 +911,24 @@ export default function AdminDashboard({
 
       {/* Project Edit Modal */}
       <ProjectEditModal
-        project={selectedProject}
         isOpen={isProjectModalOpen}
+        project={selectedProject}
         onClose={onProjectModalClose}
         onSave={handleSaveProject}
       />
 
       {/* Section Content Edit Modal */}
       <SectionContentEditModal
-        section={selectedSection}
         isOpen={isSectionModalOpen}
+        section={selectedSection}
         onClose={onSectionModalClose}
         onUpdate={refreshSections}
       />
 
       {/* Page Edit Modal */}
       <PageEditModal
-        page={selectedPage}
         isOpen={isPageModalOpen}
+        page={selectedPage}
         onClose={onPageModalClose}
         onSave={handleSavePage}
       />

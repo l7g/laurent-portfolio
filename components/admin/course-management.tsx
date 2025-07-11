@@ -6,7 +6,6 @@ import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Input } from "@heroui/input";
 import { useDisclosure } from "@heroui/modal";
-import { Tabs, Tab } from "@heroui/tabs";
 import {
   PlusIcon,
   PencilIcon,
@@ -24,6 +23,7 @@ import {
   ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
+
 import CourseEditModal from "./course-edit-modal";
 
 interface Course {
@@ -98,6 +98,7 @@ const CourseManagement = () => {
 
       if (coursesResponse.ok) {
         const coursesData = await coursesResponse.json();
+
         setCourses(Array.isArray(coursesData) ? coursesData : []);
       } else {
         console.error("Failed to fetch courses");
@@ -106,6 +107,7 @@ const CourseManagement = () => {
 
       if (programsResponse.ok) {
         const programsData = await programsResponse.json();
+
         setAcademicPrograms(Array.isArray(programsData) ? programsData : []);
       } else {
         console.error("Failed to fetch academic programs");
@@ -250,8 +252,10 @@ const CourseManagement = () => {
   const coursesByYear = (filteredCourses || []).reduce(
     (acc, course) => {
       const year = course.year;
+
       if (!acc[year]) acc[year] = [];
       acc[year].push(course);
+
       return acc;
     },
     {} as Record<number, Course[]>,
@@ -273,10 +277,10 @@ const CourseManagement = () => {
     return (
       <div className="p-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4" />
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+              <div key={i} className="h-32 bg-gray-200 rounded" />
             ))}
           </div>
         </div>
@@ -296,8 +300,8 @@ const CourseManagement = () => {
         </div>
         <Button
           color="primary"
-          onPress={handleCreateCourse}
           startContent={<PlusIcon className="w-5 h-5" />}
+          onPress={handleCreateCourse}
         >
           Add New Course
         </Button>
@@ -385,19 +389,19 @@ const CourseManagement = () => {
             <div className="flex items-center gap-2">
               <MagnifyingGlassIcon className="w-5 h-5 text-default-500" />
               <Input
+                className="w-64"
                 placeholder="Search courses..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-64"
               />
             </div>
 
             <div className="flex items-center gap-2">
               <FunnelIcon className="w-5 h-5 text-default-500" />
               <select
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Status</option>
                 <option value="upcoming">Upcoming</option>
@@ -411,9 +415,9 @@ const CourseManagement = () => {
             <div className="flex items-center gap-2">
               <AcademicCapIcon className="w-5 h-5 text-default-500" />
               <select
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Years</option>
                 <option value="1">Year 1</option>
@@ -440,8 +444,8 @@ const CourseManagement = () => {
               </p>
               <Button
                 color="primary"
-                onPress={handleCreateCourse}
                 startContent={<PlusIcon className="w-4 h-4" />}
+                onPress={handleCreateCourse}
               >
                 Add Your First Course
               </Button>
@@ -453,8 +457,8 @@ const CourseManagement = () => {
             .map((year) => (
               <motion.div
                 key={year}
-                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
                 transition={{ duration: 0.3 }}
               >
                 <div className="flex items-center gap-4 mb-4">
@@ -489,9 +493,9 @@ const CourseManagement = () => {
                             )}
                             <Chip
                               color={getStatusColor(course.status)}
-                              variant="flat"
                               size="sm"
                               startContent={getStatusIcon(course.status)}
+                              variant="flat"
                             >
                               {course.status}
                             </Chip>
@@ -538,8 +542,8 @@ const CourseManagement = () => {
                                       <Chip
                                         key={skill}
                                         color="secondary"
-                                        variant="flat"
                                         size="sm"
+                                        variant="flat"
                                       >
                                         {skill}
                                       </Chip>
@@ -547,8 +551,8 @@ const CourseManagement = () => {
                                   {course.skillsDelivered.length > 3 && (
                                     <Chip
                                       color="default"
-                                      variant="flat"
                                       size="sm"
+                                      variant="flat"
                                     >
                                       +{course.skillsDelivered.length - 3} more
                                     </Chip>
@@ -600,9 +604,9 @@ const CourseManagement = () => {
                               </Button>
 
                               <Button
+                                color="danger"
                                 size="sm"
                                 variant="light"
-                                color="danger"
                                 onPress={() => handleDeleteCourse(course.id)}
                               >
                                 <TrashIcon className="w-4 h-4" />
@@ -621,11 +625,11 @@ const CourseManagement = () => {
 
       {/* Course Edit Modal */}
       <CourseEditModal
+        academic_programs={academicPrograms}
+        course={selectedCourse || undefined}
         isOpen={isOpen}
         onClose={onClose}
-        course={selectedCourse || undefined}
         onSave={handleSaveCourse}
-        academic_programss={academicPrograms}
       />
     </div>
   );

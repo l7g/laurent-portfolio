@@ -5,8 +5,6 @@ import { Card, CardBody, CardHeader } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Chip } from "@heroui/chip";
 import { Input } from "@heroui/input";
-import { Avatar } from "@heroui/avatar";
-import { Divider } from "@heroui/divider";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MagnifyingGlassIcon,
@@ -14,13 +12,13 @@ import {
   EyeIcon,
   ClockIcon,
   BookOpenIcon,
-  ArrowRightIcon,
   FireIcon,
   RectangleStackIcon,
   TagIcon,
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+
 import { title, subtitle } from "@/components/primitives";
 
 interface BlogPost {
@@ -29,6 +27,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   coverImage?: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   category: {
     id: string;
     name: string;
@@ -105,8 +104,10 @@ export default function BlogPage() {
   const fetchCategories = async () => {
     try {
       const response = await fetch("/api/blog/categories");
+
       if (response.ok) {
         const data = await response.json();
+
         setCategories(data);
       }
     } catch (error) {
@@ -118,8 +119,10 @@ export default function BlogPage() {
     try {
       setSeriesLoading(true);
       const response = await fetch("/api/blog/series?published=true");
+
       if (response.ok) {
         const data = await response.json();
+
         setSeries(data.series);
       }
     } catch (error) {
@@ -147,8 +150,10 @@ export default function BlogPage() {
       params.append("limit", "12");
 
       const response = await fetch(`/api/blog/posts?${params}`);
+
       if (response.ok) {
         const data = await response.json();
+
         setPosts(data.posts);
       }
     } catch (error) {
@@ -160,6 +165,7 @@ export default function BlogPage() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
+
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
@@ -171,6 +177,7 @@ export default function BlogPage() {
     const wordsPerMinute = 200;
     const words = content.split(/\s+/).length;
     const minutes = Math.ceil(words / wordsPerMinute);
+
     return minutes;
   };
 
@@ -180,8 +187,8 @@ export default function BlogPage() {
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-secondary/5 to-background">
         <div className="w-full text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6">
@@ -209,32 +216,32 @@ export default function BlogPage() {
             <div className="flex flex-col lg:flex-row gap-6 mb-8">
               <div className="flex-1">
                 <Input
+                  className="w-full"
                   placeholder="Search articles..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  size="lg"
                   startContent={
                     <MagnifyingGlassIcon className="w-5 h-5 text-default-400" />
                   }
-                  size="lg"
-                  className="w-full"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <div className="flex gap-3">
                 <Button
-                  variant={viewMode === "posts" ? "solid" : "bordered"}
                   color={viewMode === "posts" ? "primary" : "default"}
-                  onClick={() => setViewMode("posts")}
-                  startContent={<BookOpenIcon className="w-5 h-5" />}
                   size="lg"
+                  startContent={<BookOpenIcon className="w-5 h-5" />}
+                  variant={viewMode === "posts" ? "solid" : "bordered"}
+                  onClick={() => setViewMode("posts")}
                 >
                   Articles
                 </Button>
                 <Button
-                  variant={viewMode === "series" ? "solid" : "bordered"}
                   color={viewMode === "series" ? "primary" : "default"}
-                  onClick={() => setViewMode("series")}
-                  startContent={<RectangleStackIcon className="w-5 h-5" />}
                   size="lg"
+                  startContent={<RectangleStackIcon className="w-5 h-5" />}
+                  variant={viewMode === "series" ? "solid" : "bordered"}
+                  onClick={() => setViewMode("series")}
                 >
                   Series
                 </Button>
@@ -245,10 +252,10 @@ export default function BlogPage() {
             <AnimatePresence mode="wait">
               {viewMode === "posts" && (
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
                   className="space-y-6"
+                  exit={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, y: 20 }}
                 >
                   {/* Category Filters */}
                   <div>
@@ -257,30 +264,30 @@ export default function BlogPage() {
                     </h3>
                     <div className="flex flex-wrap gap-3">
                       <Button
-                        variant={selectedCategory === "all" ? "solid" : "flat"}
                         color={
                           selectedCategory === "all" ? "primary" : "default"
                         }
-                        onClick={() => setSelectedCategory("all")}
-                        startContent={<FireIcon className="w-4 h-4" />}
                         size="sm"
+                        startContent={<FireIcon className="w-4 h-4" />}
+                        variant={selectedCategory === "all" ? "solid" : "flat"}
+                        onClick={() => setSelectedCategory("all")}
                       >
                         All Posts
                       </Button>
                       {categories.map((category) => (
                         <Button
                           key={category.id}
-                          variant={
+                          className={
                             selectedCategory === category.slug
-                              ? "solid"
-                              : "flat"
+                              ? ""
+                              : "hover:scale-105"
                           }
                           color={
                             selectedCategory === category.slug
                               ? "primary"
                               : "default"
                           }
-                          onClick={() => setSelectedCategory(category.slug)}
+                          size="sm"
                           startContent={
                             category.icon ? (
                               <span>{category.icon}</span>
@@ -288,18 +295,18 @@ export default function BlogPage() {
                               <TagIcon className="w-4 h-4" />
                             )
                           }
-                          size="sm"
-                          className={
-                            selectedCategory === category.slug
-                              ? ""
-                              : "hover:scale-105"
-                          }
                           style={{
                             backgroundColor:
                               selectedCategory === category.slug
                                 ? category.color
                                 : undefined,
                           }}
+                          variant={
+                            selectedCategory === category.slug
+                              ? "solid"
+                              : "flat"
+                          }
+                          onClick={() => setSelectedCategory(category.slug)}
                         >
                           {category.name || "Uncategorized"} (
                           {category._count?.posts || 0})
@@ -316,28 +323,28 @@ export default function BlogPage() {
                       </h3>
                       <div className="flex flex-wrap gap-3">
                         <Button
-                          variant={selectedSeries === "all" ? "solid" : "flat"}
                           color={
                             selectedSeries === "all" ? "primary" : "default"
                           }
-                          onClick={() => setSelectedSeries("all")}
+                          size="sm"
                           startContent={
                             <RectangleStackIcon className="w-4 h-4" />
                           }
-                          size="sm"
+                          variant={selectedSeries === "all" ? "solid" : "flat"}
+                          onClick={() => setSelectedSeries("all")}
                         >
                           All Series
                         </Button>
                         {series.map((s) => (
                           <Button
                             key={s.id}
-                            variant={
-                              selectedSeries === s.slug ? "solid" : "flat"
+                            className={
+                              selectedSeries === s.slug ? "" : "hover:scale-105"
                             }
                             color={
                               selectedSeries === s.slug ? "primary" : "default"
                             }
-                            onClick={() => setSelectedSeries(s.slug)}
+                            size="sm"
                             startContent={
                               s.icon ? (
                                 <span>{s.icon}</span>
@@ -345,14 +352,14 @@ export default function BlogPage() {
                                 <RectangleStackIcon className="w-4 h-4" />
                               )
                             }
-                            size="sm"
-                            className={
-                              selectedSeries === s.slug ? "" : "hover:scale-105"
-                            }
                             style={{
                               backgroundColor:
                                 selectedSeries === s.slug ? s.color : undefined,
                             }}
+                            variant={
+                              selectedSeries === s.slug ? "solid" : "flat"
+                            }
+                            onClick={() => setSelectedSeries(s.slug)}
                           >
                             {s.title || "Untitled Series"} (
                             {s._count?.posts || 0})
@@ -372,9 +379,9 @@ export default function BlogPage() {
               {viewMode === "series" ? (
                 <motion.div
                   key="series"
-                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, y: 20 }}
                 >
                   <div className="flex items-center gap-3 mb-8">
                     <RectangleStackIcon className="w-6 h-6 text-primary" />
@@ -387,10 +394,10 @@ export default function BlogPage() {
                         <Card key={i} className="h-80">
                           <CardBody className="p-6">
                             <div className="animate-pulse space-y-4">
-                              <div className="h-6 bg-default-300 rounded w-3/4"></div>
-                              <div className="h-4 bg-default-300 rounded w-1/2"></div>
-                              <div className="h-20 bg-default-300 rounded"></div>
-                              <div className="h-4 bg-default-300 rounded w-2/3"></div>
+                              <div className="h-6 bg-default-300 rounded w-3/4" />
+                              <div className="h-4 bg-default-300 rounded w-1/2" />
+                              <div className="h-20 bg-default-300 rounded" />
+                              <div className="h-4 bg-default-300 rounded w-2/3" />
                             </div>
                           </CardBody>
                         </Card>
@@ -401,13 +408,13 @@ export default function BlogPage() {
                       {series.map((s, index) => (
                         <motion.div
                           key={s.id}
-                          initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, y: 20 }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}
                         >
                           <Link
-                            href={`/blog/series/${s.slug}`}
                             className="block h-full"
+                            href={`/blog/series/${s.slug}`}
                           >
                             <Card className="h-full hover:shadow-2xl transition-all duration-300 group cursor-pointer">
                               <CardBody className="p-6">
@@ -462,9 +469,9 @@ export default function BlogPage() {
               ) : (
                 <motion.div
                   key="posts"
-                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0, y: 20 }}
                 >
                   <div className="flex items-center gap-3 mb-8">
                     <BookOpenIcon className="w-6 h-6 text-primary" />
@@ -481,10 +488,10 @@ export default function BlogPage() {
                         <Card key={i} className="h-96">
                           <CardBody className="p-6">
                             <div className="animate-pulse space-y-4">
-                              <div className="h-6 bg-default-300 rounded w-3/4"></div>
-                              <div className="h-4 bg-default-300 rounded w-1/2"></div>
-                              <div className="h-20 bg-default-300 rounded"></div>
-                              <div className="h-4 bg-default-300 rounded w-2/3"></div>
+                              <div className="h-6 bg-default-300 rounded w-3/4" />
+                              <div className="h-4 bg-default-300 rounded w-1/2" />
+                              <div className="h-20 bg-default-300 rounded" />
+                              <div className="h-4 bg-default-300 rounded w-2/3" />
                             </div>
                           </CardBody>
                         </Card>
@@ -495,31 +502,51 @@ export default function BlogPage() {
                       {posts.map((post, index) => (
                         <motion.div
                           key={post.id}
-                          initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, y: 20 }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}
                         >
                           <Link
-                            href={`/blog/${post.slug}`}
                             className="block h-full"
+                            href={`/blog/${post.slug}`}
                           >
                             <Card className="h-full hover:shadow-2xl transition-all duration-300 group cursor-pointer">
                               <CardHeader className="pb-2">
                                 <div className="flex items-center justify-between w-full">
-                                  <Chip
-                                    size="sm"
-                                    style={{
-                                      backgroundColor: `${post.category.color}20`,
-                                      color: post.category.color,
-                                    }}
-                                  >
-                                    {post.category.icon && (
-                                      <span className="mr-1">
-                                        {post.category.icon}
-                                      </span>
+                                  <div className="flex items-center gap-2">
+                                    <Chip
+                                      size="sm"
+                                      style={{
+                                        backgroundColor: `${post.category.color}20`,
+                                        color: post.category.color,
+                                      }}
+                                    >
+                                      {post.category.icon && (
+                                        <span className="mr-1">
+                                          {post.category.icon}
+                                        </span>
+                                      )}
+                                      {post.category.name || "Uncategorized"}
+                                    </Chip>
+                                    {post.status === "DRAFT" && (
+                                      <Chip
+                                        color="warning"
+                                        size="sm"
+                                        variant="bordered"
+                                      >
+                                        📝 Draft
+                                      </Chip>
                                     )}
-                                    {post.category.name || "Uncategorized"}
-                                  </Chip>
+                                    {post.status === "ARCHIVED" && (
+                                      <Chip
+                                        color="default"
+                                        size="sm"
+                                        variant="bordered"
+                                      >
+                                        📦 Archived
+                                      </Chip>
+                                    )}
+                                  </div>
                                   <div className="flex items-center gap-1 text-xs text-default-500">
                                     <CalendarDaysIcon className="w-3 h-3" />
                                     {formatDate(post.publishedAt)}
@@ -532,11 +559,11 @@ export default function BlogPage() {
                                     <div className="flex items-center gap-2">
                                       <Chip
                                         size="sm"
-                                        variant="bordered"
                                         style={{
                                           borderColor: post.series.color,
                                           color: post.series.color,
                                         }}
+                                        variant="bordered"
                                       >
                                         {post.series.icon && (
                                           <span className="mr-1">
@@ -623,8 +650,8 @@ export default function BlogPage() {
                       </p>
                       {searchQuery && (
                         <Button
-                          variant="flat"
                           color="primary"
+                          variant="flat"
                           onClick={() => {
                             setSearchQuery("");
                             setSelectedCategory("all");

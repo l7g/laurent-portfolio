@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 // Force dynamic rendering - don't pre-render at build time
@@ -78,6 +79,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error generating sitemap:", error);
+
     return NextResponse.json(
       { error: "Failed to generate sitemap" },
       { status: 500 },

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
@@ -65,6 +66,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error("Error generating RSS feed:", error);
+
     return NextResponse.json(
       { error: "Failed to generate RSS feed" },
       { status: 500 },

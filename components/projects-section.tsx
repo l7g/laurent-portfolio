@@ -10,9 +10,11 @@ import {
   ArrowTopRightOnSquareIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
+
+import LoadingSkeleton from "./loading-skeleton";
 
 import { GithubIcon } from "@/components/icons";
-import { siteConfig } from "@/config/site";
 
 interface Project {
   title: string;
@@ -45,11 +47,47 @@ const ProjectsSection = ({
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [ctaData, setCtaData] = useState<any>(null);
+  const router = useRouter();
+
+  // Helper function to handle button actions based on database configuration
+  const handleButtonAction = (buttonConfig: any) => {
+    if (!buttonConfig) return;
+
+    switch (buttonConfig.action) {
+      case "scroll":
+        if (buttonConfig.target === "/contact") {
+          // Navigate to contact page instead of scrolling
+          router.push("/contact");
+        } else {
+          // Handle other scroll targets
+          const element = document.getElementById(
+            buttonConfig.target.replace("/", ""),
+          );
+          element?.scrollIntoView({ behavior: "smooth" });
+        }
+        break;
+      case "link":
+        if (buttonConfig.target) {
+          router.push(buttonConfig.target);
+        }
+        break;
+      case "external":
+        if (buttonConfig.target) {
+          window.open(buttonConfig.target, "_blank");
+        }
+        break;
+      default:
+        // Fallback to scroll behavior for backward compatibility
+        const contactSection = document.getElementById("contact");
+        contactSection?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     async function fetchProjects() {
       try {
         const response = await fetch("/api/projects");
+
         if (response.ok) {
           const dbProjects = await response.json();
 
@@ -93,11 +131,13 @@ const ProjectsSection = ({
     async function fetchCtaData() {
       try {
         const response = await fetch("/api/sections");
+
         if (response.ok) {
           const sections = await response.json();
           const ctaSection = sections.find(
             (section: any) => section.name === "projects-cta",
           );
+
           if (ctaSection) {
             setCtaData(ctaSection);
           }
@@ -111,13 +151,7 @@ const ProjectsSection = ({
   }, []);
 
   if (loading) {
-    return (
-      <section className="py-20 px-4 sm:px-6 lg:px-8" id="projects">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="animate-pulse">Loading projects...</div>
-        </div>
-      </section>
-    );
+    return <LoadingSkeleton type="projects" />;
   }
   // Custom placeholder component for WIP projects
   const PlaceholderImage = ({
@@ -241,8 +275,8 @@ const ProjectsSection = ({
                   {projects[0].image &&
                   projects[0].image.startsWith("placeholder-") ? (
                     <PlaceholderImage
-                      type={projects[0].image}
                       title={projects[0].title}
+                      type={projects[0].image}
                     />
                   ) : (
                     <img
@@ -291,6 +325,7 @@ const ProjectsSection = ({
                               "Personal project currently in development. Code is private. Contact me to discuss my development approach and capabilities.";
 
                             const messageText = customText || defaultText;
+
                             return `${selectedEmoji} ${messageText}`;
                           })()}
                         </p>
@@ -327,8 +362,8 @@ const ProjectsSection = ({
                         {projects[0].links.live &&
                           projects[0].links.live !== "#" && (
                             <Button
-                              color="warning"
                               className="font-semibold shadow-lg"
+                              color="warning"
                               startContent={
                                 <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                               }
@@ -359,14 +394,7 @@ const ProjectsSection = ({
                             </svg>
                           }
                           variant="solid"
-                          onPress={() => {
-                            const contactSection =
-                              document.getElementById("contact");
-
-                            contactSection?.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
+                          onPress={() => router.push("/contact")}
                         >
                           Explore My Work
                         </Button>
@@ -547,14 +575,7 @@ const ProjectsSection = ({
                             </svg>
                           }
                           variant="solid"
-                          onPress={() => {
-                            const contactSection =
-                              document.getElementById("contact");
-
-                            contactSection?.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
+                          onPress={() => router.push("/contact")}
                         >
                           Explore My Work
                         </Button>
@@ -634,9 +655,9 @@ const ProjectsSection = ({
           >
             <Button
               as={Link}
-              href="/projects"
               color="primary"
               endContent={<ArrowRightIcon className="w-5 h-5" />}
+              href="/projects"
               size="lg"
               variant="bordered"
             >
@@ -696,24 +717,22 @@ const ProjectsSection = ({
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Button
+                className="min-w-[200px] font-semibold"
                 color="primary"
                 endContent={<ArrowRightIcon className="w-5 h-5" />}
                 size="lg"
                 variant="solid"
-                className="min-w-[200px] font-semibold"
-                onPress={() => {
-                  document.getElementById("contact")?.scrollIntoView({
-                    behavior: "smooth",
-                  });
-                }}
+                onPress={() =>
+                  handleButtonAction(ctaData?.content?.primaryButton)
+                }
               >
                 {ctaData?.content?.primaryButton?.text || "Start Your Project"}
               </Button>
               <Button
-                color="default"
-                variant="bordered"
-                size="lg"
                 className="min-w-[200px] font-semibold"
+                color="default"
+                size="lg"
+                variant="bordered"
                 onPress={() => {
                   const emailSubject = encodeURIComponent(
                     ctaData?.content?.emailSubject || "Project Inquiry",
@@ -722,6 +741,7 @@ const ProjectsSection = ({
                     ctaData?.content?.emailBody ||
                       "Hi Laurent, I'd like to discuss a project with you.",
                   );
+
                   window.open(
                     `mailto:contact@laurentgagne.com?subject=${emailSubject}&body=${emailBody}`,
                     "_blank",

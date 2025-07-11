@@ -102,19 +102,17 @@ const EducationSkillsSection = ({
 
   // Override education-related props based on visibility toggle
   const effectiveShowAcademicProgress =
-    isEducationVisible === true && showAcademicProgress;
-  const effectiveShowCertifications =
-    isEducationVisible === true && showCertifications;
+    isEducationVisible && showAcademicProgress;
+  const effectiveShowCertifications = isEducationVisible && showCertifications;
 
   // Update title and description when education is hidden
-  const effectiveTitle =
-    isEducationVisible === true ? title : "Technical Skills";
-  const effectiveSubtitle =
-    isEducationVisible === true ? subtitle : "Technical Expertise";
-  const effectiveDescription =
-    isEducationVisible === true
-      ? description
-      : "Technical skills and proficiency across various technologies and tools.";
+  const effectiveTitle = isEducationVisible ? title : "Technical Skills";
+  const effectiveSubtitle = isEducationVisible
+    ? subtitle
+    : "Technical Expertise";
+  const effectiveDescription = isEducationVisible
+    ? description
+    : "Technical skills and proficiency across various technologies and tools.";
 
   // Helper function to get color for category
   const getColorForCategory = (categoryTitle: string) => {
@@ -289,15 +287,12 @@ const EducationSkillsSection = ({
               categoryMapping[skill.category] || skill.category;
 
             // Skip academic skills if education is not visible
-            if (skill.category === "ACADEMIC" && isEducationVisible === false) {
+            if (skill.category === "ACADEMIC" && !isEducationVisible) {
               return;
             }
 
             // Skip academic skills since we show them separately (only when education is visible)
-            if (
-              isAcademicSkill(displayCategory) &&
-              isEducationVisible === true
-            ) {
+            if (isAcademicSkill(displayCategory) && isEducationVisible) {
               return;
             }
 
@@ -335,18 +330,12 @@ const EducationSkillsSection = ({
               const categoryName = skillData.category;
 
               // Skip academic skills if education is not visible
-              if (
-                isAcademicSkill(categoryName) &&
-                isEducationVisible === false
-              ) {
+              if (isAcademicSkill(categoryName) && !isEducationVisible) {
                 return;
               }
 
               // Skip academic skills since we show them separately (only when education is visible)
-              if (
-                isAcademicSkill(categoryName) &&
-                isEducationVisible === true
-              ) {
+              if (isAcademicSkill(categoryName) && isEducationVisible) {
                 return;
               }
 

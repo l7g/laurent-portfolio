@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 
 export function useEducationVisibility() {
-  const [isEducationVisible, setIsEducationVisible] = useState<
-    boolean | undefined
-  >(undefined);
+  const [isEducationVisible, setIsEducationVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

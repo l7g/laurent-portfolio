@@ -137,12 +137,21 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
       // Add rate limiting - prevent spam clicking
       const lastLikeTime = localStorage.getItem("lastLikeTime");
       const now = Date.now();
-      if (lastLikeTime && now - parseInt(lastLikeTime) < 1000) {
-        // Too fast, revert and ignore
-        setLiked(previousLiked);
-        setLikeCount(previousCount);
-        localStorage.setItem(`liked_post_${post.id}`, previousLiked.toString());
-        return;
+      const rateLimitMs = 300; // 300ms rate limit (more reasonable than 1000ms)
+
+      // Safely parse the last like time and check rate limit
+      if (lastLikeTime) {
+        const lastTime = parseInt(lastLikeTime, 10);
+        if (!isNaN(lastTime) && now - lastTime < rateLimitMs) {
+          // Too fast, revert and ignore
+          setLiked(previousLiked);
+          setLikeCount(previousCount);
+          localStorage.setItem(
+            `liked_post_${post.id}`,
+            previousLiked.toString(),
+          );
+          return;
+        }
       }
       localStorage.setItem("lastLikeTime", now.toString());
 

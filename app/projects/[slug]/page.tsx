@@ -11,8 +11,25 @@ import { GithubIcon } from "@/components/icons";
 import { motion } from "framer-motion";
 import { prisma } from "@/lib/prisma";
 
-// Force dynamic rendering - don't pre-render at build time
-export const dynamic = "force-dynamic";
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour
+
+// Generate static paths for all active projects
+export async function generateStaticParams() {
+  try {
+    const projects = await prisma.projects.findMany({
+      where: { isActive: true },
+      select: { slug: true },
+    });
+
+    return projects.map((project) => ({
+      slug: project.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params for projects:", error);
+    return [];
+  }
+}
 
 interface ProjectPageProps {
   params: Promise<{
@@ -245,7 +262,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               Need custom development work or have a project in mind? Let's
               discuss how I can help bring your ideas to life.
             </p>
-            <Button as={Link} href="/#contact" color="primary" size="lg">
+            <Button as={Link} href="/contact" color="primary" size="lg">
               Get In Touch
             </Button>
           </div>

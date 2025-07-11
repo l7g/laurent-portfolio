@@ -6,6 +6,7 @@ import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { Link } from "@heroui/link";
 import { motion } from "framer-motion";
+import LoadingSkeleton from "./loading-skeleton";
 import {
   ArrowTopRightOnSquareIcon,
   ArrowRightIcon,
@@ -111,13 +112,7 @@ const ProjectsSection = ({
   }, []);
 
   if (loading) {
-    return (
-      <section className="py-20 px-4 sm:px-6 lg:px-8" id="projects">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="animate-pulse">Loading projects...</div>
-        </div>
-      </section>
-    );
+    return <LoadingSkeleton type="projects" />;
   }
   // Custom placeholder component for WIP projects
   const PlaceholderImage = ({

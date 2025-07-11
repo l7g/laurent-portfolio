@@ -29,6 +29,12 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { title } from "@/components/primitives";
+import SettingsManager from "@/components/admin/settings-manager";
+import ProjectEditModal from "@/components/admin/project-edit-modal";
+import SkillEditModal from "@/components/admin/skill-edit-modal";
+import ProgramEditModal from "@/components/admin/program-edit-modal";
+import CourseEditModal from "@/components/admin/course-edit-modal";
+import EducationVisibilityToggle from "@/components/admin/education-visibility-toggle";
 
 interface AdminStats {
   totalProjects: number;
@@ -40,6 +46,9 @@ interface AdminStats {
   totalViews: number;
   totalLikes: number;
   totalPrograms: number;
+  totalComments: number;
+  pendingComments: number;
+  approvedComments: number;
 }
 
 export default function AdminDashboard() {
@@ -57,6 +66,9 @@ export default function AdminDashboard() {
     totalViews: 0,
     totalLikes: 0,
     totalPrograms: 0,
+    totalComments: 0,
+    pendingComments: 0,
+    approvedComments: 0,
   });
 
   // Data states for each tab
@@ -66,6 +78,12 @@ export default function AdminDashboard() {
   const [skills, setSkills] = useState<any[]>([]);
   const [courses, setCourses] = useState<any[]>([]);
   const [programs, setPrograms] = useState<any[]>([]);
+
+  // Modal states
+  const [editingProject, setEditingProject] = useState<any>(null);
+  const [editingSkill, setEditingSkill] = useState<any>(null);
+  const [editingProgram, setEditingProgram] = useState<any>(null);
+  const [editingCourse, setEditingCourse] = useState<any>(null);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -86,6 +104,7 @@ export default function AdminDashboard() {
         skillsResponse,
         coursesResponse,
         programsResponse,
+        commentsResponse,
       ] = await Promise.all([
         fetch("/api/blog/posts"),
         fetch("/api/projects"),
@@ -93,6 +112,7 @@ export default function AdminDashboard() {
         fetch("/api/skills?admin=true"),
         fetch("/api/academic/courses?admin=true"),
         fetch("/api/academic/programs?admin=true"),
+        fetch("/api/admin/comments"),
       ]);
 
       const rawBlogData = blogResponse.ok ? await blogResponse.json() : {};
@@ -110,6 +130,9 @@ export default function AdminDashboard() {
       const programsData = programsResponse.ok
         ? await programsResponse.json()
         : [];
+      const commentsData = commentsResponse.ok
+        ? await commentsResponse.json()
+        : { comments: [], summary: { total: 0, approved: 0, pending: 0 } };
 
       // Ensure all data is arrays
       const safeBlogData = Array.isArray(blogData) ? blogData : [];
@@ -150,6 +173,9 @@ export default function AdminDashboard() {
         totalViews,
         totalLikes,
         totalPrograms: safeProgramsData.length,
+        totalComments: commentsData.summary?.total || 0,
+        approvedComments: commentsData.summary?.approved || 0,
+        pendingComments: commentsData.summary?.pending || 0,
       });
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -262,6 +288,60 @@ export default function AdminDashboard() {
       } catch (error) {
         console.error("Error deleting item:", error);
       }
+    }
+  };
+
+  // Modal handlers
+  const handleProjectSave = async (updates: any) => {
+    try {
+      const response = await fetch(`/api/projects/${editingProject.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates),
+      });
+
+      if (response.ok) {
+        const updatedProject = await response.json();
+        setProjects(
+          projects.map((p) =>
+            p.id === editingProject.id ? updatedProject : p,
+          ),
+        );
+        setEditingProject(null);
+        fetchDashboardData();
+      }
+    } catch (error) {
+      console.error("Error updating project:", error);
+    }
+  };
+
+  const handleSkillSave = async (skillId: string, updates: any) => {
+    try {
+      await handleSkillUpdate(skillId, updates);
+      setEditingSkill(null);
+      fetchDashboardData();
+    } catch (error) {
+      console.error("Error updating skill:", error);
+    }
+  };
+
+  const handleProgramSave = async (programId: string, updates: any) => {
+    try {
+      await handleEducationUpdate("program", programId, updates);
+      setEditingProgram(null);
+      fetchDashboardData();
+    } catch (error) {
+      console.error("Error updating program:", error);
+    }
+  };
+
+  const handleCourseSave = async (courseData: any) => {
+    try {
+      await handleEducationUpdate("course", courseData.id, courseData);
+      setEditingCourse(null);
+      fetchDashboardData();
+    } catch (error) {
+      console.error("Error updating course:", error);
     }
   };
 
@@ -401,7 +481,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Quick Actions Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Blog Management */}
                 <Card>
                   <CardHeader className="pb-2">
@@ -446,6 +526,53 @@ export default function AdminDashboard() {
                       <Link href="/admin/blog/series">
                         <Button size="sm" variant="flat">
                           Series
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardBody>
+                </Card>
+
+                {/* Comments Management */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <ChatBubbleLeftRightIcon className="w-5 h-5" />
+                        Comments
+                      </h3>
+                      <Link href="/admin/blog/comments">
+                        <Button size="sm" variant="flat" color="primary">
+                          Manage All
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardHeader>
+                  <CardBody>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span>Pending Review</span>
+                        <span className="font-medium text-orange-600">
+                          {stats.pendingComments}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Approved</span>
+                        <span className="font-medium text-green-600">
+                          {stats.approvedComments}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>Total Comments</span>
+                        <span className="font-medium">
+                          {stats.totalComments}
+                        </span>
+                      </div>
+                    </div>
+                    <Divider className="my-3" />
+                    <div className="flex gap-2">
+                      <Link href="/admin/blog/comments" className="flex-1">
+                        <Button size="sm" color="primary" className="w-full">
+                          Review Comments
                         </Button>
                       </Link>
                     </div>
@@ -772,6 +899,7 @@ export default function AdminDashboard() {
                               variant="flat"
                               color="warning"
                               isIconOnly
+                              onPress={() => setEditingSkill(skill)}
                             >
                               <PencilIcon className="w-4 h-4" />
                             </Button>
@@ -839,6 +967,24 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              {/* Education Visibility Toggle */}
+              <Card className="border border-warning-200 bg-warning-50/50">
+                <CardBody>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground">
+                        Education Section Visibility
+                      </h3>
+                      <p className="text-sm text-default-600 mt-1">
+                        Control whether education content appears on your
+                        portfolio and in navigation
+                      </p>
+                    </div>
+                    <EducationVisibilityToggle />
+                  </div>
+                </CardBody>
+              </Card>
+
               {/* Programs Section */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -897,6 +1043,7 @@ export default function AdminDashboard() {
                                 variant="flat"
                                 color="warning"
                                 isIconOnly
+                                onPress={() => setEditingProgram(program)}
                               >
                                 <PencilIcon className="w-4 h-4" />
                               </Button>
@@ -980,6 +1127,7 @@ export default function AdminDashboard() {
                                 variant="flat"
                                 color="warning"
                                 isIconOnly
+                                onPress={() => setEditingCourse(course)}
                               >
                                 <PencilIcon className="w-4 h-4" />
                               </Button>
@@ -1190,6 +1338,7 @@ export default function AdminDashboard() {
                             color="warning"
                             className="flex-1"
                             startContent={<PencilIcon className="w-4 h-4" />}
+                            onPress={() => setEditingProject(project)}
                           >
                             Edit
                           </Button>
@@ -1400,6 +1549,44 @@ export default function AdminDashboard() {
           )}
         </motion.div>
       </div>
+
+      {/* Edit Modals */}
+      {editingProject && (
+        <ProjectEditModal
+          isOpen={!!editingProject}
+          onClose={() => setEditingProject(null)}
+          project={editingProject}
+          onSave={handleProjectSave}
+        />
+      )}
+
+      {editingSkill && (
+        <SkillEditModal
+          isOpen={!!editingSkill}
+          onClose={() => setEditingSkill(null)}
+          skill={editingSkill}
+          onSave={handleSkillSave}
+        />
+      )}
+
+      {editingProgram && (
+        <ProgramEditModal
+          isOpen={!!editingProgram}
+          onClose={() => setEditingProgram(null)}
+          program={editingProgram}
+          onSave={handleProgramSave}
+        />
+      )}
+
+      {editingCourse && (
+        <CourseEditModal
+          isOpen={!!editingCourse}
+          onClose={() => setEditingCourse(null)}
+          course={editingCourse}
+          onSave={handleCourseSave}
+          academic_programs={programs}
+        />
+      )}
     </div>
   );
 }

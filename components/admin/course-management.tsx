@@ -625,7 +625,7 @@ const CourseManagement = () => {
         onClose={onClose}
         course={selectedCourse || undefined}
         onSave={handleSaveCourse}
-        academic_programss={academicPrograms}
+        academic_programs={academicPrograms}
       />
     </div>
   );

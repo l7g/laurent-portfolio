@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardBody } from "@heroui/card";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
+import LoadingSkeleton from "./loading-skeleton";
 import {
   CodeBracketIcon,
   CircleStackIcon,
@@ -73,13 +74,7 @@ const AboutSection = () => {
   }, []);
 
   if (loading) {
-    return (
-      <section className="py-20" id="about">
-        <div className="container mx-auto px-6 text-center">
-          <div className="animate-pulse">Loading...</div>
-        </div>
-      </section>
-    );
+    return <LoadingSkeleton type="about" />;
   }
 
   // Fallback to hardcoded data if database data is not available

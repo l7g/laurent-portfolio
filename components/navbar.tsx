@@ -20,11 +20,30 @@ import { usePathname } from "next/navigation";
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { GithubIcon, Logo } from "@/components/icons";
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const currentPath = usePathname();
+  const { isEducationVisible } = useEducationVisibility();
+
+  // Filter navigation items based on education visibility
+  const filteredNavItems = siteConfig.navItems.filter((item) => {
+    // Only hide Education when explicitly false, keep Skills always visible
+    if (isEducationVisible === false && item.href === "/education") {
+      return false;
+    }
+    return true;
+  });
+
+  const filteredNavMenuItems = siteConfig.navMenuItems.filter((item) => {
+    // Only hide Education when explicitly false, keep Skills always visible
+    if (isEducationVisible === false && item.href === "/education") {
+      return false;
+    }
+    return true;
+  });
 
   useEffect(() => {
     // Only track scroll sections on homepage
@@ -73,9 +92,9 @@ export const Navbar = () => {
 
   const isLinkActive = (href: string) => {
     // Handle homepage section links
-    if (href.startsWith("#") || href === "/#contact") {
+    if (href.startsWith("#")) {
       if (currentPath !== "/") return false;
-      const section = href.replace("#", "").replace("/#", "");
+      const section = href.replace("#", "");
       return activeSection === section;
     }
 
@@ -102,7 +121,7 @@ export const Navbar = () => {
           </NextLink>
         </NavbarBrand>{" "}
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
+          {filteredNavItems.map((item) => (
             <NavbarItem key={item.href}>
               <NextLink
                 className={clsx(
@@ -124,22 +143,11 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        {" "}
         <NavbarItem className="hidden sm:flex gap-2">
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500 w-5 h-5" />
           </Link>
           <ThemeSwitch />
-        </NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href="#contact"
-            variant="flat"
-          >
-            Contact
-          </Button>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
@@ -151,13 +159,13 @@ export const Navbar = () => {
       </NavbarContent>{" "}
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {filteredNavMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color={
                   isLinkActive(item.href)
                     ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
+                    : index === filteredNavMenuItems.length - 1
                       ? "danger"
                       : "foreground"
                 }

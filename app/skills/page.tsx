@@ -31,6 +31,7 @@ import {
   SiMysql,
 } from "react-icons/si";
 import { title } from "@/components/primitives";
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface SkillItem {
   id: string;
@@ -96,6 +97,11 @@ const categoryConfig: Record<
     icon: PaintBrushIcon,
     color: "danger",
   },
+  ACADEMIC: {
+    title: "Academic Skills",
+    icon: GlobeAltIcon,
+    color: "default",
+  },
   OTHER: {
     title: "Other Technologies",
     icon: CogIcon,
@@ -104,6 +110,7 @@ const categoryConfig: Record<
 };
 
 export default function SkillsPage() {
+  const { isEducationVisible } = useEducationVisibility();
   const [skills, setSkills] = useState<SkillItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -133,14 +140,23 @@ export default function SkillsPage() {
   }, []);
 
   const groupSkillsByCategory = (skills: SkillItem[]): SkillCategory[] => {
-    const grouped = skills.reduce((acc: Record<string, SkillItem[]>, skill) => {
-      const category = skill.category;
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(skill);
-      return acc;
-    }, {});
+    // Filter out academic skills if education is not visible
+    const filteredSkills =
+      isEducationVisible === true
+        ? skills
+        : skills.filter((skill) => skill.category !== "ACADEMIC");
+
+    const grouped = filteredSkills.reduce(
+      (acc: Record<string, SkillItem[]>, skill) => {
+        const category = skill.category;
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(skill);
+        return acc;
+      },
+      {},
+    );
 
     return Object.entries(grouped).map(([category, skills]) => ({
       title: categoryConfig[category]?.title || category,

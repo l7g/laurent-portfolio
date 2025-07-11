@@ -49,13 +49,24 @@ export async function PUT(
       return NextResponse.json({ error: "Value is required" }, { status: 400 });
     }
 
-    const setting = await prisma.site_settings.update({
+    // Use upsert to either update existing or create new setting
+    const setting = await prisma.site_settings.upsert({
       where: { key },
-      data: {
+      update: {
         value,
-        type,
+        type: type || "text",
         description,
-        isPublic,
+        isPublic: isPublic !== undefined ? isPublic : false,
+        updatedAt: new Date(),
+      },
+      create: {
+        id: `setting_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        key,
+        value,
+        type: type || "text",
+        description: description || `Setting for ${key}`,
+        isPublic: isPublic !== undefined ? isPublic : false,
+        createdAt: new Date(),
         updatedAt: new Date(),
       },
     });

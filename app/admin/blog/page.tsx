@@ -97,7 +97,8 @@ export default function BlogAdminPage() {
           postsResponse.json(),
           categoriesResponse.json(),
         ]);
-        setPosts(postsData);
+        // Fix: extract posts array from the response object
+        setPosts(postsData.posts || []);
         setCategories(categoriesData);
       }
     } catch (error) {

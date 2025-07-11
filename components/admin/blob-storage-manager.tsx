@@ -266,9 +266,9 @@ export default function BlobStorageManager({
                 {images.map((image) => (
                   <Card
                     key={image.url}
-                    isPressable
                     isHoverable
-                    className={`relative transition-all duration-200 group ${
+                    isPressable
+                    className={`relative transition-all duration-200 group cursor-pointer ${
                       selectedImage === image.url
                         ? "ring-2 ring-primary bg-primary/5"
                         : ""

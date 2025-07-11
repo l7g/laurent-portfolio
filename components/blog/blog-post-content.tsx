@@ -21,6 +21,7 @@ import ReactMarkdown from "react-markdown";
 import { title, subtitle } from "@/components/primitives";
 import CommentsSystem from "@/components/blog/comments-system";
 import SocialShare from "@/components/blog/social-share";
+import { canUsePreferences } from "@/lib/consent";
 
 interface BlogPost {
   id: string;
@@ -29,6 +30,7 @@ interface BlogPost {
   excerpt: string;
   content: string;
   coverImage?: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   category: {
     id: string;
     name: string;
@@ -70,6 +72,14 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
     }
   }, [slug]);
 
+  // Check localStorage for like status when post is loaded
+  useEffect(() => {
+    if (post?.id && canUsePreferences()) {
+      const hasLiked = localStorage.getItem(`liked_post_${post.id}`) === "true";
+      setLiked(hasLiked);
+    }
+  }, [post?.id]);
+
   const fetchPost = async (slug: string) => {
     try {
       setLoading(true);
@@ -101,11 +111,84 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
     return minutes;
   };
 
-  const handleLike = () => {
-    setLiked(!liked);
-    setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
-    // TODO: Implement actual like functionality with API
+  const handleLike = async () => {
+    if (!post) return;
+
+    // Check if user has consented to preferences
+    if (!canUsePreferences()) {
+      alert(
+        "Please accept preferences in the cookie banner to use the like feature.",
+      );
+      return;
+    }
+
+    const action = liked ? "unlike" : "like";
+    const previousLiked = liked;
+    const previousCount = likeCount;
+
+    try {
+      // Optimistically update UI
+      setLiked(!liked);
+      setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+
+      // Update localStorage immediately
+      localStorage.setItem(`liked_post_${post.id}`, (!liked).toString());
+
+      // Add rate limiting - prevent spam clicking
+      const lastLikeTime = localStorage.getItem("lastLikeTime");
+      const now = Date.now();
+      if (lastLikeTime && now - parseInt(lastLikeTime) < 1000) {
+        // Too fast, revert and ignore
+        setLiked(previousLiked);
+        setLikeCount(previousCount);
+        localStorage.setItem(`liked_post_${post.id}`, previousLiked.toString());
+        return;
+      }
+      localStorage.setItem("lastLikeTime", now.toString());
+
+      // Call API to update server count
+      const response = await fetch(`/api/blog/posts/${post.slug}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ action }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setLikeCount(data.likes);
+      } else {
+        // Revert optimistic update on error
+        setLiked(previousLiked);
+        setLikeCount(previousCount);
+        localStorage.setItem(`liked_post_${post.id}`, previousLiked.toString());
+        console.error("Failed to save like");
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setLiked(previousLiked);
+      setLikeCount(previousCount);
+      localStorage.setItem(`liked_post_${post.id}`, previousLiked.toString());
+      console.error("Error saving like:", error);
+    }
   };
+
+  // Utility function to clear all like data (for privacy/debugging)
+  const clearAllLikes = () => {
+    const keys = Object.keys(localStorage);
+    keys.forEach((key) => {
+      if (key.startsWith("liked_post_") || key === "lastLikeTime") {
+        localStorage.removeItem(key);
+      }
+    });
+    console.log("All like data cleared from localStorage");
+  };
+
+  // Make it available in browser console for users who want to clear their data
+  useEffect(() => {
+    (window as any).clearAllLikes = clearAllLikes;
+  }, []);
 
   if (loading) {
     return (
@@ -189,6 +272,16 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
                 >
                   <span className="mr-1">{post.category.icon}</span>
                   {post.category.name}
+                </Chip>
+              )}
+              {post.status === "DRAFT" && (
+                <Chip size="sm" color="warning" variant="bordered">
+                  📝 Draft - Only visible to admin
+                </Chip>
+              )}
+              {post.status === "ARCHIVED" && (
+                <Chip size="sm" color="default" variant="bordered">
+                  📦 Archived - Only visible to admin
                 </Chip>
               )}
             </div>
@@ -339,8 +432,9 @@ export default function BlogPostContent({ slug }: BlogPostContentProps) {
               }
               onClick={handleLike}
               className="gap-2"
+              title={liked ? "Unlike this post" : "Like this post"}
             >
-              {likeCount}
+              {likeCount} {liked ? "Liked" : ""}
             </Button>
             <SocialShare
               url={`${process.env.NEXT_PUBLIC_APP_URL}/blog/${post.slug}`}

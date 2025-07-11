@@ -86,7 +86,7 @@ export async function POST() {
             primaryButton: {
               text: "Start Your Project",
               action: "scroll",
-              target: "#contact",
+              target: "/contact",
             },
             secondaryButton: {
               text: "Send Quick Email",

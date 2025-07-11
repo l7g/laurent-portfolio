@@ -10,10 +10,6 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "About",
-      href: "/about",
-    },
-    {
       label: "Education",
       href: "/education",
     },
@@ -31,7 +27,7 @@ export const siteConfig = {
     },
     {
       label: "Contact",
-      href: "/#contact",
+      href: "/contact",
     },
   ],
   navMenuItems: [
@@ -40,10 +36,6 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "About",
-      href: "/about",
-    },
-    {
       label: "Education",
       href: "/education",
     },
@@ -61,7 +53,7 @@ export const siteConfig = {
     },
     {
       label: "Contact",
-      href: "/#contact",
+      href: "/contact",
     },
     {
       label: "Curriculum",

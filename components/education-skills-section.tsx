@@ -6,6 +6,7 @@ import { Progress } from "@heroui/progress";
 import { Chip } from "@heroui/chip";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import LoadingSkeleton from "./loading-skeleton";
 import {
   CodeBracketIcon,
   CircleStackIcon,
@@ -34,6 +35,7 @@ import {
   SiMysql,
 } from "react-icons/si";
 import CompactAcademicSkills from "./compact-academic-skills";
+import { useEducationVisibility } from "@/lib/use-education-visibility";
 
 interface SkillItem {
   name: string;
@@ -91,11 +93,28 @@ const EducationSkillsSection = ({
   showCertifications = true,
   layout = "combined",
 }: EducationSkillsSectionProps) => {
+  const { isEducationVisible } = useEducationVisibility();
   const [skillCategories, setSkillCategories] = useState<SkillCategory[]>([]);
   const [technologies, setTechnologies] = useState<Technology[]>([]);
   const [academic_programs, setacademic_programs] =
     useState<academic_programs | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Override education-related props based on visibility toggle
+  const effectiveShowAcademicProgress =
+    isEducationVisible === true && showAcademicProgress;
+  const effectiveShowCertifications =
+    isEducationVisible === true && showCertifications;
+
+  // Update title and description when education is hidden
+  const effectiveTitle =
+    isEducationVisible === true ? title : "Technical Skills";
+  const effectiveSubtitle =
+    isEducationVisible === true ? subtitle : "Technical Expertise";
+  const effectiveDescription =
+    isEducationVisible === true
+      ? description
+      : "Technical skills and proficiency across various technologies and tools.";
 
   // Helper function to get color for category
   const getColorForCategory = (categoryTitle: string) => {
@@ -141,7 +160,9 @@ const EducationSkillsSection = ({
   const isAcademicSkill = (categoryTitle: string) => {
     return (
       categoryTitle === "International Relations" ||
-      categoryTitle === "Academic Skills"
+      categoryTitle === "Academic Skills" ||
+      categoryTitle === "Analytical Skills" ||
+      categoryTitle === "Communication Skills"
     );
   };
 
@@ -267,8 +288,16 @@ const EducationSkillsSection = ({
             const displayCategory =
               categoryMapping[skill.category] || skill.category;
 
-            // Skip academic skills since we show them separately
-            if (isAcademicSkill(displayCategory)) {
+            // Skip academic skills if education is not visible
+            if (skill.category === "ACADEMIC" && isEducationVisible === false) {
+              return;
+            }
+
+            // Skip academic skills since we show them separately (only when education is visible)
+            if (
+              isAcademicSkill(displayCategory) &&
+              isEducationVisible === true
+            ) {
               return;
             }
 
@@ -305,8 +334,19 @@ const EducationSkillsSection = ({
               const skillData = skill_progressionsData[skillName];
               const categoryName = skillData.category;
 
-              // Skip academic skills since we show them separately
-              if (isAcademicSkill(categoryName)) {
+              // Skip academic skills if education is not visible
+              if (
+                isAcademicSkill(categoryName) &&
+                isEducationVisible === false
+              ) {
+                return;
+              }
+
+              // Skip academic skills since we show them separately (only when education is visible)
+              if (
+                isAcademicSkill(categoryName) &&
+                isEducationVisible === true
+              ) {
                 return;
               }
 
@@ -367,13 +407,7 @@ const EducationSkillsSection = ({
   }, []);
 
   if (loading) {
-    return (
-      <section className="py-20 bg-default-50/50" id="education-skills">
-        <div className="container mx-auto px-6 text-center">
-          <div className="animate-pulse">Loading education & skills...</div>
-        </div>
-      </section>
-    );
+    return <LoadingSkeleton type="education" className="bg-default-50/50" />;
   }
 
   return (
@@ -387,18 +421,18 @@ const EducationSkillsSection = ({
           whileInView={{ opacity: 1, y: 0 }}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            {title.split(" ")[0]}{" "}
+            {effectiveTitle.split(" ")[0]}{" "}
             <span className="text-primary">
-              {title.split(" ").slice(1).join(" ")}
+              {effectiveTitle.split(" ").slice(1).join(" ")}
             </span>
           </h2>
           <p className="text-xl text-default-600 max-w-3xl mx-auto mb-8">
-            {description}
+            {effectiveDescription}
           </p>
         </motion.div>
 
         {/* Academic Progress Section */}
-        {showAcademicProgress && academic_programs && (
+        {effectiveShowAcademicProgress && academic_programs && (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}
@@ -501,7 +535,7 @@ const EducationSkillsSection = ({
         )}
 
         {/* Academic Skills - Most Relevant */}
-        {showAcademicProgress && (
+        {effectiveShowAcademicProgress && (
           <motion.div
             className="mb-16"
             initial={{ opacity: 0, y: 20 }}

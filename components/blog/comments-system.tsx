@@ -250,7 +250,7 @@ export default function CommentsSystem({
               />
               <div className="flex items-center justify-between">
                 <p className="text-sm text-default-600">
-                  Comments are moderated and will appear after approval.
+                  Comments are reviewed for quality. Most appear immediately.
                 </p>
                 <Button
                   type="submit"

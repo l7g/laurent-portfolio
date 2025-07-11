@@ -141,6 +141,18 @@ const PREDEFINED_SETTINGS = [
     placeholder: "5",
     defaultValue: "5",
   },
+  {
+    key: "show_education",
+    label: "Show Education Section",
+    description:
+      "Toggle visibility of education-related content and navigation",
+    type: "boolean",
+    isPublic: true,
+    category: "Site",
+    icon: InformationCircleIcon,
+    placeholder: "",
+    defaultValue: "true",
+  },
 ];
 
 export default function SettingsManager() {

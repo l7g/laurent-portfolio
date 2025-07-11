@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import crypto from "crypto";
 
 // GET - Fetch related articles for a specific post
 export async function GET(
@@ -161,36 +162,46 @@ export async function POST(
     // Create the relation
     const relation = await prisma.blog_post_relations.create({
       data: {
+        id: crypto.randomUUID(),
         sourcePostId: sourcePost.id,
-        targetPostId,
-        relationType,
+        targetPostId: targetPostId,
+        relationType: relationType,
         createdBy: session.user.id,
+        createdAt: new Date(),
       },
+    });
+
+    // Fetch the target post separately for the response
+    const relatedTargetPost = await prisma.blog_posts.findUnique({
+      where: { id: targetPostId },
       include: {
-        targetPost: {
-          include: {
-            blog_categories: true,
-            users: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
+        blog_categories: true,
+        users: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
     });
 
+    if (!relatedTargetPost) {
+      return NextResponse.json(
+        { error: "Target post not found" },
+        { status: 404 },
+      );
+    }
+
     return NextResponse.json({
-      id: relation.targetPost.id,
-      title: relation.targetPost.title,
-      slug: relation.targetPost.slug,
-      excerpt: relation.targetPost.excerpt,
-      status: relation.targetPost.status,
-      coverImage: relation.targetPost.coverImage,
-      category: relation.targetPost.blog_categories,
-      author: relation.targetPost.users,
-      publishedAt: relation.targetPost.publishedAt,
+      id: relatedTargetPost.id,
+      title: relatedTargetPost.title,
+      slug: relatedTargetPost.slug,
+      excerpt: relatedTargetPost.excerpt,
+      status: relatedTargetPost.status,
+      coverImage: relatedTargetPost.coverImage,
+      category: relatedTargetPost.blog_categories,
+      author: relatedTargetPost.users,
+      publishedAt: relatedTargetPost.publishedAt,
       relationType: relation.relationType,
       relationId: relation.id,
     });

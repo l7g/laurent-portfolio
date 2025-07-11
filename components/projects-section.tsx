@@ -10,6 +10,7 @@ import {
   ArrowTopRightOnSquareIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 
 import LoadingSkeleton from "./loading-skeleton";
 
@@ -46,6 +47,41 @@ const ProjectsSection = ({
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [ctaData, setCtaData] = useState<any>(null);
+  const router = useRouter();
+
+  // Helper function to handle button actions based on database configuration
+  const handleButtonAction = (buttonConfig: any) => {
+    if (!buttonConfig) return;
+
+    switch (buttonConfig.action) {
+      case "scroll":
+        if (buttonConfig.target === "/contact") {
+          // Navigate to contact page instead of scrolling
+          router.push("/contact");
+        } else {
+          // Handle other scroll targets
+          const element = document.getElementById(
+            buttonConfig.target.replace("/", ""),
+          );
+          element?.scrollIntoView({ behavior: "smooth" });
+        }
+        break;
+      case "link":
+        if (buttonConfig.target) {
+          router.push(buttonConfig.target);
+        }
+        break;
+      case "external":
+        if (buttonConfig.target) {
+          window.open(buttonConfig.target, "_blank");
+        }
+        break;
+      default:
+        // Fallback to scroll behavior for backward compatibility
+        const contactSection = document.getElementById("contact");
+        contactSection?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   useEffect(() => {
     async function fetchProjects() {
@@ -358,14 +394,7 @@ const ProjectsSection = ({
                             </svg>
                           }
                           variant="solid"
-                          onPress={() => {
-                            const contactSection =
-                              document.getElementById("contact");
-
-                            contactSection?.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
+                          onPress={() => router.push("/contact")}
                         >
                           Explore My Work
                         </Button>
@@ -546,14 +575,7 @@ const ProjectsSection = ({
                             </svg>
                           }
                           variant="solid"
-                          onPress={() => {
-                            const contactSection =
-                              document.getElementById("contact");
-
-                            contactSection?.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
+                          onPress={() => router.push("/contact")}
                         >
                           Explore My Work
                         </Button>
@@ -700,11 +722,9 @@ const ProjectsSection = ({
                 endContent={<ArrowRightIcon className="w-5 h-5" />}
                 size="lg"
                 variant="solid"
-                onPress={() => {
-                  document.getElementById("contact")?.scrollIntoView({
-                    behavior: "smooth",
-                  });
-                }}
+                onPress={() =>
+                  handleButtonAction(ctaData?.content?.primaryButton)
+                }
               >
                 {ctaData?.content?.primaryButton?.text || "Start Your Project"}
               </Button>

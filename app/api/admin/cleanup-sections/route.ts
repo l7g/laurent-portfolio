@@ -90,7 +90,7 @@ export async function POST() {
             ],
             primaryButton: {
               text: "Start Your Project",
-              action: "scroll",
+              action: "link",
               target: "/contact",
             },
             secondaryButton: {

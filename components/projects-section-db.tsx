@@ -9,6 +9,7 @@ import {
   ArrowTopRightOnSquareIcon,
   ArrowRightIcon,
 } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 
 import { GithubIcon } from "@/components/icons";
 import { getProjectImageUrl } from "@/lib/blob-storage";
@@ -43,6 +44,7 @@ interface ProjectsSectionProps {
 }
 
 const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
+  const router = useRouter();
   const flagshipProject = projects.find((p) => p.flagship);
   const featuredProjects = projects.filter((p) => p.featured && !p.flagship);
   const otherProjects = projects.filter((p) => !p.featured && !p.flagship);
@@ -390,11 +392,7 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
           <Button
             color="primary"
             size="lg"
-            onPress={() =>
-              document.getElementById("contact")?.scrollIntoView({
-                behavior: "smooth",
-              })
-            }
+            onPress={() => router.push("/contact")}
           >
             Get In Touch
           </Button>

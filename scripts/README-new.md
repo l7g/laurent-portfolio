@@ -5,11 +5,13 @@ This directory contains the essential database management tools for the portfoli
 ## Core System
 
 ### Environment-Safe Prisma Operations
+
 - **`safe-prisma.js`** - Main database command wrapper that handles environment switching
-- **`.env.development`** - Docker database configuration  
+- **`.env.development`** - Docker database configuration
 - **`.env.production`** - Neon database configuration
 
 ### Essential Scripts
+
 - **`postinstall-db.js`** - Database setup after npm install
 - **`migrate.js`** - Migration helper for development
 - **`seed-production.js`** - Production data seeding
@@ -23,7 +25,7 @@ This directory contains the essential database management tools for the portfoli
 ```bash
 # Development (Docker)
 npm run dev                                    # Start development
-npm run prisma dev:migrate feature_name       # Create migration  
+npm run prisma dev:migrate feature_name       # Create migration
 npm run prisma dev:studio                     # View dev database
 
 # Production (Neon)
@@ -38,12 +40,14 @@ npm run setup:admin                          # Create admin user
 ```
 
 ## Key Benefits
+
 - ✅ **No environment variable errors** - Automatic environment switching
 - ✅ **30-second deployments** - Simple and fast
 - ✅ **Safe operations** - Can't accidentally target wrong database
 - ✅ **Standard Prisma commands** - Familiar workflow
 
 ## Documentation
+
 - **`docs/BULLETPROOF_WORKFLOW.md`** - Complete workflow guide
-- **`docs/ENHANCED_PROJECTS_GUIDE.md`** - Projects feature documentation  
+- **`docs/ENHANCED_PROJECTS_GUIDE.md`** - Projects feature documentation
 - **`docs/BRANCH_PROTECTION.md`** - Git workflow guidelines

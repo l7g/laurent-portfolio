@@ -28,6 +28,10 @@ yarn-error.log*
 .env*.local
 .env
 
+# Environment-specific files (contain database credentials)
+.env.development
+.env.production
+
 # Database backups and exports (contains sensitive data)
 database-export-*.json
 dev-to-prod-export-*.json

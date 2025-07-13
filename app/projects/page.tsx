@@ -2,7 +2,7 @@ import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
-import ProjectsSection from "@/components/projects-section";
+import EnhancedProjectsSection from "@/components/enhanced-projects-section";
 
 export default function ProjectsPage() {
   return (
@@ -21,44 +21,54 @@ export default function ProjectsPage() {
       </div>
 
       {/* Enhanced Projects Section */}
-      <ProjectsSection showAll={true} />
+      <EnhancedProjectsSection showAll={true} excludeDemos={true} />
 
       {/* Additional Content for Dedicated Page */}
       <section className="py-20 bg-default-50/50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Project <span className="text-primary">Archive</span>
+              Project <span className="text-primary">Categories</span>
             </h2>
             <p className="text-xl text-default-600 max-w-2xl mx-auto">
-              Explore my complete portfolio - from early experiments to
-              production applications. Each project represents a learning
-              journey and showcases different aspects of my development skills.
+              Explore my diverse portfolio across different types of development
+              work
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="text-center p-6 bg-white dark:bg-default-100 rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">Frontend Focus</h3>
-              <p className="text-default-600 text-sm">
-                Modern React, Next.js, and TypeScript applications with emphasis
-                on user experience
-              </p>
-            </div>
-            <div className="text-center p-6 bg-white dark:bg-default-100 rounded-lg">
+              <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🏢</span>
+              </div>
               <h3 className="text-xl font-semibold mb-2">
-                Full-Stack Solutions
+                Commercial Projects
               </h3>
               <p className="text-default-600 text-sm">
-                Complete applications with databases, APIs, and authentication
-                systems
+                Professional business applications and enterprise solutions
+                developed for commercial use and potential licensing
               </p>
             </div>
+
             <div className="text-center p-6 bg-white dark:bg-default-100 rounded-lg">
-              <h3 className="text-xl font-semibold mb-2">Professional Tools</h3>
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">👥</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Client Work</h3>
               <p className="text-default-600 text-sm">
-                Business applications, dashboards, and productivity tools for
-                real-world use
+                Custom development projects created for clients, showcasing
+                collaboration and requirement fulfillment skills
+              </p>
+            </div>
+
+            <div className="text-center p-6 bg-white dark:bg-default-100 rounded-lg">
+              <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🌍</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Open Source</h3>
+              <p className="text-default-600 text-sm">
+                Public repositories and contributions to the open source
+                community, demonstrating code quality and collaboration
               </p>
             </div>
           </div>

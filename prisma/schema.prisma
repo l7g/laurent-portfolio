@@ -234,36 +234,42 @@ model portfolio_sections {
 }
 
 model projects {
-  id                  String        @id
+  id                  String           @id
   title               String
-  slug                String        @unique
+  slug                String           @unique
   description         String
   shortDesc           String?
   image               String?
   technologies        String[]
-  featured            Boolean       @default(false)
-  flagship            Boolean       @default(false)
-  isActive            Boolean       @default(true)
-  status              ProjectStatus @default(READY)
-  sortOrder           Int           @default(0)
+  featured            Boolean          @default(false)
+  flagship            Boolean          @default(false)
+  demo                Boolean          @default(false)
+  isActive            Boolean          @default(true)
+  status              ProjectStatus    @default(READY)
+  category            ProjectCategory  @default(OPENSOURCE)
+  sortOrder           Int              @default(0)
   liveUrl             String?
   githubUrl           String?
+  caseStudyUrl        String?
   highlights          String[]
   detailedDescription String?
   challenges          String?
   solutions           String?
   results             String?
+  outcomes            String[]
   clientName          String?
   projectDuration     String?
   teamSize            String?
   myRole              String?
+  role                String?
+  year                Int?
   startDate           DateTime?
   endDate             DateTime?
-  createdAt           DateTime      @default(now())
+  createdAt           DateTime         @default(now())
   updatedAt           DateTime
-  showWipWarning      Boolean       @default(true)
+  showWipWarning      Boolean          @default(true)
   wipWarningText      String?
-  wipWarningEmoji     String?       @default("🚧")
+  wipWarningEmoji     String?          @default("🚧")
 }
 
 model site_settings {
@@ -358,6 +364,13 @@ enum CourseStatus {
 enum ProjectStatus {
   WIP
   READY
+}
+
+enum ProjectCategory {
+  DEMO
+  COMMERCIAL
+  CLIENT
+  OPENSOURCE
 }
 
 enum RequestStatus {

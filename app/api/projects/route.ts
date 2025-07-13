@@ -7,9 +7,28 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // GET /api/projects - Get all projects
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const demo = searchParams.get("demo");
+    const category = searchParams.get("category");
+
+    const whereClause: any = {};
+
+    // Filter by demo status
+    if (demo === "true") {
+      whereClause.demo = true;
+    } else if (demo === "false") {
+      whereClause.demo = false;
+    }
+
+    // Filter by category
+    if (category) {
+      whereClause.category = category.toUpperCase();
+    }
+
     const projects = await prisma.projects.findMany({
+      where: whereClause,
       orderBy: [
         { flagship: "desc" },
         { featured: "desc" },

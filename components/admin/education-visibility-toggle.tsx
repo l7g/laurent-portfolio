@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 export default function EducationVisibilityToggle() {
-  const [isEducationVisible, setIsEducationVisible] = useState<boolean>(true);
+  const [isEducationVisible, setIsEducationVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
@@ -28,15 +28,15 @@ export default function EducationVisibilityToggle() {
             setting?.value === "true" || setting?.value === true,
           );
         } else if (response.status === 404) {
-          // If setting doesn't exist, default to true
-          setIsEducationVisible(true);
+          // If setting doesn't exist, default to false
+          setIsEducationVisible(false);
         } else {
           console.error("Error fetching education setting:", response.status);
-          setIsEducationVisible(true);
+          setIsEducationVisible(false);
         }
       } catch (error) {
         console.error("Error fetching education setting:", error);
-        setIsEducationVisible(true);
+        setIsEducationVisible(false);
       } finally {
         setLoading(false);
       }

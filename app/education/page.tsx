@@ -54,17 +54,18 @@ interface Course {
 
 export default function EducationPage() {
   const router = useRouter();
-  const { isEducationVisible } = useEducationVisibility();
+  const { isEducationVisible, isLoading: visibilityLoading } =
+    useEducationVisibility();
   const [programs, setPrograms] = useState<AcademicProgram[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Redirect if education is not visible
   useEffect(() => {
-    if (!isEducationVisible) {
+    if (!visibilityLoading && !isEducationVisible) {
       router.push("/");
     }
-  }, [isEducationVisible, router]);
+  }, [isEducationVisible, visibilityLoading, router]);
 
   useEffect(() => {
     const fetchEducationData = async () => {
@@ -171,7 +172,7 @@ export default function EducationPage() {
     (c) => c.status.toLowerCase() === "completed",
   );
 
-  if (loading) {
+  if (loading || visibilityLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
         <div className="max-w-7xl mx-auto">

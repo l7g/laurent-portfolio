@@ -26,33 +26,37 @@ export const Navbar = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [mounted, setMounted] = useState(false);
   const currentPath = usePathname();
-  const { isEducationVisible } = useEducationVisibility();
+  const { isEducationVisible, isLoading: visibilityLoading } =
+    useEducationVisibility();
 
   // Ensure component is mounted before doing any filtering
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Use static navigation items until mounted, then apply filtering
-  const filteredNavItems = mounted
-    ? siteConfig.navItems.filter((item) => {
-        // Only hide Education when explicitly false, keep Skills always visible
-        if (!isEducationVisible && item.href === "/education") {
-          return false;
-        }
-        return true;
-      })
-    : siteConfig.navItems;
+  // Create navigation items that exclude education by default, only show when explicitly enabled
+  const getFilteredNavItems = () => {
+    return siteConfig.navItems.filter((item) => {
+      // Only show Education when explicitly enabled and not loading
+      if (item.href === "/education") {
+        return mounted && !visibilityLoading && isEducationVisible;
+      }
+      return true;
+    });
+  };
 
-  const filteredNavMenuItems = mounted
-    ? siteConfig.navMenuItems.filter((item) => {
-        // Only hide Education when explicitly false, keep Skills always visible
-        if (!isEducationVisible && item.href === "/education") {
-          return false;
-        }
-        return true;
-      })
-    : siteConfig.navMenuItems;
+  const getFilteredNavMenuItems = () => {
+    return siteConfig.navMenuItems.filter((item) => {
+      // Only show Education when explicitly enabled and not loading
+      if (item.href === "/education") {
+        return mounted && !visibilityLoading && isEducationVisible;
+      }
+      return true;
+    });
+  };
+
+  const filteredNavItems = getFilteredNavItems();
+  const filteredNavMenuItems = getFilteredNavMenuItems();
 
   useEffect(() => {
     // Only track scroll sections on homepage

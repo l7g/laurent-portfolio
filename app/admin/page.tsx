@@ -516,6 +516,43 @@ export default function AdminDashboard() {
     }
   };
 
+  const togglePostFeatured = async (
+    postId: string,
+    currentFeatured: boolean,
+  ) => {
+    try {
+      // Find the post to get its slug
+      const post = blogPosts.find((p) => p.id === postId);
+      if (!post) {
+        console.error("Post not found");
+        return;
+      }
+
+      const response = await fetch(`/api/blog/posts/${post.slug}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          featured: !currentFeatured,
+        }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setBlogPosts((prev) =>
+          prev.map((post) =>
+            post.id === postId ? { ...post, featured: !currentFeatured } : post,
+          ),
+        );
+      } else {
+        console.error("Failed to toggle featured status");
+      }
+    } catch (error) {
+      console.error("Error toggling featured status:", error);
+    }
+  };
+
   const tabs = [
     { id: "overview", label: "Overview", icon: ChartBarIcon },
     { id: "blog", label: "Blog", icon: DocumentTextIcon },

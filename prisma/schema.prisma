@@ -88,6 +88,7 @@ model blog_posts {
   categoryId                                                       String
   tags                                                             String[]
   status                                                           BlogStatus            @default(DRAFT)
+  featured                                                         Boolean               @default(false)
   metaTitle                                                        String?
   metaDescription                                                  String?
   authorId                                                         String

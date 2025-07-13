@@ -16,10 +16,10 @@ export default function Home() {
     <div className="flex flex-col">
       <HeroSection />
       <AboutSection />
-      <EducationSkillsSection />
       <DemosSection />
-      <EnhancedProjectsSection showAll={false} excludeDemos={true} />
-      <BlogWidget />
+      <BlogWidget postCount={4} showViewAllButton={true} />
+      <EnhancedProjectsSection showAll={false} excludeDemos={true} limit={3} />
+      <EducationSkillsSection />
       <ContactSection />
     </div>
   );

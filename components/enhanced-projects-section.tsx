@@ -55,12 +55,14 @@ interface EnhancedProjectsSectionProps {
   showAll?: boolean;
   excludeDemos?: boolean;
   className?: string;
+  limit?: number;
 }
 
 const EnhancedProjectsSection = ({
   showAll = false,
   excludeDemos = false,
   className = "",
+  limit,
 }: EnhancedProjectsSectionProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
@@ -164,6 +166,11 @@ const EnhancedProjectsSection = ({
           p.description.toLowerCase().includes(term) ||
           p.technologies.some((tech) => tech.toLowerCase().includes(term)),
       );
+    }
+
+    // Apply limit if specified
+    if (limit && limit > 0) {
+      filtered = filtered.slice(0, limit);
     }
 
     setFilteredProjects(filtered);

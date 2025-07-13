@@ -1,6 +1,11 @@
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftIcon,
+  LinkIcon,
+  PaintBrushIcon,
+  ServerIcon,
+} from "@heroicons/react/24/outline";
 
 import DemosSection from "@/components/demos-section";
 
@@ -38,7 +43,7 @@ export default function DemosPage() {
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="text-center p-6 bg-white dark:bg-default-100 rounded-lg">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🔗</span>
+                <LinkIcon className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Full Stack</h3>
               <p className="text-default-600 text-sm">
@@ -49,7 +54,7 @@ export default function DemosPage() {
 
             <div className="text-center p-6 bg-white dark:bg-default-100 rounded-lg">
               <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎨</span>
+                <PaintBrushIcon className="w-8 h-8 text-secondary" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Frontend Focus</h3>
               <p className="text-default-600 text-sm">
@@ -60,7 +65,7 @@ export default function DemosPage() {
 
             <div className="text-center p-6 bg-white dark:bg-default-100 rounded-lg">
               <div className="w-16 h-16 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">⚡</span>
+                <ServerIcon className="w-8 h-8 text-warning" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Backend Systems</h3>
               <p className="text-default-600 text-sm">

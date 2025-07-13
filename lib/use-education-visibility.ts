@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
 export function useEducationVisibility() {
-  const [isEducationVisible, setIsEducationVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+  // Start with true to match the default server behavior
+  const [isEducationVisible, setIsEducationVisible] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchEducationSetting = async () => {
@@ -28,13 +28,11 @@ export function useEducationVisibility() {
       } catch (error) {
         console.error("Error fetching education visibility setting:", error);
         setIsEducationVisible(true); // Default to true on error
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchEducationSetting();
   }, []);
 
-  return { isEducationVisible, loading };
+  return { isEducationVisible };
 }

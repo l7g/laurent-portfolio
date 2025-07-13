@@ -10,12 +10,16 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Education",
-      href: "/education",
+      label: "Demos",
+      href: "/demos",
     },
     {
       label: "Projects",
       href: "/projects",
+    },
+    {
+      label: "Education",
+      href: "/education",
     },
     {
       label: "Blog",
@@ -36,12 +40,16 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Education",
-      href: "/education",
+      label: "Demos",
+      href: "/demos",
     },
     {
       label: "Projects",
       href: "/projects",
+    },
+    {
+      label: "Education",
+      href: "/education",
     },
     {
       label: "Blog",

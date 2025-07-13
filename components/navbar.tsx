@@ -24,27 +24,35 @@ import { useEducationVisibility } from "@/lib/use-education-visibility";
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [mounted, setMounted] = useState(false);
   const currentPath = usePathname();
   const { isEducationVisible } = useEducationVisibility();
 
-  // Filter navigation items based on education visibility
-  const filteredNavItems = siteConfig.navItems.filter((item) => {
-    // Only hide Education when explicitly false, keep Skills always visible
-    if (!isEducationVisible && item.href === "/education") {
-      return false;
-    }
+  // Ensure component is mounted before doing any filtering
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-    return true;
-  });
+  // Use static navigation items until mounted, then apply filtering
+  const filteredNavItems = mounted
+    ? siteConfig.navItems.filter((item) => {
+        // Only hide Education when explicitly false, keep Skills always visible
+        if (!isEducationVisible && item.href === "/education") {
+          return false;
+        }
+        return true;
+      })
+    : siteConfig.navItems;
 
-  const filteredNavMenuItems = siteConfig.navMenuItems.filter((item) => {
-    // Only hide Education when explicitly false, keep Skills always visible
-    if (!isEducationVisible && item.href === "/education") {
-      return false;
-    }
-
-    return true;
-  });
+  const filteredNavMenuItems = mounted
+    ? siteConfig.navMenuItems.filter((item) => {
+        // Only hide Education when explicitly false, keep Skills always visible
+        if (!isEducationVisible && item.href === "/education") {
+          return false;
+        }
+        return true;
+      })
+    : siteConfig.navMenuItems;
 
   useEffect(() => {
     // Only track scroll sections on homepage

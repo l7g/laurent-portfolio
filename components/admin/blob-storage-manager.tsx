@@ -277,13 +277,12 @@ export default function BlobStorageManager({
                   <Card
                     key={image.url}
                     isHoverable
-                    isPressable
                     className={`relative transition-all duration-200 group cursor-pointer ${
                       selectedImage === image.url
                         ? "ring-2 ring-primary bg-primary/5"
                         : ""
                     }`}
-                    onPress={() => setSelectedImage(image.url)}
+                    onClick={() => setSelectedImage(image.url)}
                   >
                     <CardBody className="p-0">
                       {/* Image Preview */}
@@ -315,18 +314,16 @@ export default function BlobStorageManager({
                         )}
 
                         {/* Delete Button */}
-                        <div
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent card selection
-                            setDeleteConfirm(image.url);
-                          }}
-                        >
+                        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                           <Button
                             isIconOnly
                             color="danger"
                             size="sm"
                             variant="flat"
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent card selection
+                              setDeleteConfirm(image.url);
+                            }}
                           >
                             <TrashIcon className="w-4 h-4" />
                           </Button>

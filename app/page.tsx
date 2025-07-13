@@ -3,7 +3,8 @@
 import HeroSection from "@/components/hero-section";
 import AboutSection from "@/components/about-section";
 import EducationSkillsSection from "@/components/education-skills-section";
-import ProjectsSection from "@/components/projects-section";
+import DemosSection from "@/components/demos-section";
+import EnhancedProjectsSection from "@/components/enhanced-projects-section";
 import BlogWidget from "@/components/blog-widget";
 import ContactSection from "@/components/contact-section";
 
@@ -16,7 +17,8 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <EducationSkillsSection />
-      <ProjectsSection />
+      <DemosSection />
+      <EnhancedProjectsSection showAll={false} excludeDemos={true} />
       <BlogWidget />
       <ContactSection />
     </div>

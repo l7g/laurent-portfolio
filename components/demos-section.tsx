@@ -1,3 +1,19 @@
+/**
+ * Demos Section Component
+ *
+ * Displays live demo projects showcasing different development skills.
+ * Shows exactly 3 projects - one for each category: FULLSTACK, FRONTEND, BACKEND.
+ *
+ * Features:
+ * - Fetches demo projects from API (projects marked with demo: true)
+ * - Uses database demoType field for categorization
+ * - Responsive grid layout with hover effects
+ * - Live links, GitHub links, and case study links
+ * - Loading states and error handling
+ *
+ * @component
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -27,7 +43,7 @@ interface Demo {
   liveUrl?: string;
   githubUrl?: string;
   caseStudyUrl?: string;
-  type: "fullstack" | "frontend" | "backend";
+  type: "FULLSTACK" | "FRONTEND" | "BACKEND";
   features: string[];
   year?: number;
   role?: string;
@@ -66,11 +82,7 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
             liveUrl: demo.liveUrl,
             githubUrl: demo.githubUrl,
             caseStudyUrl: demo.caseStudyUrl,
-            type: inferDemoType(
-              demo.technologies,
-              demo.title,
-              demo.description,
-            ),
+            type: demo.demoType || "FULLSTACK", // Use database demoType
             features: demo.highlights || [],
             year: demo.year,
             role: demo.role || demo.myRole,
@@ -88,80 +100,20 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
     }
   }
 
-  // Infer demo type based on tech stack and description
-  function inferDemoType(
-    technologies: string[],
-    title: string,
-    description: string,
-  ): "fullstack" | "frontend" | "backend" {
-    const tech = technologies.map((t) => t.toLowerCase());
-    const content = `${title} ${description}`.toLowerCase();
-
-    // Check for backend indicators
-    if (
-      tech.some((t) =>
-        [
-          "node.js",
-          "express",
-          "fastapi",
-          "django",
-          "flask",
-          "spring",
-          "laravel",
-        ].includes(t),
-      ) ||
-      content.includes("api") ||
-      content.includes("backend") ||
-      content.includes("server")
-    ) {
-      // Check if it also has frontend tech
-      if (
-        tech.some((t) =>
-          ["react", "vue", "angular", "next.js", "nuxt", "svelte"].includes(t),
-        )
-      ) {
-        return "fullstack";
-      }
-      return "backend";
-    }
-
-    // Check for frontend-only
-    if (
-      tech.some((t) =>
-        [
-          "react",
-          "vue",
-          "angular",
-          "next.js",
-          "nuxt",
-          "svelte",
-          "html",
-          "css",
-          "javascript",
-        ].includes(t),
-      )
-    ) {
-      return "frontend";
-    }
-
-    // Default to fullstack for complete applications
-    return "fullstack";
-  }
-
   const typeConfig = {
-    fullstack: {
+    FULLSTACK: {
       color: "primary" as const,
       label: "Full Stack",
       description: "Complete web application with frontend and backend",
       gradient: "from-blue-500 to-purple-600",
     },
-    frontend: {
+    FRONTEND: {
       color: "secondary" as const,
       label: "Frontend",
       description: "User interface and experience focused",
       gradient: "from-emerald-500 to-teal-600",
     },
-    backend: {
+    BACKEND: {
       color: "warning" as const,
       label: "Backend",
       description: "Server-side logic and API development",

@@ -244,6 +244,7 @@ model projects {
   featured            Boolean          @default(false)
   flagship            Boolean          @default(false)
   demo                Boolean          @default(false)
+  demoType            DemoType?        @default(FULLSTACK)
   isActive            Boolean          @default(true)
   status              ProjectStatus    @default(READY)
   category            ProjectCategory  @default(OPENSOURCE)
@@ -371,6 +372,12 @@ enum ProjectCategory {
   COMMERCIAL
   CLIENT
   OPENSOURCE
+}
+
+enum DemoType {
+  FULLSTACK
+  FRONTEND
+  BACKEND
 }
 
 enum RequestStatus {

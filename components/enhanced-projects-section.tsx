@@ -266,12 +266,31 @@ const EnhancedProjectsSection = ({
           whileInView={{ opacity: 1, y: 0 }}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Project <span className="text-primary">Portfolio</span>
+            {showAll ? (
+              <>
+                Project <span className="text-primary">Portfolio</span>
+              </>
+            ) : (
+              <>
+                Other <span className="text-primary">Projects</span>
+              </>
+            )}
           </h2>
           <p className="text-xl text-default-600 max-w-3xl mx-auto leading-relaxed">
-            A comprehensive showcase of my development work, from commercial
-            applications to open-source contributions. Each project demonstrates
-            different aspects of modern web development and problem-solving.
+            {showAll ? (
+              <>
+                A comprehensive showcase of my development work, from commercial
+                applications to open-source contributions. Each project
+                demonstrates different aspects of modern web development and
+                problem-solving.
+              </>
+            ) : (
+              <>
+                Beyond the featured demos, explore my diverse project portfolio
+                including commercial applications, client work, and open-source
+                contributions across different technologies and industries.
+              </>
+            )}
           </p>
         </motion.div>
 

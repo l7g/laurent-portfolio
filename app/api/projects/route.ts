@@ -12,14 +12,26 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const demo = searchParams.get("demo");
     const category = searchParams.get("category");
+    const active = searchParams.get("active");
 
     const whereClause: any = {};
 
     // Filter by demo status
     if (demo === "true") {
       whereClause.demo = true;
+      // For demos, also filter by active status by default unless explicitly set to false
+      if (active !== "false") {
+        whereClause.isActive = true;
+      }
     } else if (demo === "false") {
       whereClause.demo = false;
+    }
+
+    // Filter by active status
+    if (active === "true") {
+      whereClause.isActive = true;
+    } else if (active === "false") {
+      whereClause.isActive = false;
     }
 
     // Filter by category
@@ -30,6 +42,7 @@ export async function GET(request: NextRequest) {
     const projects = await prisma.projects.findMany({
       where: whereClause,
       orderBy: [
+        { sortOrder: "asc" },
         { flagship: "desc" },
         { featured: "desc" },
         { createdAt: "desc" },

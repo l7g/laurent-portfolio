@@ -54,18 +54,17 @@ interface Course {
 
 export default function EducationPage() {
   const router = useRouter();
-  const { isEducationVisible, loading: visibilityLoading } =
-    useEducationVisibility();
+  const { isEducationVisible } = useEducationVisibility();
   const [programs, setPrograms] = useState<AcademicProgram[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Redirect if education is not visible
   useEffect(() => {
-    if (!visibilityLoading && !isEducationVisible) {
+    if (!isEducationVisible) {
       router.push("/");
     }
-  }, [isEducationVisible, visibilityLoading, router]);
+  }, [isEducationVisible, router]);
 
   useEffect(() => {
     const fetchEducationData = async () => {
@@ -190,7 +189,7 @@ export default function EducationPage() {
   }
 
   // Don't render anything if education is not visible
-  if (visibilityLoading || !isEducationVisible) {
+  if (!isEducationVisible) {
     return null;
   }
 

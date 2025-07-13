@@ -36,6 +36,7 @@ interface Project {
   featured: boolean;
   flagship: boolean;
   isActive: boolean;
+  demo?: boolean;
   liveUrl?: string;
   githubUrl?: string;
   caseStudyUrl?: string;
@@ -100,6 +101,7 @@ const EnhancedProjectsSection = ({
             featured: project.featured || false,
             flagship: project.flagship || false,
             isActive: project.isActive,
+            demo: project.demo || false,
             liveUrl: project.liveUrl,
             githubUrl: project.githubUrl,
             caseStudyUrl: project.caseStudyUrl,
@@ -118,7 +120,7 @@ const EnhancedProjectsSection = ({
         // Exclude demos if specified
         if (excludeDemos) {
           transformedProjects = transformedProjects.filter(
-            (p: Project) => !(p as any).demo,
+            (p: Project) => !p.demo,
           );
         }
 

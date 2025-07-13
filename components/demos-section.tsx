@@ -270,14 +270,15 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
                     </div>
 
                     {/* Role/Outcomes */}
-                    {(demo.role || demo.outcomes?.length) && (
+                    {(demo.role ||
+                      (demo.outcomes && demo.outcomes.length > 0)) && (
                       <div className="text-xs text-default-500">
                         {demo.role && (
                           <p className="mb-1">
                             <strong>Role:</strong> {demo.role}
                           </p>
                         )}
-                        {demo.outcomes?.length && (
+                        {demo.outcomes && demo.outcomes.length > 0 && (
                           <p>
                             <strong>Impact:</strong> {demo.outcomes[0]}
                           </p>

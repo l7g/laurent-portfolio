@@ -411,3 +411,21 @@ enum UserRole {
   ADMIN
   VIEWER
 }
+
+model Settings {
+  id             Int      @id @default(autoincrement())
+  name           String
+  description    String?
+  mission        String?
+  vision         String?
+  contactEmail   String?
+  githubUrl      String?
+  linkedinUrl    String?
+  cvFileName     String?
+  emailSignature String?
+  responseTime   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("settings")
+}

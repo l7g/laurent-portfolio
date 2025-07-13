@@ -120,6 +120,14 @@ export default function ProjectEditModal({
         wipWarningEmoji: selectedEmoji,
       };
 
+      // Generate slug for new projects
+      if (!project?.id && !updatedProject.slug) {
+        updatedProject.slug = formData.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+      }
+
       await onSave(updatedProject);
       onClose();
     } catch (error) {

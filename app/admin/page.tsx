@@ -9,6 +9,8 @@ import { Chip } from "@heroui/chip";
 import { Progress } from "@heroui/progress";
 import { Divider } from "@heroui/divider";
 import { Spinner } from "@heroui/spinner";
+import { Input, Textarea } from "@heroui/input";
+import { Switch } from "@heroui/switch";
 import { motion } from "framer-motion";
 import {
   BriefcaseIcon,
@@ -24,6 +26,9 @@ import {
   Cog6ToothIcon,
   BookOpenIcon,
   BuildingOfficeIcon,
+  WrenchScrewdriverIcon,
+  CloudArrowUpIcon,
+  DocumentIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -83,6 +88,33 @@ export default function AdminDashboard() {
   const [editingProgram, setEditingProgram] = useState<any>(null);
   const [editingCourse, setEditingCourse] = useState<any>(null);
 
+  // Settings state
+  const [settings, setSettings] = useState({
+    name: "",
+    description: "",
+    mission: "",
+    vision: "",
+    contactEmail: "",
+    githubUrl: "",
+    linkedinUrl: "",
+    cvFileName: "",
+    emailSignature: "",
+    responseTime: "",
+  });
+  const [settingsLoading, setSettingsLoading] = useState(false);
+
+  // Document management state
+  const [documents, setDocuments] = useState<
+    Array<{
+      url: string;
+      fileName: string;
+      size: number;
+      uploadedAt: Date;
+    }>
+  >([]);
+  const [documentLoading, setDocumentLoading] = useState(false);
+  const [selectedCvUrl, setSelectedCvUrl] = useState<string>("");
+
   useEffect(() => {
     if (status === "loading") return;
     if (!session || session.user?.role !== "ADMIN") {
@@ -91,6 +123,8 @@ export default function AdminDashboard() {
       return;
     }
     fetchDashboardData();
+    fetchSettings();
+    fetchDocuments();
   }, [session, status, router]);
 
   const fetchDashboardData = async () => {
@@ -293,28 +327,162 @@ export default function AdminDashboard() {
     }
   };
 
-  // Modal handlers
-  const handleProjectSave = async (updates: any) => {
+  // Settings functions
+  const fetchSettings = async () => {
     try {
-      const response = await fetch(`/api/projects/${editingProject.id}`, {
-        method: "PATCH",
+      const response = await fetch("/api/admin/settings");
+      if (response.ok) {
+        const data = await response.json();
+        setSettings(data);
+      }
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+    }
+  };
+
+  const handleSettingsSave = async () => {
+    try {
+      setSettingsLoading(true);
+
+      // Include selected CV URL in settings
+      const settingsToSave = {
+        ...settings,
+        cvUrl: selectedCvUrl,
+      };
+
+      const response = await fetch("/api/admin/settings", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
+        body: JSON.stringify(settingsToSave),
       });
 
       if (response.ok) {
-        const updatedProject = await response.json();
-
-        setProjects(
-          projects.map((p) =>
-            p.id === editingProject.id ? updatedProject : p,
-          ),
-        );
-        setEditingProject(null);
-        fetchDashboardData();
+        // Show success message or feedback
+        console.log("Settings saved successfully");
       }
     } catch (error) {
-      console.error("Error updating project:", error);
+      console.error("Error saving settings:", error);
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  // Document management functions
+  const fetchDocuments = async () => {
+    try {
+      const response = await fetch("/api/admin/documents");
+      if (response.ok) {
+        const data = await response.json();
+        setDocuments(data);
+
+        // Find current CV if it exists
+        const cvDoc = data.find(
+          (doc: any) =>
+            doc.fileName.toLowerCase().includes("cv") ||
+            doc.fileName.toLowerCase().includes("resume"),
+        );
+        if (cvDoc) {
+          setSelectedCvUrl(cvDoc.url);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching documents:", error);
+    }
+  };
+
+  const handleDocumentUpload = async (file: File) => {
+    try {
+      setDocumentLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/admin/documents", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        await fetchDocuments(); // Refresh the list
+        return true;
+      } else {
+        const error = await response.json();
+        console.error("Upload error:", error.error);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      return false;
+    } finally {
+      setDocumentLoading(false);
+    }
+  };
+
+  const handleDocumentDelete = async (url: string) => {
+    try {
+      const response = await fetch(
+        `/api/admin/documents?url=${encodeURIComponent(url)}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      if (response.ok) {
+        await fetchDocuments(); // Refresh the list
+        if (selectedCvUrl === url) {
+          setSelectedCvUrl(""); // Clear selection if deleted CV was selected
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting document:", error);
+    }
+  };
+
+  const handleCvSelect = (url: string) => {
+    setSelectedCvUrl(url);
+    // Update settings with the selected CV
+    const fileName = documents.find((doc) => doc.url === url)?.fileName || "";
+    setSettings({ ...settings, cvFileName: fileName });
+  };
+
+  // Modal handlers
+  const handleProjectSave = async (updates: any) => {
+    try {
+      if (editingProject.id) {
+        // Updating existing project
+        const response = await fetch(`/api/projects/${editingProject.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        });
+
+        if (response.ok) {
+          const updatedProject = await response.json();
+
+          setProjects(
+            projects.map((p) =>
+              p.id === editingProject.id ? updatedProject : p,
+            ),
+          );
+          setEditingProject(null);
+          fetchDashboardData();
+        }
+      } else {
+        // Creating new project
+        const response = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates),
+        });
+
+        if (response.ok) {
+          const newProject = await response.json();
+          setProjects([...projects, newProject]);
+          setEditingProject(null);
+          fetchDashboardData();
+        }
+      }
+    } catch (error) {
+      console.error("Error saving project:", error);
     }
   };
 
@@ -355,6 +523,7 @@ export default function AdminDashboard() {
     { id: "skills", label: "Skills", icon: Cog6ToothIcon },
     { id: "education", label: "Education", icon: AcademicCapIcon },
     { id: "contacts", label: "Messages", icon: ChatBubbleLeftRightIcon },
+    { id: "settings", label: "Settings", icon: WrenchScrewdriverIcon },
   ];
 
   if (loading) {
@@ -1207,6 +1376,7 @@ export default function AdminDashboard() {
                   <Button
                     color="primary"
                     startContent={<PlusIcon className="w-4 h-4" />}
+                    onPress={() => setEditingProject({})}
                   >
                     Add Project
                   </Button>
@@ -1551,18 +1721,322 @@ export default function AdminDashboard() {
               </div>
             </div>
           )}
+
+          {activeTab === "settings" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-foreground">
+                  Site Settings
+                </h2>
+                <Button
+                  color="primary"
+                  isLoading={settingsLoading}
+                  onPress={handleSettingsSave}
+                >
+                  Save Changes
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Basic Information */}
+                <Card>
+                  <CardHeader>
+                    <h3 className="text-lg font-semibold">Basic Information</h3>
+                  </CardHeader>
+                  <CardBody className="space-y-4">
+                    <Input
+                      label="Site Name"
+                      placeholder="Your portfolio name"
+                      value={settings.name}
+                      onChange={(e) =>
+                        setSettings({ ...settings, name: e.target.value })
+                      }
+                    />
+                    <Textarea
+                      label="Site Description"
+                      placeholder="A brief description of yourself and your work"
+                      value={settings.description}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          description: e.target.value,
+                        })
+                      }
+                      minRows={3}
+                    />
+                    <Textarea
+                      label="Mission Statement"
+                      placeholder="Your professional mission"
+                      value={settings.mission}
+                      onChange={(e) =>
+                        setSettings({ ...settings, mission: e.target.value })
+                      }
+                      minRows={2}
+                    />
+                    <Textarea
+                      label="Vision Statement"
+                      placeholder="Your professional vision"
+                      value={settings.vision}
+                      onChange={(e) =>
+                        setSettings({ ...settings, vision: e.target.value })
+                      }
+                      minRows={2}
+                    />
+                  </CardBody>
+                </Card>
+
+                {/* Contact & Social Links */}
+                <Card>
+                  <CardHeader>
+                    <h3 className="text-lg font-semibold">Contact & Social</h3>
+                  </CardHeader>
+                  <CardBody className="space-y-4">
+                    <Input
+                      label="Contact Email"
+                      placeholder="your.email@example.com"
+                      type="email"
+                      value={settings.contactEmail}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          contactEmail: e.target.value,
+                        })
+                      }
+                    />
+                    <Input
+                      label="GitHub URL"
+                      placeholder="https://github.com/yourusername"
+                      value={settings.githubUrl}
+                      onChange={(e) =>
+                        setSettings({ ...settings, githubUrl: e.target.value })
+                      }
+                    />
+                    <Input
+                      label="LinkedIn URL"
+                      placeholder="https://linkedin.com/in/yourprofile"
+                      value={settings.linkedinUrl}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          linkedinUrl: e.target.value,
+                        })
+                      }
+                    />
+                    <Input
+                      label="CV File Name"
+                      placeholder="Your_CV.pdf"
+                      value={settings.cvFileName}
+                      onChange={(e) =>
+                        setSettings({ ...settings, cvFileName: e.target.value })
+                      }
+                      description="Name of your CV file in the public folder"
+                    />
+                  </CardBody>
+                </Card>
+
+                {/* Email Configuration */}
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <h3 className="text-lg font-semibold">
+                      Email Configuration
+                    </h3>
+                  </CardHeader>
+                  <CardBody className="space-y-4">
+                    <Input
+                      label="Email Response Time"
+                      placeholder="24-48 hours"
+                      value={settings.responseTime}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          responseTime: e.target.value,
+                        })
+                      }
+                      description="Expected response time for emails"
+                    />
+                    <Textarea
+                      label="Email Signature"
+                      placeholder="Your professional email signature"
+                      value={settings.emailSignature}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          emailSignature: e.target.value,
+                        })
+                      }
+                      minRows={6}
+                      description="Professional signature for automated emails"
+                    />
+                  </CardBody>
+                </Card>
+
+                {/* CV Management Section */}
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <h3 className="text-lg font-semibold">CV Management</h3>
+                  </CardHeader>
+                  <CardBody>
+                    <div className="space-y-6">
+                      {/* Upload Area */}
+                      <div className="p-6 border-2 border-dashed border-default-300 rounded-lg text-center">
+                        <CloudArrowUpIcon className="w-12 h-12 text-default-400 mx-auto mb-2" />
+                        <p className="text-default-600 mb-2">Upload your CV</p>
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          className="hidden"
+                          id="cv-upload"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const success = await handleDocumentUpload(file);
+                              if (success) {
+                                // Auto-select newly uploaded file if it's a CV
+                                if (
+                                  file.name.toLowerCase().includes("cv") ||
+                                  file.name.toLowerCase().includes("resume")
+                                ) {
+                                  const newDoc = documents.find(
+                                    (doc) => doc.fileName === file.name,
+                                  );
+                                  if (newDoc) {
+                                    handleCvSelect(newDoc.url);
+                                  }
+                                }
+                              }
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="flat"
+                          size="sm"
+                          isLoading={documentLoading}
+                          onPress={() =>
+                            document.getElementById("cv-upload")?.click()
+                          }
+                        >
+                          Choose File
+                        </Button>
+                        <p className="text-xs text-default-500 mt-2">
+                          Accepted formats: PDF, DOC, DOCX (Max 10MB)
+                        </p>
+                      </div>
+
+                      {/* Document List */}
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-semibold text-default-700">
+                          Available Documents ({documents.length})
+                        </h4>
+                        {documents.length > 0 ? (
+                          <div className="max-h-60 overflow-y-auto space-y-2">
+                            {documents.map((doc, index) => (
+                              <div
+                                key={index}
+                                className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                                  selectedCvUrl === doc.url
+                                    ? "border-primary bg-primary/5"
+                                    : "border-default-200 bg-default-50 hover:bg-default-100"
+                                }`}
+                              >
+                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                  <DocumentIcon className="w-5 h-5 text-default-600 flex-shrink-0" />
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-medium truncate">
+                                      {doc.fileName}
+                                    </p>
+                                    <p className="text-xs text-default-500">
+                                      {(doc.size / 1024 / 1024).toFixed(2)} MB •{" "}
+                                      {new Date(
+                                        doc.uploadedAt,
+                                      ).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                  <Button
+                                    size="sm"
+                                    variant="flat"
+                                    onPress={() =>
+                                      window.open(doc.url, "_blank")
+                                    }
+                                  >
+                                    View
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    color={
+                                      selectedCvUrl === doc.url
+                                        ? "primary"
+                                        : "default"
+                                    }
+                                    variant={
+                                      selectedCvUrl === doc.url
+                                        ? "solid"
+                                        : "flat"
+                                    }
+                                    onPress={() => handleCvSelect(doc.url)}
+                                  >
+                                    {selectedCvUrl === doc.url
+                                      ? "Selected"
+                                      : "Select as CV"}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="flat"
+                                    color="danger"
+                                    onPress={() =>
+                                      handleDocumentDelete(doc.url)
+                                    }
+                                  >
+                                    <TrashIcon className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="text-center py-8 text-default-500">
+                            <DocumentIcon className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            <p className="text-sm">No documents uploaded yet</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Selected CV Display */}
+                      {selectedCvUrl && (
+                        <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <DocumentTextIcon className="w-5 h-5 text-primary" />
+                            <span className="text-sm font-medium text-primary">
+                              Selected CV
+                            </span>
+                          </div>
+                          <p className="text-sm text-default-600">
+                            {documents.find((doc) => doc.url === selectedCvUrl)
+                              ?.fileName || "Unknown file"}
+                          </p>
+                          <p className="text-xs text-default-500 mt-1">
+                            This CV will be used in your portfolio navigation
+                            and download links.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardBody>
+                </Card>
+              </div>
+            </div>
+          )}
         </motion.div>
       </div>
 
       {/* Edit Modals */}
-      {editingProject && (
-        <ProjectEditModal
-          isOpen={!!editingProject}
-          project={editingProject}
-          onClose={() => setEditingProject(null)}
-          onSave={handleProjectSave}
-        />
-      )}
+      <ProjectEditModal
+        isOpen={!!editingProject}
+        project={editingProject?.id ? editingProject : null}
+        onClose={() => setEditingProject(null)}
+        onSave={handleProjectSave}
+      />
 
       {editingSkill && (
         <SkillEditModal

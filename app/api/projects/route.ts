@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     const whereClause: any = {};
 
-    // Filter by demo status
+    // Filter by demo status (this field exists in production)
     if (demo === "true") {
       whereClause.demo = true;
       // For demos, also filter by active status by default unless explicitly set to false
@@ -27,17 +27,15 @@ export async function GET(request: NextRequest) {
       whereClause.demo = false;
     }
 
-    // Filter by active status
+    // Filter by active status (this field exists in production)
     if (active === "true") {
       whereClause.isActive = true;
     } else if (active === "false") {
       whereClause.isActive = false;
     }
 
-    // Filter by category
-    if (category) {
-      whereClause.category = category.toUpperCase();
-    }
+    // Skip category filter - field doesn't exist in production database
+    // TODO: Add category field via proper migration when needed
 
     const projects = await prisma.projects.findMany({
       where: whereClause,

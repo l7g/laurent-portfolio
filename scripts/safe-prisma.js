@@ -69,11 +69,47 @@ switch (action) {
     execWithEnv("npx prisma migrate status", "development");
     break;
 
+  case "dev:push":
+    console.log("🏠 Pushing schema to development (no migration files)...");
+    execWithEnv("npx prisma db push", "development");
+    break;
+
+  case "dev:reset":
+    console.log("🏠 Resetting development database...");
+    execWithEnv("npx prisma migrate reset --force", "development");
+    break;
+
+  case "dev:seed":
+    console.log("🏠 Seeding development database...");
+    execWithEnv("npx prisma db seed", "development");
+    break;
+
   case "prod:deploy":
     console.log("🚀 Deploying to production...");
     execWithEnv("npx prisma generate", "production");
     execWithEnv("npx prisma migrate deploy", "production");
     console.log("✅ Production deployment complete!");
+    break;
+
+  case "prod:backup":
+    console.log("🚀 Creating production database backup...");
+    const timestamp = new Date().toISOString().replace(/:/g, "-").split(".")[0];
+    const backupFile = `backups/prod-backup-${timestamp}.sql`;
+    execWithEnv(
+      `pg_dump "${process.env.DATABASE_URL}" > ${backupFile}`,
+      "production",
+    );
+    console.log(`✅ Backup saved to ${backupFile}`);
+    break;
+
+  case "prod:push":
+    console.log("🚀 Pushing schema changes to production (db push)...");
+    execWithEnv("npx prisma db push", "production");
+    break;
+
+  case "prod:check-schema":
+    console.log("🚀 Checking production database schema...");
+    execWithEnv("npx prisma db pull --print", "production");
     break;
 
   case "prod:status":
@@ -100,10 +136,14 @@ Development (Docker):
   npm run prisma dev:migrate [name]    - Create migration
   npm run prisma dev:studio           - Open Studio
   npm run prisma dev:status           - Check status
+  npm run prisma dev:push             - Push schema
+  npm run prisma dev:reset            - Reset database
+  npm run prisma dev:seed             - Seed database
   npm run prisma generate             - Generate client
 
 Production (Neon):
   npm run prisma prod:deploy          - Deploy migrations
+  npm run prisma prod:check-schema    - Check actual schema
   npm run prisma prod:status          - Check status
   npm run prisma prod:studio          - Open Studio (careful!)
 

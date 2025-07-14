@@ -95,10 +95,7 @@ switch (action) {
     console.log("🚀 Creating production database backup...");
     const timestamp = new Date().toISOString().replace(/:/g, "-").split(".")[0];
     const backupFile = `backups/prod-backup-${timestamp}.sql`;
-    execWithEnv(
-      `pg_dump "${process.env.DATABASE_URL}" > ${backupFile}`,
-      "production",
-    );
+    execWithEnv(`pg_dump "$DATABASE_URL" > ${backupFile}`, "production");
     console.log(`✅ Backup saved to ${backupFile}`);
     break;
 

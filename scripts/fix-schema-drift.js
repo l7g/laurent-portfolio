@@ -38,22 +38,55 @@ console.log(
   "📝 This migration tells Prisma about manually added fields without changing the database",
 );
 
+// Parse .env.production file properly
+function parseEnvFile(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, "utf-8");
+    const envVars = {};
+
+    content.split("\n").forEach((line) => {
+      // Skip empty lines and comments
+      if (!line.trim() || line.trim().startsWith("#")) {
+        return;
+      }
+
+      // Find the first equals sign
+      const equalsIndex = line.indexOf("=");
+      if (equalsIndex === -1) {
+        return; // Skip lines without equals sign
+      }
+
+      const key = line.substring(0, equalsIndex).trim();
+      const value = line.substring(equalsIndex + 1).trim();
+
+      if (key) {
+        // Remove quotes if present
+        let cleanValue = value;
+        if (
+          (value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))
+        ) {
+          cleanValue = value.slice(1, -1);
+        }
+
+        envVars[key] = cleanValue;
+      }
+    });
+
+    return envVars;
+  } catch (error) {
+    console.warn(`⚠️  Warning: Could not read ${filePath}:`, error.message);
+    return {};
+  }
+}
+
 // Now mark this migration as applied in production
 console.log("🚀 Marking migration as applied in production...");
 execSync(`npx prisma migrate resolve --applied ${migrationName}`, {
   stdio: "inherit",
   env: {
     ...process.env,
-    ...JSON.parse(
-      fs
-        .readFileSync(".env.production", "utf-8")
-        .split("\n")
-        .reduce((acc, line) => {
-          const [key, value] = line.split("=");
-          if (key && value) acc[key] = value;
-          return acc;
-        }, {}),
-    ),
+    ...parseEnvFile(".env.production"),
   },
 });
 

@@ -94,8 +94,16 @@ switch (action) {
   case "prod:backup":
     console.log("🚀 Creating production database backup...");
     const timestamp = new Date().toISOString().replace(/:/g, "-").split(".")[0];
-    const backupFile = `backups/prod-backup-${timestamp}.sql`;
-    execWithEnv(`pg_dump "$DATABASE_URL" > ${backupFile}`, "production");
+    const backupDir = join(projectRoot, "backups");
+    const backupFile = join(backupDir, `prod-backup-${timestamp}.sql`);
+
+    // Ensure backups directory exists
+    if (!fs.existsSync(backupDir)) {
+      console.log("📁 Creating backups directory...");
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
+
+    execWithEnv(`pg_dump "$DATABASE_URL" > "${backupFile}"`, "production");
     console.log(`✅ Backup saved to ${backupFile}`);
     break;
 

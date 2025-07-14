@@ -43,7 +43,7 @@ function execWithEnv(command, mode) {
   console.log(`📁 Environment: ${mode}`);
   console.log(`🔗 Database: ${envVars.DATABASE_URL?.substring(0, 30)}...`);
 
-  execSync(command, { stdio: "inherit", env });
+  execSync(command, { stdio: "inherit", env, shell: true });
 }
 
 // Main script

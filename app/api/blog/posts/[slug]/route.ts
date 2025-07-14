@@ -97,3 +97,64 @@ export async function GET(
     );
   }
 }
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> },
+) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user || session.user.role !== "ADMIN") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { slug } = await params;
+    const body = await request.json();
+
+    // First find the post by slug to get the ID
+    const existingPost = await prisma.blog_posts.findUnique({
+      where: { slug },
+    });
+
+    if (!existingPost) {
+      return NextResponse.json(
+        { error: "Blog post not found" },
+        { status: 404 },
+      );
+    }
+
+    // Update the post
+    const updatedPost = await prisma.blog_posts.update({
+      where: { id: existingPost.id },
+      data: {
+        ...(body.featured !== undefined && { featured: body.featured }),
+        ...(body.title && { title: body.title }),
+        ...(body.excerpt && { excerpt: body.excerpt }),
+        ...(body.content && { content: body.content }),
+        ...(body.status && { status: body.status }),
+        ...(body.coverImage !== undefined && { coverImage: body.coverImage }),
+        ...(body.tags && { tags: body.tags }),
+        updatedAt: new Date(),
+      },
+      include: {
+        blog_categories: true,
+        users: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(updatedPost);
+  } catch (error) {
+    console.error("Error updating blog post:", error);
+    return NextResponse.json(
+      { error: "Failed to update blog post" },
+      { status: 500 },
+    );
+  }
+}

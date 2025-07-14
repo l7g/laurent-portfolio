@@ -54,7 +54,7 @@ interface Course {
 
 export default function EducationPage() {
   const router = useRouter();
-  const { isEducationVisible, loading: visibilityLoading } =
+  const { isEducationVisible, isLoading: visibilityLoading } =
     useEducationVisibility();
   const [programs, setPrograms] = useState<AcademicProgram[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -172,7 +172,7 @@ export default function EducationPage() {
     (c) => c.status.toLowerCase() === "completed",
   );
 
-  if (loading) {
+  if (loading || visibilityLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/80 p-8">
         <div className="max-w-7xl mx-auto">
@@ -190,7 +190,7 @@ export default function EducationPage() {
   }
 
   // Don't render anything if education is not visible
-  if (visibilityLoading || !isEducationVisible) {
+  if (!isEducationVisible) {
     return null;
   }
 

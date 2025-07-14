@@ -183,37 +183,42 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-primary/5 via-secondary/5 to-background">
-        <div className="w-full text-center">
-          <motion.div
-            animate={{ opacity: 1, y: 0 }}
-            initial={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6">
-              <SparklesIcon className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium text-primary">
-                Blog & Insights
-              </span>
-            </div>
-            <h1 className={title({ size: "lg", className: "mb-6" })}>
-              Thoughts, Stories & Ideas
-            </h1>
-            <p className={subtitle({ className: "text-lg" })}>
-              Sharing my journey in tech development, international relations,
-              and everything in between
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Main Content */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
+      <section className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="w-full">
-          {/* Search and Navigation */}
-          <div className="mb-12">
-            <div className="flex flex-col lg:flex-row gap-6 mb-8">
+          {/* Compact Header with Navigation */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-8">
+            <div>
+              <h1 className="text-3xl font-bold mb-1">Blog</h1>
+              <p className="text-default-600 text-sm">
+                Thoughts, stories and technical insights
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                color={viewMode === "posts" ? "primary" : "default"}
+                size="md"
+                startContent={<BookOpenIcon className="w-4 h-4" />}
+                variant={viewMode === "posts" ? "solid" : "bordered"}
+                onClick={() => setViewMode("posts")}
+              >
+                Articles
+              </Button>
+              <Button
+                color={viewMode === "series" ? "primary" : "default"}
+                size="md"
+                startContent={<RectangleStackIcon className="w-4 h-4" />}
+                variant={viewMode === "series" ? "solid" : "bordered"}
+                onClick={() => setViewMode("series")}
+              >
+                Series
+              </Button>
+            </div>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="mb-8">
+            <div className="flex flex-col lg:flex-row gap-4 mb-6">
               <div className="flex-1">
                 <Input
                   className="w-full"
@@ -225,26 +230,6 @@ export default function BlogPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  color={viewMode === "posts" ? "primary" : "default"}
-                  size="lg"
-                  startContent={<BookOpenIcon className="w-5 h-5" />}
-                  variant={viewMode === "posts" ? "solid" : "bordered"}
-                  onClick={() => setViewMode("posts")}
-                >
-                  Articles
-                </Button>
-                <Button
-                  color={viewMode === "series" ? "primary" : "default"}
-                  size="lg"
-                  startContent={<RectangleStackIcon className="w-5 h-5" />}
-                  variant={viewMode === "series" ? "solid" : "bordered"}
-                  onClick={() => setViewMode("series")}
-                >
-                  Series
-                </Button>
               </div>
             </div>
 
@@ -473,15 +458,6 @@ export default function BlogPage() {
                   exit={{ opacity: 0, y: -20 }}
                   initial={{ opacity: 0, y: 20 }}
                 >
-                  <div className="flex items-center gap-3 mb-8">
-                    <BookOpenIcon className="w-6 h-6 text-primary" />
-                    <h2 className="text-3xl font-bold">
-                      {selectedSeries !== "all"
-                        ? `${series.find((s) => s.slug === selectedSeries)?.title || "Series"} Articles`
-                        : "Latest Articles"}
-                    </h2>
-                  </div>
-
                   {loading ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
                       {[...Array(9)].map((_, i) => (
@@ -639,14 +615,16 @@ export default function BlogPage() {
 
                   {!loading && posts.length === 0 && (
                     <div className="text-center py-20">
-                      <div className="text-6xl mb-6">📝</div>
-                      <h3 className="text-2xl font-bold mb-4">
+                      <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-3xl flex items-center justify-center">
+                        <BookOpenIcon className="w-12 h-12 text-primary/60" />
+                      </div>
+                      <h3 className="text-2xl font-bold mb-4 text-foreground">
                         No articles found
                       </h3>
-                      <p className="text-default-600 mb-8">
+                      <p className="text-default-600 mb-8 max-w-md mx-auto">
                         {searchQuery
-                          ? "Try adjusting your search terms or filters"
-                          : "Check back later for new content"}
+                          ? "Try adjusting your search terms or browse different categories"
+                          : "New content is coming soon. Check back later for fresh insights and stories"}
                       </p>
                       {searchQuery && (
                         <Button

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 
 export function useEducationVisibility() {
+  // Start with loading state to prevent content flash
   const [isEducationVisible, setIsEducationVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchEducationSetting = async () => {
@@ -14,27 +15,27 @@ export function useEducationVisibility() {
           const settingsData = result.data || {};
           const educationValue = settingsData.show_education;
 
-          // Handle boolean values properly - default to true if not set
+          // Handle boolean values properly - default to false if not set
           const isVisible =
             educationValue === undefined
-              ? true
+              ? false
               : educationValue === true || educationValue === "true";
 
           setIsEducationVisible(isVisible);
         } else {
-          // Default to true if setting doesn't exist
-          setIsEducationVisible(true);
+          // Default to false if setting doesn't exist
+          setIsEducationVisible(false);
         }
       } catch (error) {
         console.error("Error fetching education visibility setting:", error);
-        setIsEducationVisible(true); // Default to true on error
+        setIsEducationVisible(false); // Default to false on error
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
     fetchEducationSetting();
   }, []);
 
-  return { isEducationVisible, loading };
+  return { isEducationVisible, isLoading };
 }

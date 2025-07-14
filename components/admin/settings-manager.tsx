@@ -152,7 +152,7 @@ const PREDEFINED_SETTINGS = [
     category: "Site",
     icon: InformationCircleIcon,
     placeholder: "",
-    defaultValue: "true",
+    defaultValue: "false",
   },
 ];
 

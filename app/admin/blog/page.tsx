@@ -31,6 +31,7 @@ interface BlogPost {
   slug: string;
   excerpt: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  featured?: boolean;
   category: {
     id: string;
     name: string;
@@ -82,6 +83,7 @@ export default function BlogAdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [featuredFilter, setFeaturedFilter] = useState("all");
 
   // Define functions before hooks that use them
   const fetchData = async () => {
@@ -172,6 +174,33 @@ export default function BlogAdminPage() {
     }
   };
 
+  const toggleFeatured = async (post: BlogPost) => {
+    try {
+      const response = await fetch(`/api/blog/posts/${post.slug}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          featured: !post.featured,
+        }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setPosts((prev) =>
+          prev.map((p) =>
+            p.id === post.id ? { ...p, featured: !post.featured } : p,
+          ),
+        );
+      } else {
+        console.error("Failed to toggle featured status");
+      }
+    } catch (error) {
+      console.error("Error toggling featured status:", error);
+    }
+  };
+
   const filteredPosts = posts.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -180,8 +209,12 @@ export default function BlogAdminPage() {
       statusFilter === "all" || post.status === statusFilter;
     const matchesCategory =
       categoryFilter === "all" || post.category.id === categoryFilter;
+    const matchesFeatured =
+      featuredFilter === "all" ||
+      (featuredFilter === "featured" && post.featured) ||
+      (featuredFilter === "not-featured" && !post.featured);
 
-    return matchesSearch && matchesStatus && matchesCategory;
+    return matchesSearch && matchesStatus && matchesCategory && matchesFeatured;
   });
 
   const formatDate = (dateString: string | null) => {
@@ -245,6 +278,30 @@ export default function BlogAdminPage() {
                 Series
               </Button>
               <Button
+                className="w-full sm:w-auto"
+                color="warning"
+                variant="bordered"
+                startContent={<span>⭐</span>}
+                onClick={() =>
+                  setFeaturedFilter(
+                    featuredFilter === "featured" ? "all" : "featured",
+                  )
+                }
+              >
+                {featuredFilter === "featured" ? "Show All" : "Featured Only"}
+              </Button>
+              <Button
+                as={Link}
+                className="w-full sm:w-auto"
+                color="secondary"
+                href="/blog"
+                target="_blank"
+                startContent={<EyeIcon className="w-4 h-4" />}
+                variant="bordered"
+              >
+                Preview Magazine
+              </Button>
+              <Button
                 as={Link}
                 className="w-full sm:w-auto"
                 href="/admin/blog/categories"
@@ -306,6 +363,15 @@ export default function BlogAdminPage() {
                       </option>
                     ))}
                   </select>
+                  <select
+                    className="px-3 py-2 bg-default-100 border border-default-200 rounded-lg w-full sm:w-auto"
+                    value={featuredFilter}
+                    onChange={(e) => setFeaturedFilter(e.target.value)}
+                  >
+                    <option value="all">All Posts</option>
+                    <option value="featured">⭐ Featured</option>
+                    <option value="not-featured">Not Featured</option>
+                  </select>
                 </div>
               </div>
             </CardBody>
@@ -363,16 +429,16 @@ export default function BlogAdminPage() {
                 </div>
               </CardBody>
             </Card>
-            <Card className="bg-gradient-to-r from-purple-500/10 to-purple-600/10">
+            <Card className="bg-gradient-to-r from-orange-500/10 to-orange-600/10">
               <CardBody className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-500/20 rounded-lg">
-                    <EyeIcon className="w-5 h-5 text-purple-500" />
+                  <div className="p-2 bg-orange-500/20 rounded-lg">
+                    <span className="text-orange-500 text-lg">⭐</span>
                   </div>
                   <div>
-                    <p className="text-sm text-default-600">Total Views</p>
+                    <p className="text-sm text-default-600">Featured</p>
                     <p className="text-xl font-bold">
-                      {posts.reduce((acc, post) => acc + post.views, 0)}
+                      {posts.filter((p) => p.featured).length}
                     </p>
                   </div>
                 </div>
@@ -425,7 +491,11 @@ export default function BlogAdminPage() {
                     {filteredPosts.map((post) => (
                       <tr
                         key={post.id}
-                        className="border-b border-default-200 hover:bg-default-50/50"
+                        className={`border-b border-default-200 hover:bg-default-50/50 ${
+                          post.featured
+                            ? "bg-orange-50/30 border-orange-200/50"
+                            : ""
+                        }`}
                       >
                         <td className="p-3 sm:p-4">
                           <div className="flex items-center gap-3">
@@ -434,10 +504,20 @@ export default function BlogAdminPage() {
                               name={post.author.name}
                               size="sm"
                             />
-                            <div className="min-w-0">
-                              <p className="font-medium truncate">
-                                {post.title}
-                              </p>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <p className="font-medium truncate">
+                                  {post.title}
+                                </p>
+                                {post.featured && (
+                                  <span
+                                    className="text-orange-500 text-sm"
+                                    title="Featured"
+                                  >
+                                    ⭐
+                                  </span>
+                                )}
+                              </div>
                               <p className="text-sm text-default-600 truncate sm:hidden">
                                 {post.category.name}
                               </p>
@@ -531,6 +611,24 @@ export default function BlogAdminPage() {
                               variant="light"
                             >
                               <PencilIcon className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              title={
+                                post.featured
+                                  ? "Remove from Featured"
+                                  : "Mark as Featured"
+                              }
+                              variant="light"
+                              className={
+                                post.featured
+                                  ? "text-orange-500"
+                                  : "text-default-400"
+                              }
+                              onClick={() => toggleFeatured(post)}
+                            >
+                              <span className="text-base">⭐</span>
                             </Button>
                             <div className="hidden sm:flex items-center gap-1">
                               <Button

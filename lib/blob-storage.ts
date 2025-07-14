@@ -82,6 +82,60 @@ export class BlobStorage {
   }
 
   /**
+   * List all documents in a folder with metadata
+   * @param folder - Folder to list
+   * @returns Promise with array of document objects
+   */
+  static async listDocuments(folder: string = "documents"): Promise<
+    Array<{
+      url: string;
+      fileName: string;
+      size: number;
+      uploadedAt: Date;
+    }>
+  > {
+    try {
+      const { blobs } = await list({
+        prefix: `${folder}/`,
+      });
+
+      return blobs.map((blob) => ({
+        url: blob.url,
+        fileName: blob.pathname.split("/").pop() || "Unknown",
+        size: blob.size,
+        uploadedAt: blob.uploadedAt,
+      }));
+    } catch (error) {
+      console.error("Error listing documents:", error);
+      return [];
+    }
+  }
+
+  /**
+   * Upload a document to blob storage
+   * @param file - Document file to upload
+   * @param folder - Folder to organize files (default: 'documents')
+   * @returns Promise with blob URL
+   */
+  static async uploadDocument(
+    file: File,
+    folder: string = "documents",
+  ): Promise<string> {
+    try {
+      const filename = `${folder}/${Date.now()}-${file.name}`;
+      const blob = await put(filename, file, {
+        access: "public",
+        contentType: file.type,
+      });
+
+      return blob.url;
+    } catch (error) {
+      console.error("Error uploading document to blob storage:", error);
+      throw new Error("Failed to upload document");
+    }
+  }
+
+  /**
    * Get optimized image URL with Vercel's image optimization
    * @param blobUrl - Original blob URL
    * @param width - Desired width

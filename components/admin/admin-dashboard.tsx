@@ -629,6 +629,11 @@ export default function AdminDashboard({
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h4 className="font-medium">{project.title}</h4>
+                          {project.demo && (
+                            <Chip color="success" size="sm" variant="flat">
+                              Demo
+                            </Chip>
+                          )}
                           {project.flagship && (
                             <Chip color="warning" size="sm" variant="flat">
                               Flagship

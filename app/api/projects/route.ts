@@ -25,18 +25,18 @@ export async function GET(request: NextRequest) {
       }
     } else if (demo === "false") {
       whereClause.demo = false;
-    }
-
-    // Filter by active status (this field exists in production)
+    }    // Filter by active status (this field exists in production)
     if (active === "true") {
       whereClause.isActive = true;
     } else if (active === "false") {
       whereClause.isActive = false;
     }
 
-    // Skip category filter - field doesn't exist in production database
-    // TODO: Add category field via proper migration when needed
-
+    // Filter by category (field now added to production database)
+    if (category) {
+      whereClause.category = category.toUpperCase();
+    }
+    
     const projects = await prisma.projects.findMany({
       where: whereClause,
       orderBy: [
@@ -79,9 +79,12 @@ export async function POST(request: NextRequest) {
       flagship,
       isActive,
       status,
+      category,
       liveUrl,
       githubUrl,
+      caseStudyUrl,
       highlights,
+      outcomes,
       showWipWarning,
       wipWarningText,
       wipWarningEmoji,
@@ -93,6 +96,8 @@ export async function POST(request: NextRequest) {
       projectDuration,
       teamSize,
       myRole,
+      role,
+      year,
     } = body;
 
     // Validate required fields
@@ -128,9 +133,12 @@ export async function POST(request: NextRequest) {
         flagship: flagship || false,
         isActive: isActive !== undefined ? isActive : true,
         status: status || "READY",
+        category: category || "OPENSOURCE",
         liveUrl,
         githubUrl,
+        caseStudyUrl,
         highlights: highlights || [],
+        outcomes: outcomes || [],
         showWipWarning: showWipWarning !== undefined ? showWipWarning : true,
         wipWarningText,
         wipWarningEmoji: wipWarningEmoji || "🚧",
@@ -142,6 +150,8 @@ export async function POST(request: NextRequest) {
         projectDuration,
         teamSize,
         myRole,
+        role,
+        year,
         updatedAt: new Date(),
       },
     });

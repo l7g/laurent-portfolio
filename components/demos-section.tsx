@@ -6,7 +6,7 @@
  *
  * Features:
  * - Fetches demo projects from API (projects marked with demo: true)
- * - Uses database demoType field for categorization
+ * - Uses databas                        onPress={() => openUrl(demo.githubUrl)}                  onPress={() => openUrl(demo.liveUrl)}Type field for categorization
  * - Responsive grid layout with hover effects
  * - Live links, GitHub links, and case study links
  * - Loading states and error handling
@@ -32,6 +32,7 @@ import LoadingSkeleton from "./loading-skeleton";
 
 import { GithubIcon } from "@/components/icons";
 import { getProjectImageUrl } from "@/lib/blob-storage";
+import { openUrl } from "@/lib/utils";
 
 interface Demo {
   id: string;
@@ -68,6 +69,7 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
 
       if (response.ok) {
         const dbDemos = await response.json();
+        console.log("Raw demos from API:", dbDemos);
 
         // Transform database demos to match our interface
         const transformedDemos = dbDemos
@@ -90,6 +92,7 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
           }))
           .slice(0, 3); // Limit to 3 demos
 
+        console.log("Filtered demos:", transformedDemos);
         setDemos(transformedDemos);
       }
     } catch (error) {
@@ -297,7 +300,12 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
                         startContent={
                           <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                         }
-                        onPress={() => window.open(demo.liveUrl, "_blank")}
+                        onPress={() => {
+                          const normalizedUrl = demo.liveUrl?.startsWith("http")
+                            ? demo.liveUrl
+                            : `https://${demo.liveUrl}`;
+                          window.open(normalizedUrl, "_blank");
+                        }}
                       >
                         Live Demo
                       </Button>
@@ -309,7 +317,14 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
                         size="sm"
                         startContent={<GithubIcon className="w-4 h-4" />}
                         variant="bordered"
-                        onPress={() => window.open(demo.githubUrl, "_blank")}
+                        onPress={() => {
+                          const normalizedUrl = demo.githubUrl?.startsWith(
+                            "http",
+                          )
+                            ? demo.githubUrl
+                            : `https://${demo.githubUrl}`;
+                          window.open(normalizedUrl, "_blank");
+                        }}
                       >
                         Code
                       </Button>
@@ -321,7 +336,7 @@ const DemosSection = ({ className = "" }: DemosSectionProps) => {
                         size="sm"
                         startContent={<DocumentTextIcon className="w-4 h-4" />}
                         variant="light"
-                        onPress={() => window.open(demo.caseStudyUrl, "_blank")}
+                        onPress={() => openUrl(demo.caseStudyUrl)}
                       />
                     )}
                   </CardFooter>

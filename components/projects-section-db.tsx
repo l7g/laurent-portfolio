@@ -140,9 +140,13 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                           <Button
                             startContent={<GithubIcon className="w-4 h-4" />}
                             variant="flat"
-                            onPress={() =>
-                              window.open(flagshipProject.githubUrl!, "_blank")
-                            }
+                            onPress={() => {
+                              const normalizedUrl =
+                                flagshipProject.githubUrl?.startsWith("http")
+                                  ? flagshipProject.githubUrl
+                                  : `https://${flagshipProject.githubUrl}`;
+                              window.open(normalizedUrl, "_blank");
+                            }}
                           >
                             Code
                           </Button>
@@ -153,9 +157,13 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                             startContent={
                               <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                             }
-                            onPress={() =>
-                              window.open(flagshipProject.liveUrl!, "_blank")
-                            }
+                            onPress={() => {
+                              const normalizedUrl =
+                                flagshipProject.liveUrl?.startsWith("http")
+                                  ? flagshipProject.liveUrl
+                                  : `https://${flagshipProject.liveUrl}`;
+                              window.open(normalizedUrl, "_blank");
+                            }}
                           >
                             Live Demo
                           </Button>
@@ -247,9 +255,13 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                             className="flex-1"
                             startContent={<GithubIcon className="w-4 h-4" />}
                             variant="flat"
-                            onPress={() =>
-                              window.open(project.githubUrl!, "_blank")
-                            }
+                            onPress={() => {
+                              const normalizedUrl =
+                                project.githubUrl?.startsWith("http")
+                                  ? project.githubUrl
+                                  : `https://${project.githubUrl}`;
+                              window.open(normalizedUrl, "_blank");
+                            }}
                           >
                             Code
                           </Button>
@@ -261,9 +273,14 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                             startContent={
                               <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                             }
-                            onPress={() =>
-                              window.open(project.liveUrl!, "_blank")
-                            }
+                            onPress={() => {
+                              const normalizedUrl = project.liveUrl?.startsWith(
+                                "http",
+                              )
+                                ? project.liveUrl
+                                : `https://${project.liveUrl}`;
+                              window.open(normalizedUrl, "_blank");
+                            }}
                           >
                             Demo
                           </Button>
@@ -346,9 +363,13 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                               size="sm"
                               startContent={<GithubIcon className="w-3 h-3" />}
                               variant="flat"
-                              onPress={() =>
-                                window.open(project.githubUrl!, "_blank")
-                              }
+                              onPress={() => {
+                                const normalizedUrl =
+                                  project.githubUrl?.startsWith("http")
+                                    ? project.githubUrl
+                                    : `https://${project.githubUrl}`;
+                                window.open(normalizedUrl, "_blank");
+                              }}
                             >
                               Code
                             </Button>
@@ -361,9 +382,13 @@ const ProjectsSection = ({ projects }: ProjectsSectionProps) => {
                               startContent={
                                 <ArrowTopRightOnSquareIcon className="w-3 h-3" />
                               }
-                              onPress={() =>
-                                window.open(project.liveUrl!, "_blank")
-                              }
+                              onPress={() => {
+                                const normalizedUrl =
+                                  project.liveUrl?.startsWith("http")
+                                    ? project.liveUrl
+                                    : `https://${project.liveUrl}`;
+                                window.open(normalizedUrl, "_blank");
+                              }}
                             >
                               Demo
                             </Button>

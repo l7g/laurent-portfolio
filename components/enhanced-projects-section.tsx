@@ -531,9 +531,14 @@ const EnhancedProjectsSection = ({
                             startContent={
                               <ArrowTopRightOnSquareIcon className="w-4 h-4" />
                             }
-                            onPress={() =>
-                              window.open(project.liveUrl, "_blank")
-                            }
+                            onPress={() => {
+                              const normalizedUrl = project.liveUrl?.startsWith(
+                                "http",
+                              )
+                                ? project.liveUrl
+                                : `https://${project.liveUrl}`;
+                              window.open(normalizedUrl, "_blank");
+                            }}
                           >
                             Live Demo
                           </Button>
@@ -545,9 +550,13 @@ const EnhancedProjectsSection = ({
                             size="sm"
                             startContent={<GithubIcon className="w-4 h-4" />}
                             variant="bordered"
-                            onPress={() =>
-                              window.open(project.githubUrl, "_blank")
-                            }
+                            onPress={() => {
+                              const normalizedUrl =
+                                project.githubUrl?.startsWith("http")
+                                  ? project.githubUrl
+                                  : `https://${project.githubUrl}`;
+                              window.open(normalizedUrl, "_blank");
+                            }}
                           >
                             Code
                           </Button>
@@ -561,9 +570,13 @@ const EnhancedProjectsSection = ({
                               <DocumentTextIcon className="w-4 h-4" />
                             }
                             variant="light"
-                            onPress={() =>
-                              window.open(project.caseStudyUrl, "_blank")
-                            }
+                            onPress={() => {
+                              const normalizedUrl =
+                                project.caseStudyUrl?.startsWith("http")
+                                  ? project.caseStudyUrl
+                                  : `https://${project.caseStudyUrl}`;
+                              window.open(normalizedUrl, "_blank");
+                            }}
                           />
                         )}
                       </>

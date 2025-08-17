@@ -154,7 +154,12 @@ export function ProjectCard({
               size="sm"
               startContent={<ArrowTopRightOnSquareIcon className="w-4 h-4" />}
               variant="flat"
-              onPress={() => window.open(project.liveUrl, "_blank")}
+              onPress={() => {
+                const normalizedUrl = project.liveUrl?.startsWith("http")
+                  ? project.liveUrl
+                  : `https://${project.liveUrl}`;
+                window.open(normalizedUrl, "_blank");
+              }}
             >
               Live Demo
             </Button>
@@ -164,7 +169,12 @@ export function ProjectCard({
               size="sm"
               startContent={<CodeBracketIcon className="w-4 h-4" />}
               variant="flat"
-              onPress={() => window.open(project.githubUrl, "_blank")}
+              onPress={() => {
+                const normalizedUrl = project.githubUrl?.startsWith("http")
+                  ? project.githubUrl
+                  : `https://${project.githubUrl}`;
+                window.open(normalizedUrl, "_blank");
+              }}
             >
               Code
             </Button>
